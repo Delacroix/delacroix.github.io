@@ -6,13 +6,13 @@
   <title>LVS集群中的IP负载均衡技术 | Delacroix&#39; Blog</title>
   <meta name="author" content="Delacroix">
   
-  <meta name="description" content="LVS集群中的IP负载均衡技术@(计算机网络)[负载均衡|原理|]
+  <meta name="description" content="[转]LVS集群中的IP负载均衡技术@(计算机网络)[负载均衡|原理|]
 
 本文在分析服务器集群实现虚拟网络服务的相关技术上，详细描述了LVS集群中实现的三种IP负载均衡技术（VS/NAT、VS/TUN和VS/DR）的工作原理，以及它们的优缺点。
 
 
 [TOC]
-1 前言在前面文章中，讲述了可伸缩网络服务">
+1 前言在前面文章中，讲述了可伸缩网">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -117,7 +117,7 @@
 	<div class="mypage">		
 	  		
 
-	  <h1 id="LVS集群中的IP负载均衡技术"><a href="#LVS集群中的IP负载均衡技术" class="headerlink" title="LVS集群中的IP负载均衡技术"></a>LVS集群中的IP负载均衡技术</h1><p>@(计算机网络)[负载均衡|原理|]</p>
+	  <h1 id="转-LVS集群中的IP负载均衡技术"><a href="#转-LVS集群中的IP负载均衡技术" class="headerlink" title="[转]LVS集群中的IP负载均衡技术"></a>[转]LVS集群中的IP负载均衡技术</h1><p>@(计算机网络)[负载均衡|原理|]</p>
 <blockquote>
 <p>本文在分析服务器集群实现虚拟网络服务的相关技术上，详细描述了LVS集群中实现的三种IP负载均衡技术（VS/NAT、VS/TUN和VS/DR）的工作原理，以及它们的优缺点。</p>
 </blockquote>
@@ -410,7 +410,7 @@
 	
 	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
 	   <div id="toc" class="toc collapse in">
-			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#LVS集群中的IP负载均衡技术"><span class="toc-article-text">LVS集群中的IP负载均衡技术</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#1-前言"><span class="toc-article-text">1 前言</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#2-实现虚拟服务的相关方法"><span class="toc-article-text">2 实现虚拟服务的相关方法</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#2-1-基于RR-DNS的解决方法"><span class="toc-article-text">2.1 基于RR-DNS的解决方法</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#2-2-基于客户端的解决方法"><span class="toc-article-text">2.2 基于客户端的解决方法</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#2-3-基于应用层负载均衡调度的解决方法"><span class="toc-article-text">2.3 基于应用层负载均衡调度的解决方法</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#2-4-基于IP层负载均衡调度的解决方法"><span class="toc-article-text">2.4 基于IP层负载均衡调度的解决方法</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#3-通过NAT实现虚拟服务器（VS-NAT）"><span class="toc-article-text">3 通过NAT实现虚拟服务器（VS/NAT）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#4-通过IP隧道实现虚拟服务器（VS-TUN）"><span class="toc-article-text">4 通过IP隧道实现虚拟服务器（VS/TUN）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#5-通过直接路由实现虚拟服务器（VS-DR）"><span class="toc-article-text">5 通过直接路由实现虚拟服务器（VS/DR）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#6-三种方法的优缺点比较"><span class="toc-article-text">6 三种方法的优缺点比较</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#6-1-Virtual-Server-via-NAT"><span class="toc-article-text">6.1 Virtual Server via NAT</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#6-2-Virtual-Server-via-IP-Tunneling"><span class="toc-article-text">6.2 Virtual Server via IP Tunneling</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#6-3-Virtual-Server-via-Direct-Routing"><span class="toc-article-text">6.3 Virtual Server via Direct Routing</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#7-小结"><span class="toc-article-text">7 小结</span></a></li></ol></li></ol>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#转-LVS集群中的IP负载均衡技术"><span class="toc-article-text">[转]LVS集群中的IP负载均衡技术</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#1-前言"><span class="toc-article-text">1 前言</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#2-实现虚拟服务的相关方法"><span class="toc-article-text">2 实现虚拟服务的相关方法</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#2-1-基于RR-DNS的解决方法"><span class="toc-article-text">2.1 基于RR-DNS的解决方法</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#2-2-基于客户端的解决方法"><span class="toc-article-text">2.2 基于客户端的解决方法</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#2-3-基于应用层负载均衡调度的解决方法"><span class="toc-article-text">2.3 基于应用层负载均衡调度的解决方法</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#2-4-基于IP层负载均衡调度的解决方法"><span class="toc-article-text">2.4 基于IP层负载均衡调度的解决方法</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#3-通过NAT实现虚拟服务器（VS-NAT）"><span class="toc-article-text">3 通过NAT实现虚拟服务器（VS/NAT）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#4-通过IP隧道实现虚拟服务器（VS-TUN）"><span class="toc-article-text">4 通过IP隧道实现虚拟服务器（VS/TUN）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#5-通过直接路由实现虚拟服务器（VS-DR）"><span class="toc-article-text">5 通过直接路由实现虚拟服务器（VS/DR）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#6-三种方法的优缺点比较"><span class="toc-article-text">6 三种方法的优缺点比较</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#6-1-Virtual-Server-via-NAT"><span class="toc-article-text">6.1 Virtual Server via NAT</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#6-2-Virtual-Server-via-IP-Tunneling"><span class="toc-article-text">6.2 Virtual Server via IP Tunneling</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#6-3-Virtual-Server-via-Direct-Routing"><span class="toc-article-text">6.3 Virtual Server via Direct Routing</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#7-小结"><span class="toc-article-text">7 小结</span></a></li></ol></li></ol>
 		</div>
 	
 	</div>
