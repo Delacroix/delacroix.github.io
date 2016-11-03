@@ -128,7 +128,8 @@
 <p>编辑 yaml 改一下 imagePullPolicy，把 Always 改成 IfNotPresent(本地没有再去拉取) 或者 Never(从不去拉取) 即可</p>
 <p>IfNotPresent</p>
 <p>最后再利用 Dokcer Hub 中转，然后创建(实际上 dashboard 已经有了 v1.4.1，我这里已经改了)</p>
-<p>kubectl create -f kubernetes-dashboard.yaml<br>截图如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create -f kubernetes-dashboard.yaml</div></pre></td></tr></table></figure>
+<p>截图如下</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">create dashboard</div></pre></td></tr></table></figure>
 <p>通过 describe 命令我们可以查看其暴露出的 NodePoint,然后便可访问</p>
 <p>describe dashboard</p>
