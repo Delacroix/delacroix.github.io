@@ -6,7 +6,8 @@
     <entry>
       <title><![CDATA[LVS集群中的IP负载均衡技术]]></title>
       <url>http://yoursite.com/2016/11/03/LVS%E9%9B%86%E7%BE%A4%E4%B8%AD%E7%9A%84IP%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%8A%80%E6%9C%AF-1/</url>
-      <content type="html"><![CDATA[<h1 id="LVS集群中的IP负载均衡技术"><a href="#LVS集群中的IP负载均衡技术" class="headerlink" title="LVS集群中的IP负载均衡技术"></a>LVS集群中的IP负载均衡技术</h1><p>@(计算机网络)[负载均衡|原理|]</p>
+      <content type="html"><![CDATA[<p>toc: true</p>
+<h1 id="LVS集群中的IP负载均衡技术"><a href="#LVS集群中的IP负载均衡技术" class="headerlink" title="LVS集群中的IP负载均衡技术"></a>LVS集群中的IP负载均衡技术</h1><p>@(计算机网络)[负载均衡|原理|]</p>
 <blockquote>
 <p>本文在分析服务器集群实现虚拟网络服务的相关技术上，详细描述了LVS集群中实现的三种IP负载均衡技术（VS/NAT、VS/TUN和VS/DR）的工作原理，以及它们的优缺点。</p>
 </blockquote>
