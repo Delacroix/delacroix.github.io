@@ -9,7 +9,29 @@
       <content type="html"><![CDATA[<p>#[转]kubeadm 搭建 kubernetes 集群<br>原作者链接：<a href="https://mritd.me/2016/10/29/set-up-kubernetes-cluster-by-kubeadm/" target="_blank" rel="external">点我</a></p>
 <p>距离上一篇 kubernetes 1.4 集群搭建 发布间隔不算太久，自己也不断地在生产和测试环境鼓捣，有不少 “逗比” 的经历，准备写一下具体的 kubeadm 搭建集群的一些坑和踩坑的经验，如果没有使用过 kubeadm 的同学，最好先看下上面的文章，然后鼓捣一遍，也许并不会成功，但大部分坑再来看此文会有收获<br>一、环境准备</p>
 <p>首先环境还是三台虚拟机，虚拟机地址如下</p>
-<p>IP 地址    节点<br>192.168.1.167    master<br>192.168.1.189    node1<br>192.168.1.176    node2<br>然后每台机器安装好 docker，至于 rpm 安装包版本下面介绍</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">IP 地址</th>
+<th style="text-align:right">节点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">192.168.1.167</td>
+<td style="text-align:right">master</td>
+</tr>
+<tr>
+<td style="text-align:left">192.168.1.189</td>
+<td style="text-align:right">node1</td>
+</tr>
+<tr>
+<td style="text-align:left">192.168.1.189</td>
+<td style="text-align:right">node2</td>
+</tr>
+</tbody>
+</table>
+<p>然后每台机器安装好 docker，至于 rpm 安装包版本下面介绍</p>
 <p>二、说点正经事</p>
 <p>2.1、安装包从哪来</p>
 <p>官方的文档页面更新并不及时，同时他的 yum 源更新也很慢，再者…那他妈可是 Google 的服务器，能特么连上吗？以前总是在国外服务器使用 yumdownloader 下载，然后 scp 到本地，虽然能解决问题，但是蛋碎一地…最后找到了源头，如下</p>
@@ -74,12 +96,13 @@
 <p>这里再爆料一个坑，底下的 kubeadm join –token=b17964.5d8a3c14e99cf6aa 192.168.1.167 这条命令一定保存好，因为后期没法重现的，你们老大再让你添加机器的时候如果没这个你会哭的</p>
 <p>3.5、加入 node</p>
 <p>上面所有坑大约说的差不多了，直接上命令了</p>
-<h1 id="处理主机名"><a href="#处理主机名" class="headerlink" title="处理主机名"></a>处理主机名</h1><p>echo “192-168-1-189.node” &gt; /etc/hostname<br>echo “127.0.0.1   192-168-1-189.node” &gt;&gt; /etc/hosts<br>sysctl kernel.hostname=192-168-1-189.node</p>
+<h1 id="处理主机名"><a href="#处理主机名" class="headerlink" title="处理主机名"></a>处理主机名</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">echo &quot;192-168-1-189.node&quot; &gt; /etc/hostname </div><div class="line">echo &quot;127.0.0.1   192-168-1-189.node&quot; &gt;&gt; /etc/hosts</div><div class="line">sysctl kernel.hostname=192-168-1-189.node</div></pre></td></tr></table></figure>
 <h1 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">images=(kube-proxy-amd64:v1.4.4 kube-discovery-amd64:1.0 kubedns-amd64:1.7 kube-scheduler-amd64:v1.4.4 kube-controller-manager-amd64:v1.4.4 kube-apiserver-amd64:v1.4.4 etcd-amd64:2.2.5 kube-dnsmasq-amd64:1.3 exechealthz-amd64:1.1 pause-amd64:3.0 kubernetes-dashboard-amd64:v1.4.1)</div><div class="line">for imageName in $&#123;images[@]&#125; ; do</div><div class="line">  docker pull mritd/$imageName</div><div class="line">  docker tag mritd/$imageName gcr.io/google_containers/$imageName</div><div class="line">  docker rmi mritd/$imageName</div><div class="line">done</div></pre></td></tr></table></figure>
-<h1 id="装-rpm"><a href="#装-rpm" class="headerlink" title="装 rpm"></a>装 rpm</h1><p>tee /etc/yum.repos.d/mritd.repo &lt;&lt; EOF<br>[mritdrepo]<br>name=Mritd Repository<br>baseurl=<a href="https://rpm.mritd.me/centos/7/x86_64" target="_blank" rel="external">https://rpm.mritd.me/centos/7/x86_64</a><br>enabled=1<br>gpgcheck=1<br>gpgkey=<a href="https://cdn.mritd.me/keys/rpm.public.key" target="_blank" rel="external">https://cdn.mritd.me/keys/rpm.public.key</a><br>EOF<br>yum makecache<br>yum install -y kubelet kubectl kubernetes-cni kubeadm ebtables</p>
-<h1 id="清理目录-没初始化过只需要删目录"><a href="#清理目录-没初始化过只需要删目录" class="headerlink" title="清理目录(没初始化过只需要删目录)"></a>清理目录(没初始化过只需要删目录)</h1><p>rm -r -f /etc/kubernetes /var/lib/kubelet /var/lib/etcd;</p>
-<h1 id="启动-kubelet"><a href="#启动-kubelet" class="headerlink" title="启动 kubelet"></a>启动 kubelet</h1><p>systemctl enable kubelet<br>systemctl start kubelet</p>
-<h1 id="初始化加入集群"><a href="#初始化加入集群" class="headerlink" title="初始化加入集群"></a>初始化加入集群</h1><p>kubeadm join –token=b17964.5d8a3c14e99cf6aa 192.168.1.167<br>同样完美截图</p>
+<h1 id="装-rpm"><a href="#装-rpm" class="headerlink" title="装 rpm"></a>装 rpm</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">tee /etc/yum.repos.d/mritd.repo &lt;&lt; EOF</div><div class="line">[mritdrepo]</div><div class="line">name=Mritd Repository</div><div class="line">baseurl=https://rpm.mritd.me/centos/7/x86_64</div><div class="line">enabled=1</div><div class="line">gpgcheck=1</div><div class="line">gpgkey=https://cdn.mritd.me/keys/rpm.public.key</div><div class="line">EOF</div><div class="line">yum makecache</div><div class="line">yum install -y kubelet kubectl kubernetes-cni kubeadm ebtables</div></pre></td></tr></table></figure>
+<h1 id="清理目录-没初始化过只需要删目录"><a href="#清理目录-没初始化过只需要删目录" class="headerlink" title="清理目录(没初始化过只需要删目录)"></a>清理目录(没初始化过只需要删目录)</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rm -r -f /etc/kubernetes /var/lib/kubelet /var/lib/etcd;</div></pre></td></tr></table></figure>
+<h1 id="启动-kubelet"><a href="#启动-kubelet" class="headerlink" title="启动 kubelet"></a>启动 kubelet</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">systemctl enable kubelet</div><div class="line">systemctl start kubelet</div></pre></td></tr></table></figure>
+<h1 id="初始化加入集群"><a href="#初始化加入集群" class="headerlink" title="初始化加入集群"></a>初始化加入集群</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubeadm join --token=b17964.5d8a3c14e99cf6aa 192.168.1.167</div></pre></td></tr></table></figure>
+<p>同样完美截图</p>
 <p>join master</p>
 <p>get node</p>
 <p>3.6、部署 weave 网络</p>
@@ -88,15 +111,17 @@
 <p>官方给出的命令是这样的</p>
 <p>kubectl create -f <a href="https://git.io/weave-kube" target="_blank" rel="external">https://git.io/weave-kube</a><br>本着 “刨根问底挖祖坟” 的精神，先把这个 yaml 搞下来</p>
 <p>wget <a href="https://git.io/weave-kube" target="_blank" rel="external">https://git.io/weave-kube</a> -O weave-kube.yaml<br>然后同样的套路，打开看一下镜像，利用 Docker Hub 做中转，搞下来再 load 进去，然后 create -f 就行了</p>
-<p>docker pull mritd/weave-kube:1.7.2<br>docker tag mritd/weave-kube:1.7.2 weaveworks/weave-kube:1.7.2<br>docker rmi mritd/weave-kube:1.7.2<br>kubectl create -f weave-kube.yaml<br>完美截图</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">docker pull mritd/weave-kube:1.7.2</div><div class="line">docker tag mritd/weave-kube:1.7.2 weaveworks/weave-kube:1.7.2</div><div class="line">docker rmi mritd/weave-kube:1.7.2</div><div class="line">kubectl create -f weave-kube.yaml</div></pre></td></tr></table></figure>
+<p>完美截图</p>
 <p>create weave</p>
 <p>3.7、部署 dashboard</p>
 <p>dashboard 的命令也跟 weave 的一样，不过有个大坑，默认的 yaml 文件中对于 image 拉取策略的定义是 无论何时都会去拉取镜像，导致即使你 load 进去也无卵用，所以还得先把 yaml 搞下来然后改一下镜像拉取策略，最后再 create -f 即可</p>
-<p>wget <a href="https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml" target="_blank" rel="external">https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml</a> -O kubernetes-dashboard.yaml<br>编辑 yaml 改一下 imagePullPolicy，把 Always 改成 IfNotPresent(本地没有再去拉取) 或者 Never(从不去拉取) 即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml -O kubernetes-dashboard.yaml</div></pre></td></tr></table></figure>
+<p>编辑 yaml 改一下 imagePullPolicy，把 Always 改成 IfNotPresent(本地没有再去拉取) 或者 Never(从不去拉取) 即可</p>
 <p>IfNotPresent</p>
 <p>最后再利用 Dokcer Hub 中转，然后创建(实际上 dashboard 已经有了 v1.4.1，我这里已经改了)</p>
 <p>kubectl create -f kubernetes-dashboard.yaml<br>截图如下</p>
-<p>create dashboard</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">create dashboard</div></pre></td></tr></table></figure>
 <p>通过 describe 命令我们可以查看其暴露出的 NodePoint,然后便可访问</p>
 <p>describe dashboard</p>
 <p>show dashboard</p>
