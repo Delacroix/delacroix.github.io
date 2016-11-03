@@ -3,21 +3,16 @@
 <head>
   <meta charset="utf-8">
   
-  <title>LVS集群中的IP负载均衡技术 | Delacroix&#39; Blog</title>
+  <title>kubeadm 搭建 kubernetes 集群 | Delacroix&#39; Blog</title>
   <meta name="author" content="Delacroix">
   
-  <meta name="description" content="[转]LVS集群中的IP负载均衡技术@(计算机网络)[负载均衡|原理|]
-
-本文在分析服务器集群实现虚拟网络服务的相关技术上，详细描述了LVS集群中实现的三种IP负载均衡技术（VS/NAT、VS/TUN和VS/DR）的工作原理，以及它们的优缺点。
-
-
-[TOC]
-1 前言在前面文章中，讲述了可伸缩网">
+  <meta name="description" content="#[转]kubeadm 搭建 kubernetes 集群原作者链接：点我
+距离上一篇 kubernetes 1.4 集群搭建 发布间隔不算太久，自己也不断地在生产和测试环境鼓捣，有不少 “逗比” 的经历，准备写一下具体的 kubeadm 搭建集群的一些坑和踩坑的经验，如果没有使用过 kubeadm ">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="LVS集群中的IP负载均衡技术"/>
+  <meta property="og:title" content="kubeadm 搭建 kubernetes 集群"/>
   <meta property="og:site_name" content="Delacroix&#39; Blog"/>
 
   
@@ -97,7 +92,7 @@
 
 	
 		<div class="page-header page-header-inverse ">		
-			<h1 class="title title-inverse "> LVS集群中的IP负载均衡技术</h1>
+			<h1 class="title title-inverse "> kubeadm 搭建 kubernetes 集群</h1>
 		</div>		
 	
 
@@ -117,210 +112,137 @@
 	<div class="mypage">		
 	  		
 
-	  <h1 id="转-LVS集群中的IP负载均衡技术"><a href="#转-LVS集群中的IP负载均衡技术" class="headerlink" title="[转]LVS集群中的IP负载均衡技术"></a>[转]LVS集群中的IP负载均衡技术</h1><p>@(计算机网络)[负载均衡|原理|]</p>
+	  <p>#[转]kubeadm 搭建 kubernetes 集群<br>原作者链接：<a href="https://mritd.me/2016/10/29/set-up-kubernetes-cluster-by-kubeadm/" target="_blank" rel="external">点我</a></p>
+<p>距离上一篇 kubernetes 1.4 集群搭建 发布间隔不算太久，自己也不断地在生产和测试环境鼓捣，有不少 “逗比” 的经历，准备写一下具体的 kubeadm 搭建集群的一些坑和踩坑的经验，如果没有使用过 kubeadm 的同学，最好先看下上面的文章，然后鼓捣一遍，也许并不会成功，但大部分坑再来看此文会有收获</p>
+<h2 id="1-环境准备"><a href="#1-环境准备" class="headerlink" title="1 环境准备"></a>1 环境准备</h2><p>首先环境还是三台虚拟机，虚拟机地址如下</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">IP 地址</th>
+<th style="text-align:right">节点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">192.168.1.167</td>
+<td style="text-align:right">master</td>
+</tr>
+<tr>
+<td style="text-align:left">192.168.1.189</td>
+<td style="text-align:right">node1</td>
+</tr>
+<tr>
+<td style="text-align:left">192.168.1.189</td>
+<td style="text-align:right">node2</td>
+</tr>
+</tbody>
+</table>
+<p>然后每台机器安装好 docker，至于 rpm 安装包版本下面介绍</p>
+<h2 id="2-说点正经事"><a href="#2-说点正经事" class="headerlink" title="2 说点正经事"></a>2 说点正经事</h2><h3 id="2-1-安装包从哪来"><a href="#2-1-安装包从哪来" class="headerlink" title="2.1 安装包从哪来"></a>2.1 安装包从哪来</h3><p>官方的文档页面更新并不及时，同时他的 yum 源更新也很慢，再者…那他妈可是 Google 的服务器，能特么连上吗？以前总是在国外服务器使用 yumdownloader 下载，然后 scp 到本地，虽然能解决问题，但是蛋碎一地…最后找到了源头，如下</p>
+<p>Kubernetes 编译的各种发行版安装包来源于 Github 上的另一个叫 release 的项目，地址 点这里，把这个项目 clone 下来，由于本人是 Centos 用户，所以进入 rpm 目录，在安装好 docker 的机器上执行那个 docker-build.sh 脚本即可编译 rpm 包，最后会生成到当前目录的 output 目录下,截图如下</p>
+<p>release</p>
+<p>rpm目录</p>
+<h3 id="2-2-镜像从哪来"><a href="#2-2-镜像从哪来" class="headerlink" title="2.2 镜像从哪来"></a>2.2 镜像从哪来</h3><p>对的，没错，gcr.io 就是 Google 的域名，服务器更不用提，所以在进行 kubeadm init 操作时如果不先把这些镜像 load 进去绝对会卡死不动，以下列出了所需镜像，但是版本号根据 rpm 版本不同可能略有不同，具体怎么看下面介绍</p>
+<p>镜像名称    版本号</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">gcr.io/google_containers/kube-discovery-amd64	1.0</div><div class="line">gcr.io/google_containers/kubedns-amd64	1.7</div><div class="line">gcr.io/google_containers/kube-proxy-amd64	v1.4.1</div><div class="line">gcr.io/google_containers/kube-scheduler-amd64	v1.4.1</div><div class="line">gcr.io/google_containers/kube-controller-manager-amd64	v1.4.1</div><div class="line">gcr.io/google_containers/kube-apiserver-amd64	v1.4.1</div><div class="line">gcr.io/google_containers/etcd-amd64	2.2.5</div><div class="line">gcr.io/google_containers/kube-dnsmasq-amd64	1.3</div><div class="line">gcr.io/google_containers/exechealthz-amd64	1.1</div><div class="line">gcr.io/google_containers/pause-amd64	3.0</div></pre></td></tr></table></figure>
+<p>这些镜像有两种办法可以获取，第一种是利用一台国外的服务器，在上面 pull 下来，然后再 save 成 tar 文件，最后 scp 到本地 load 进去；相对于第一种方式比较坑的是取决于服务器速度，每次搞起来也很蛋疼，第二种方式就是利用 docker hub 做中转，简单的说就是利用 docker hub 的自动构建功能，在 Github 中创建一个 Dockerfile，里面只需要 FROM xxxx 这些 gcr.io 的镜像即可，最后 pull 到本地，然后再 tag 一下</p>
+<p>首先创建一个 github 项目，可以直接 fork 我的即可</p>
+<p>docker-libray</p>
+<p>其中每个 Dockerfile 只需要 FROM 一下即可</p>
+<p>Dockerfile</p>
+<p>最后在 Docker Hub 上创建自动构建项目</p>
+<p>createproject</p>
+<p>from github</p>
+<p>selectproject</p>
+<p>details</p>
+<p>最后要手动触发一下，然后 Docker Hub 才会开始给你编译</p>
+<p>Tigger</p>
+<p>等待完成即可直接 pull 了</p>
+<p>success</p>
+<h3 id="2-3-镜像版本怎么整"><a href="#2-3-镜像版本怎么整" class="headerlink" title="2.3 镜像版本怎么整"></a>2.3 镜像版本怎么整</h3><p>上面已经解决了镜像获取问题，但是一大心病就是 “我特么怎么知道是哪个版本的”，为了发扬 “刨根问底” 的精神，先进行一遍 kubeadm init，这时候绝对卡死，此时进入 /etc/kubernetes/manifests 可以看到许多 json 文件，这些文件中定义了需要哪些基础镜像</p>
+<p>all json</p>
+<p>image version</p>
+<p>从上图中基本可以看到 kubeadm init 的时候会拉取哪些基础镜像了，但是还有一些镜像，仍然无法找到，比如kubedns、pause 等，至于其他的镜像版本，可以从源码中找到，源码位置是 kubernetes/cmd/kubeadm/app/images/images.go 这个文件中，如下所示:</p>
+<p>image version</p>
+<p>剩余的一些镜像，比如 kube-proxy-amd64、kube-discovery-amd64 两个镜像，其中 kube-discovery-amd64 现在一直是 1.0 版本，源码如下所示</p>
+<p>discovery version</p>
+<p>kube-proxy-amd64 则是一直跟随基础组件的主版本，也就是说如果从 manifests 中看到 controller 等版本是 v.1.4.4，那么 kube-proxy-amd64 也是这个版本，源码如下</p>
+<p>proxy version</p>
+<p>最后根据这些版本去 github 上准备相应的 Dockerfile，在利用 Docker Hub 的自动构建 build 一下，再 pull 下来 tag 成对应的镜像名称即可</p>
+<p>##三 搭建集群</p>
+<h3 id="3-1-主机名处理"><a href="#3-1-主机名处理" class="headerlink" title="3.1 主机名处理"></a>3.1 主机名处理</h3><p>经过亲测，节点主机名最好为 xxx.xxx 这种域名格式，否则在某些情况下，POD 中跑的程序使用域名解析时可能出现问题，所以先要处理一下主机名</p>
+<p><strong>写入 hostname(node 节点后缀改成 .node)</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">echo &quot;192-168-1-167.master&quot; &gt; /etc/hostname</div></pre></td></tr></table></figure>
+<p><strong>加入 hosts</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">echo &quot;127.0.0.1   192-168-1-167.master&quot; &gt;&gt; /etc/hosts</div></pre></td></tr></table></figure>
+<p><strong>不重启情况下使内核生效</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sysctl kernel.hostname=192-168-1-167.master</div></pre></td></tr></table></figure>
+<p><strong>验证是否修改成功</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">➜  ~ hostname</div><div class="line">192-168-1-167.master</div><div class="line">3.2、load 镜像</div></pre></td></tr></table></figure>
+<p>由于本人已经在 Docker Hub 上处理好了相关镜像，所以直接 pull 下来 tag 一下即可，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">images=(kube-proxy-amd64:v1.4.4 kube-discovery-amd64:1.0 kubedns-amd64:1.7 kube-scheduler-amd64:v1.4.4 kube-controller-manager-amd64:v1.4.4 kube-apiserver-amd64:v1.4.4 etcd-amd64:2.2.5 kube-dnsmasq-amd64:1.3 exechealthz-amd64:1.1 pause-amd64:3.0 kubernetes-dashboard-amd64:v1.4.1)</div><div class="line">for imageName in $&#123;images[@]&#125; ; do</div><div class="line">  docker pull mritd/$imageName</div><div class="line">  docker tag mritd/$imageName gcr.io/google_containers/$imageName</div><div class="line">  docker rmi mritd/$imageName</div><div class="line">done</div></pre></td></tr></table></figure>
+<h3 id="3-3-安装-rpm"><a href="#3-3-安装-rpm" class="headerlink" title="3.3 安装 rpm"></a>3.3 安装 rpm</h3><p>rpm 获取办法上文已经提到，可以自己编译，这里我已经编译好并维护了一个 yum 源，直接yum install 即可(懒)</p>
+<p><strong>添加 yum 源</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">tee /etc/yum.repos.d/mritd.repo &lt;&lt; EOF</div><div class="line">[mritdrepo]</div><div class="line">name=Mritd Repository</div><div class="line">baseurl=https://rpm.mritd.me/centos/7/x86_64</div><div class="line">enabled=1</div><div class="line">gpgcheck=1</div><div class="line">gpgkey=https://cdn.mritd.me/keys/rpm.public.key</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<p><strong>刷新cache</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum makecache</div></pre></td></tr></table></figure>
+<p><strong>安装</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install -y kubelet kubectl kubernetes-cni kubeadm</div></pre></td></tr></table></figure>
+<h3 id="3-4-初始化-master"><a href="#3-4-初始化-master" class="headerlink" title="3.4 初始化 master"></a>3.4 初始化 master</h3><p>等会有个坑，kubeadm 等相关 rpm 安装后会生成 /etc/kubernetes 目录，而 kubeadm init 时候又会检测这些目录是否存在，如果存在则停止初始化，所以要先清理一下，以下清理脚本来源于 官方文档 Tear down 部分，该脚本同样适用于初始化失败进行重置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl stop kubelet;</div></pre></td></tr></table></figure>
 <blockquote>
-<p>本文在分析服务器集群实现虚拟网络服务的相关技术上，详细描述了LVS集群中实现的三种IP负载均衡技术（VS/NAT、VS/TUN和VS/DR）的工作原理，以及它们的优缺点。</p>
+<p>注意: 下面这条命令会干掉所有正在运行的 docker 容器，如果要进行重置操作，最好先确定当前运行的所有容器都能干掉(干掉不影响业务)，否则的话最好手动删除 kubeadm 创建的相关容器(gcr.io 相关的)</p>
 </blockquote>
-<hr>
-<p>[TOC]</p>
-<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><p>在前面文章中，讲述了可伸缩网络服务的几种结构，它们都需要一个前端的负载调度器（或者多个进行主从备份）。我们先分析实现虚拟网络服务的主要技术，指出 IP负载均衡技术是在负载调度器的实现技术中效率最高的。在已有的IP负载均衡技术中，主要有通过网络地址转换（Network Address Translation）将一组服务器构成一个高性能的、高可用的虚拟服务器，我们称之为VS/NAT技术（Virtual Server via Network Address Translation）。在分析VS/NAT的缺点和网络服务的非对称性的基础上，我们提出了通过IP隧道实现虚拟服务器的方法VS/TUN （Virtual Server via IP Tunneling），和通过直接路由实现虚拟服务器的方法VS/DR（Virtual Server via Direct Routing），它们可以极大地提高系统的伸缩性。VS/NAT、VS/TUN和VS/DR技术是LVS集群中实现的三种IP负载均衡技术，我们将在文 章中详细描述它们的工作原理和各自的优缺点。</p>
-<p>在以下描述中，我们称客户的socket和服务器的socket之间的数据通讯为连接，无论它们是使用TCP还是UDP协议。下面简述当前用服务器集群实现高可伸缩、高可用网络服务的几种负载调度方法，并列举几个在这方面有代表性的研究项目。</p>
-<h2 id="2-实现虚拟服务的相关方法"><a href="#2-实现虚拟服务的相关方法" class="headerlink" title="2 实现虚拟服务的相关方法"></a>2 实现虚拟服务的相关方法</h2><p>在网络服务中，一端是客户程序，另一端是服务程序，在中间可能有代理程序。由此看来，可以在不同的层次上实现多台服务器的负载均衡。用集群解决网络服务性能问题的现有方法主要分为以下四类。</p>
-<h3 id="2-1-基于RR-DNS的解决方法"><a href="#2-1-基于RR-DNS的解决方法" class="headerlink" title="2.1 基于RR-DNS的解决方法"></a>2.1 基于RR-DNS的解决方法</h3><p>NCSA的可伸缩的WEB服务器系统就是最早基于RR-DNS（Round-Robin Domain Name System）的原型系统[1,2]。它的结构和工作流程如下图所示：<br><img src="/images/1478135814491.png" alt="&quot;图1：基于RR-DNS的可伸缩WEB服务器&quot;|center"></p>
-<p>有一组WEB服务器，他们通过分布式文件系统AFS(Andrew File System)来共享所有的HTML文档。这组服务器拥有相同的域名（如www.ncsa.uiuc.edu），当用户按照这个域名访问时, RR-DNS服务器会把域名轮流解析到这组服务器的不同IP地址，从而将访问负载分到各台服务器上。</p>
-<p>这种方法带来几个问题。第一，域名服务器是一个分布式系统，是按照一定的层次结构组织的。当用户就域名解析请求提交给本地的域名服务器，它会因不能直接解析而向上一级域名服务器提交，上一级域 名服务器再依次向上提交，直到RR-DNS域名服器把这个域名解析到其中一台服务器的IP地址。可见，从用户到RR-DNS间存在多台域名服器，而它们都 会缓冲已解析的名字到IP地址的映射,这会导致该域名服器组下所有用户都会访问同一WEB服务器，出现不同WEB服务器间严重的负载不平衡。为了保证在域 名服务器中域名到IP地址的映射不被长久缓冲，RR-DNS在域名到IP地址的映射上设置一个TTL(Time To Live)值，过了这一段时间，域名服务器将这个映射从缓冲中淘汰。当用户请求，它会再向上一级域名服器提交请求并进行重新影射。这就涉及到如何设置这个 TTL值，若这个值太大，在这个TTL期间，很多请求会被映射到同一台WEB服务器上，同样会导致严重的负载不平衡。若这个值太小，例如是0，会导致本地域名服务器频繁地向RR-DNS提交请求，增加了域名解析的网络流量，同样会使RR-DNS服务器成为系统中一个新的瓶颈。</p>
-<p>第二，用户机器会缓冲从名字到IP地址的映射，而不受TTL值的影响，用户的访问请求会被送到同一台WEB服务器上。由于用户访问请求的突发性和访问方式不同，例如有的 人访问一下就离开了，而有的人访问可长达几个小时，所以各台服务器间的负载仍存在倾斜（Skew）而不能控制。假设用户在每个会话中平均请求数为20，负 载最大的服务器获得的请求数额高于各服务器平均请求数的平均比率超过百分之三十。也就是说，当TTL值为0时，因为用户访问的突发性也会存在着较严重的负 载不平衡。</p>
-<p>第三，系统的可靠性和可维护性差。若一台服务器失效，会导致将域名解析到该服务器的用户看到服务中断，即使用户按 “Reload”按钮，也无济于事。系统管理员也不能随时地将一台服务器切出服务进行系统维护，如进行操作系统和应用软件升级，这需要修改RR-DNS服 务器中的IP地址列表，把该服务器的IP地址从中划掉，然后等上几天或者更长的时间，等所有域名服器将该域名到这台服务器的映射淘汰，和所有映射到这台服 务器的客户机不再使用该站点为止。</p>
-<h3 id="2-2-基于客户端的解决方法"><a href="#2-2-基于客户端的解决方法" class="headerlink" title="2.2 基于客户端的解决方法"></a>2.2 基于客户端的解决方法</h3><p>基于客户端的解决方法需要每个客户程序都有一定的服务器集群的知识，进而把以负载均衡的方式将请求发到不同的服务器。例如，Netscape Navigator浏览器访问Netscape的主页时，它会随机地从一百多台服务器中挑选第N台，最后将请求送往wwwN.netscape.com。 然而，这不是很好的解决方法，Netscape只是利用它的Navigator避免了RR-DNS解析的麻烦，当使用IE等其他浏览器不可避免的要进行 RR-DNS解析。</p>
-<p>Smart Client[3]是Berkeley做的另一种基于客户端的解决方法。服务提供一个Java Applet在客户方浏览器中运行，Applet向各个服务器发请求来收集服务器的负载等信息，再根据这些信息将客户的请求发到相应的服务器。高可用性也 在Applet中实现，当服务器没有响应时，Applet向另一个服务器转发请求。这种方法的透明性不好，Applet向各服务器查询来收集信息会增加额 外的网络流量，不具有普遍的适用性。</p>
-<h3 id="2-3-基于应用层负载均衡调度的解决方法"><a href="#2-3-基于应用层负载均衡调度的解决方法" class="headerlink" title="2.3 基于应用层负载均衡调度的解决方法"></a>2.3 基于应用层负载均衡调度的解决方法</h3><p>多台服务器通过高速的互联网络连接成一个集群系统，在前端有一个基于应用层的负载调度器。当用户访问请求到达调度器时，请求会提交给作负载均衡调度的应用程 序，分析请求，根据各个服务器的负载情况，选出一台服务器，重写请求并向选出的服务器访问，取得结果后，再返回给用户。</p>
-<p>应用层负载均衡调度 的典型代表有Zeus负载调度器[4]、pWeb[5]、Reverse-Proxy[6]和SWEB[7]等。Zeus负载调度器是Zeus公司的商业 产品，它是在Zeus Web服务器程序改写而成的，采用单进程事件驱动的服务器结构。pWeb就是一个基于Apache 1.1服务器程序改写而成的并行WEB调度程序，当一个HTTP请求到达时，pWeb会选出一个服务器，重写请求并向这个服务器发出改写后的请求，等结果 返回后，再将结果转发给客户。Reverse-Proxy利用Apache 1.3.1中的Proxy模块和Rewrite模块实现一个可伸缩WEB服务器，它与pWeb的不同之处在于它要先从Proxy的cache中查找后，若 没有这个副本，再选一台服务器，向服务器发送请求，再将服务器返回的结果转发给客户。SWEB是利用HTTP中的redirect错误代码，将客户请求到 达一台WEB服务器后，这个WEB服务器根据自己的负载情况，自己处理请求，或者通过redirect错误代码将客户引到另一台WEB服务器，以实现一个 可伸缩的WEB服务器。</p>
-<p>基于应用层负载均衡调度的多服务器解决方法也存在一些问题。第一，系统处理开销特别大，致使系统的伸缩性有限。当请 求到达负载均衡调度器至处理结束时，调度器需要进行四次从核心到用户空间或从用户空间到核心空间的上下文切换和内存复制；需要进行二次TCP连接，一次是 从用户到调度器，另一次是从调度器到真实服务器；需要对请求进行分析和重写。这些处理都需要不小的ＣＰＵ、内存和网络等资源开销，且处理时间长。所构成系 统的性能不能接近线性增加的，一般服务器组增至3或4台时，调度器本身可能会成为新的瓶颈。所以，这种基于应用层负载均衡调度的方法的伸缩性极其有限。第 二，基于应用层的负载均衡调度器对于不同的应用，需要写不同的调度器。以上几个系统都是基于HTTP协议，若对于FTP、Mail、POP3等应用，都需 要重写调度器。</p>
-<h3 id="2-4-基于IP层负载均衡调度的解决方法"><a href="#2-4-基于IP层负载均衡调度的解决方法" class="headerlink" title="2.4 基于IP层负载均衡调度的解决方法"></a>2.4 基于IP层负载均衡调度的解决方法</h3><p>用户通过虚拟IP地址（Virtual IP Address）访问服务时，访问请求的报文会到达负载调度器，由它进行负载均衡调度，从一组真实服务器选出一个，将报文的目标地址Virtual IP Address改写成选定服务器的地址，报文的目标端口改写成选定服务器的相应端口，最后将报文发送给选定的服务器。真实服务器的回应报文经过负载调度器 时，将报文的源地址和源端口改为Virtual IP Address和相应的端口，再把报文发给用户。Berkeley的MagicRouter[8]、Cisco的LocalDirector、 Alteon的ACEDirector和F5的Big/IP等都是使用网络地址转换方法。MagicRouter是在Linux 1.3版本上应用快速报文插入技术，使得进行负载均衡调度的用户进程访问网络设备接近核心空间的速度，降低了上下文切换的处理开销，但并不彻底，它只是研 究的原型系统，没有成为有用的系统存活下来。Cisco的LocalDirector、Alteon的ACEDirector和F5的Big/IP是非常 昂贵的商品化系统，它们支持部分TCP/UDP协议，有些在ICMP处理上存在问题。</p>
-<p>IBM的TCP Router[9]使用修改过的网络地址转换方法在SP/2系统实现可伸缩的WEB服务器。TCP Router修改请求报文的目标地址并把它转发给选出的服务器，服务器能把响应报文的源地址置为TCP Router地址而非自己的地址。这种方法的好处是响应报文可以直接返回给客户，坏处是每台服务器的操作系统内核都需要修改。IBM的 NetDispatcher[10]是TCP Router的后继者，它将报文转发给服务器，而服务器在non-ARP的设备配置路由器的地址。这种方法与LVS集群中的VS/DR类似，它具有很高的 可伸缩性，但一套在IBM SP/2和NetDispatcher需要上百万美金。总的来说，IBM的技术还挺不错的。</p>
-<p>在贝尔实验室的 ONE-IP[11]中，每台服务器都独立的IP地址，但都用IP Alias配置上同一VIP地址，采用路由和广播两种方法分发请求，服务器收到请求后按VIP地址处理请求，并以VIP为源地址返回结果。这种方法也是为 了避免回应报文的重写，但是每台服务器用IP Alias配置上同一VIP地址，会导致地址冲突，有些操作系统会出现网络失效。通过广播分发请求，同样需要修改服务器操作系统的源码来过滤报文，使得只 有一台服务器处理广播来的请求。</p>
-<p>微软的Windows NT负载均衡服务（Windows NT Load Balancing Service，WLBS）[12]是1998年底收购Valence Research公司获得的，它与ONE-IP中的基于本地过滤方法一样。WLBS作为过滤器运行在网卡驱动程序和TCP/IP协议栈之间，获得目标地址 为VIP的报文，它的过滤算法检查报文的源IP地址和端口号，保证只有一台服务器将报文交给上一层处理。但是，当有新结点加入和有结点失效时，所有服务器 需要协商一个新的过滤算法，这会导致所有有Session的连接中断。同时，WLBS需要所有的服务器有相同的配置，如网卡速度和处理能力。</p>
-<h2 id="3-通过NAT实现虚拟服务器（VS-NAT）"><a href="#3-通过NAT实现虚拟服务器（VS-NAT）" class="headerlink" title="3 通过NAT实现虚拟服务器（VS/NAT）"></a>3 通过NAT实现虚拟服务器（VS/NAT）</h2><p>由于IPv4中IP地址空间的日益紧张和安全方面的原因，很多网络使用保留IP地址（10.0.0.0/255.0.0.0、 172.16.0.0/255.128.0.0和192.168.0.0/255.255.0.0）[64, 65, 66]。这些地址不在Internet上使用，而是专门为内部网络预留的。当内部网络中的主机要访问Internet或被Internet访问时，就需要 采用网络地址转换（Network Address Translation, 以下简称NAT），将内部地址转化为Internets上可用的外部地址。NAT的工作原理是报文头（目标地址、源地址和端口等）被正确改写后，客户相信 它们连接一个IP地址，而不同IP地址的服务器组也认为它们是与客户直接相连的。由此，可以用NAT方法将不同IP地址的并行网络服务变成在一个IP地址 上的一个虚拟服务。</p>
-<p>VS/NAT的体系结构如图2所示。在一组服务器前有一个调度器，它们是通过Switch/HUB相连接的。这些服务器 提供相同的网络服务、相同的内容，即不管请求被发送到哪一台服务器，执行结果是一样的。服务的内容可以复制到每台服务器的本地硬盘上，可以通过网络文件系 统（如NFS）共享，也可以通过一个分布式文件系统来提供。<br><img src="/images/1478136573503.png" alt="&quot;图2：VS/NAT的体系结构&quot;|center"></p>
-<p>客户通过Virtual IP Address（虚拟服务的IP地址）访问网络服务时，请求报文到达调度器，调度器根据连接调度算法从一组真实服务器中选出一台服务器，将报文的目标地址 Virtual IP Address改写成选定服务器的地址，报文的目标端口改写成选定服务器的相应端口，最后将修改后的报文发送给选出的服务器。同时，调度器在连接Hash 表中记录这个连接，当这个连接的下一个报文到达时，从连接Hash表中可以得到原选定服务器的地址和端口，进行同样的改写操作，并将报文传给原选定的服务 器。当来自真实服务器的响应报文经过调度器时，调度器将报文的源地址和源端口改为Virtual IP Address和相应的端口，再把报文发给用户。我们在连接上引入一个状态机，不同的报文会使得连接处于不同的状态，不同的状态有不同的超时值。在TCP 连接中，根据标准的TCP有限状态机进行状态迁移，这里我们不一一叙述，请参见W. Richard Stevens的《TCP/IP Illustrated Volume I》；在UDP中，我们只设置一个UDP状态。不同状态的超时值是可以设置的，在缺省情况下，SYN状态的超时为1分钟，ESTABLISHED状态的超 时为15分钟，FIN状态的超时为1分钟；UDP状态的超时为5分钟。当连接终止或超时，调度器将这个连接从连接Hash表中删除。</p>
-<p>这样，客户所看到的只是在Virtual IP Address上提供的服务，而服务器集群的结构对用户是透明的。对改写后的报文，应用增量调整Checksum的算法调整TCP Checksum的值，避免了扫描整个报文来计算Checksum的开销。</p>
-<p>在 一些网络服务中，它们将IP地址或者端口号在报文的数据中传送，若我们只对报文头的IP地址和端口号作转换，这样就会出现不一致性，服务会中断。所以，针 对这些服务，需要编写相应的应用模块来转换报文数据中的IP地址或者端口号。我们所知道有这个问题的网络服务有FTP、IRC、H.323、 CUSeeMe、Real Audio、Real Video、Vxtreme / Vosiac、VDOLive、VIVOActive、True Speech、RSTP、PPTP、StreamWorks、NTT AudioLink、NTT SoftwareVision、Yamaha MIDPlug、iChat Pager、Quake和Diablo。</p>
-<p>下面，举个例子来进一步说明VS/NAT，如图3所示：<br><img src="/images/1478136640306.png" alt="&quot;图3：VS/NAT的例子&quot;|center"></p>
-<p>VS/NAT的配置如下表所示，所有到IP地址为202.103.106.5和端口为80的流量都被负载均衡地调度的真实服务器172.16.0.2:80和 172.16.0.3:8000上。目标地址为202.103.106.5:21的报文被转移到172.16.0.3:21上。而到其他端口的报文将被拒绝。</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">Protocol</th>
-<th style="text-align:right">Virtual IP Address</th>
-<th style="text-align:center">Port</th>
-<th>Real IP Address</th>
-<th>Port</th>
-<th>Weight</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">TCP</td>
-<td style="text-align:right">202.103.106.5</td>
-<td style="text-align:center">80</td>
-<td>172.16.0.2</td>
-<td>80</td>
-<td>1</td>
-</tr>
-<tr>
-<td style="text-align:left"></td>
-<td style="text-align:right"></td>
-<td style="text-align:center"></td>
-<td>172.16.0.3</td>
-<td>80</td>
-<td>2</td>
-</tr>
-<tr>
-<td style="text-align:left">TCP</td>
-<td style="text-align:right">202.103.106.5</td>
-<td style="text-align:center">21</td>
-<td>172.16.0.3</td>
-<td>21</td>
-<td>1</td>
-</tr>
-</tbody>
-</table>
-<p>从以下的例子中，我们可以更详细地了解报文改写的流程。<br>访问Web服务的报文可能有以下的源地址和目标地址：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">SOURCE</th>
-<th style="text-align:right">202.100.1.2:3456</th>
-<th style="text-align:center">DEST</th>
-<th>202.103.106.5:80</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"></td>
-</tr>
-</tbody>
-</table>
-<p>调度器从调度列表中选出一台服务器，例如是172.16.0.3:8000。该报文会被改写为如下地址，并将它发送给选出的服务器。</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">SOURCE</th>
-<th style="text-align:right">202.100.1.2:3456</th>
-<th style="text-align:center">DEST</th>
-<th>172.16.0.3:8000</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"></td>
-</tr>
-</tbody>
-</table>
-<p>从服务器返回到调度器的响应报文如下：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">SOURCE</th>
-<th style="text-align:right">172.16.0.3:8000</th>
-<th style="text-align:center">DEST</th>
-<th>202.100.1.2:3456</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"></td>
-</tr>
-</tbody>
-</table>
-<p>响应报文的源地址会被改写为虚拟服务的地址，再将报文发送给客户：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">SOURCE</th>
-<th style="text-align:right">202.103.106.5:80</th>
-<th style="text-align:center">DEST</th>
-<th>202.100.1.2:3456</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"></td>
-</tr>
-</tbody>
-</table>
-<p>这样，客户认为是从202.103.106.5:80服务得到正确的响应，而不会知道该请求是服务器172.16.0.2还是服务器172.16.0.3处理的。</p>
-<h2 id="4-通过IP隧道实现虚拟服务器（VS-TUN）"><a href="#4-通过IP隧道实现虚拟服务器（VS-TUN）" class="headerlink" title="4 通过IP隧道实现虚拟服务器（VS/TUN）"></a>4 通过IP隧道实现虚拟服务器（VS/TUN）</h2><p>在VS/NAT 的集群系统中，请求和响应的数据报文都需要通过负载调度器，当真实服务器的数目在10台和20台之间时，负载调度器将成为整个集群系统的新瓶颈。大多数 Internet服务都有这样的特点：请求报文较短而响应报文往往包含大量的数据。如果能将请求和响应分开处理，即在负载调度器中只负责调度请求而响应直 接返回给客户，将极大地提高整个集群系统的吞吐量。</p>
-<p>IP隧道（IP tunneling）是将一个IP报文封装在另一个IP报文的技术，这可以使得目标为一个IP地址的数据报文能被封装和转发到另一个IP地址。IP隧道技 术亦称为IP封装技术（IP encapsulation）。IP隧道主要用于移动主机和虚拟私有网络（Virtual Private Network），在其中隧道都是静态建立的，隧道一端有一个IP地址，另一端也有唯一的IP地址。</p>
-<p>我们利用IP隧道技术将请求报文封装转 发给后端服务器，响应报文能从后端服务器直接返回给客户。但在这里，后端服务器有一组而非一个，所以我们不可能静态地建立一一对应的隧道，而是动态地选择 一台服务器，将请求报文封装和转发给选出的服务器。这样，我们可以利用IP隧道的原理将一组服务器上的网络服务组成在一个IP地址上的虚拟网络服务。 VS/TUN的体系结构如图4所示，各个服务器将VIP地址配置在自己的IP隧道设备上。<br><img src="/images/1478137499989.png" alt="图4：VS/TUN的体系结构|center"></p>
-<p>VS/TUN 的工作流程如图5所示：它的连接调度和管理与VS/NAT中的一样，只是它的报文转发方法不同。调度器根据各个服务器的负载情况，动态地选择一台服务器， 将请求报文封装在另一个IP报文中，再将封装后的IP报文转发给选出的服务器；服务器收到报文后，先将报文解封获得原来目标地址为VIP的报文，服务器发 现VIP地址被配置在本地的IP隧道设备上，所以就处理这个请求，然后根据路由表将响应报文直接返回给客户。<br><img src="/images/1478137535676.png" alt="图5：VS/TUN的工作流程|center"><br>在这里需要指出，根据缺省的TCP/IP协议栈处理，请求报文的目标地址为VIP，响应报文的源地址肯定也为VIP，所以响应报文不需要作任何修改，可以直接返回给客户，客户认为得到正常的服务，而不会知道究竟是哪一台服务器处理的。<br><img src="/images/1478137588931.png" alt="图6：半连接的TCP有限状态机|center"></p>
-<h2 id="5-通过直接路由实现虚拟服务器（VS-DR）"><a href="#5-通过直接路由实现虚拟服务器（VS-DR）" class="headerlink" title="5 通过直接路由实现虚拟服务器（VS/DR）"></a>5 通过直接路由实现虚拟服务器（VS/DR）</h2><p>跟VS/TUN 方法相同，VS/DR利用大多数Internet服务的非对称特点，负载调度器中只负责调度请求，而服务器直接将响应返回给客户，可以极大地提高整个集群 系统的吞吐量。该方法与IBM的NetDispatcher产品中使用的方法类似（其中服务器上的IP地址配置方法是相似的），但IBM的 NetDispatcher是非常昂贵的商品化产品，我们也不知道它内部所使用的机制，其中有些是IBM的专利。</p>
-<p>VS/DR的体系结构如图 7所示：调度器和服务器组都必须在物理上有一个网卡通过不分断的局域网相连，如通过高速的交换机或者HUB相连。VIP地址为调度器和服务器组共享，调度 器配置的VIP地址是对外可见的，用于接收虚拟服务的请求报文；所有的服务器把VIP地址配置在各自的Non-ARP网络设备上，它对外面是不可见的，只 是用于处理目标地址为VIP的网络请求。<br><img src="/images/1478137677651.png" alt="图7：VS/DR的体系结构|center"><br>VS/DR 的工作流程如图8所示：它的连接调度和管理与VS/NAT和VS/TUN中的一样，它的报文转发方法又有不同，将报文直接路由给目标服务器。在VS/DR 中，调度器根据各个服务器的负载情况，动态地选择一台服务器，不修改也不封装IP报文，而是将数据帧的MAC地址改为选出服务器的MAC地址，再将修改后 的数据帧在与服务器组的局域网上发送。因为数据帧的MAC地址是选出的服务器，所以服务器肯定可以收到这个数据帧，从中可以获得该IP报文。当服务器发现 报文的目标地址VIP是在本地的网络设备上，服务器处理这个报文，然后根据路由表将响应报文直接返回给客户。<br><img src="/images/1478137860518.png" alt="图8：VS/DR的工作流程|center"><br>在VS/DR中，根据缺省的TCP/IP协议栈处理，请求报文的目标地址为VIP，响应报文的源地址肯定也为VIP，所以响应报文不需要作任何修改，可以直接返回给客户，客户认为得到正常的服务，而不会知道是哪一台服务器处理的。<br>VS/DR负载调度器跟VS/TUN一样只处于从客户到服务器的半连接中，按照半连接的TCP有限状态机进行状态迁移。</p>
-<h2 id="6-三种方法的优缺点比较"><a href="#6-三种方法的优缺点比较" class="headerlink" title="6 三种方法的优缺点比较"></a>6 三种方法的优缺点比较</h2><p>三种IP负载均衡技术的优缺点归纳在下表中：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">_</th>
-<th style="text-align:right">VS/NAT</th>
-<th style="text-align:center">VS/TUN</th>
-<th>VS/DR</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Server</td>
-<td style="text-align:right">any</td>
-<td style="text-align:center">Tunneling</td>
-<td>Non-arp device</td>
-</tr>
-<tr>
-<td style="text-align:left">server network</td>
-<td style="text-align:right">private</td>
-<td style="text-align:center">LAN/WAN</td>
-<td>LAN</td>
-</tr>
-<tr>
-<td style="text-align:left">server number</td>
-<td style="text-align:right">low (10~20)</td>
-<td style="text-align:center">High (100)</td>
-<td>High (100)</td>
-</tr>
-<tr>
-<td style="text-align:left">server gateway</td>
-<td style="text-align:right">load balancer</td>
-<td style="text-align:center">own router</td>
-<td>Own router</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p><strong>注：</strong> 以上三种方法所能支持最大服务器数目的估计是假设调度器使用100M网卡，调度器的硬件配置与后端服务器的硬件配置相同，而且是对一般Web服务。使用更高的硬件配置（如千兆网卡和更快的处理器）作为调度器，调度器所能调度的服务器数量会相应增加。当应用不同时，服务器的数目也会相应地改变。所以，以上数 据估计主要是为三种方法的伸缩性进行量化比较。</p>
-</blockquote>
-<h3 id="6-1-Virtual-Server-via-NAT"><a href="#6-1-Virtual-Server-via-NAT" class="headerlink" title="6.1 Virtual Server via NAT"></a>6.1 Virtual Server via NAT</h3><p>VS/NAT 的优点是服务器可以运行任何支持TCP/IP的操作系统，它只需要一个IP地址配置在调度器上，服务器组可以用私有的IP地址。缺点是它的伸缩能力有限， 当服务器结点数目升到20时，调度器本身有可能成为系统的新瓶颈，因为在VS/NAT中请求和响应报文都需要通过负载调度器。 我们在Pentium 166 处理器的主机上测得重写报文的平均延时为60us，性能更高的处理器上延时会短一些。假设TCP报文的平均长度为536 Bytes，则调度器的最大吞吐量为8.93 MBytes/s. 我们再假设每台服务器的吞吐量为800KBytes/s，这样一个调度器可以带动10台服务器。（注：这是很早以前测得的数据）</p>
-<p>基于 VS/NAT的的集群系统可以适合许多服务器的性能要求。如果负载调度器成为系统新的瓶颈，可以有三种方法解决这个问题：混合方法、VS/TUN和 VS/DR。在DNS混合集群系统中，有若干个VS/NAT负载调度器，每个负载调度器带自己的服务器集群，同时这些负载调度器又通过RR-DNS组成简 单的域名。但VS/TUN和VS/DR是提高系统吞吐量的更好方法。</p>
-<p>对于那些将IP地址或者端口号在报文数据中传送的网络服务，需要编写相应的应用模块来转换报文数据中的IP地址或者端口号。这会带来实现的工作量，同时应用模块检查报文的开销会降低系统的吞吐率。</p>
-<h3 id="6-2-Virtual-Server-via-IP-Tunneling"><a href="#6-2-Virtual-Server-via-IP-Tunneling" class="headerlink" title="6.2 Virtual Server via IP Tunneling"></a>6.2 Virtual Server via IP Tunneling</h3><p>在VS/TUN 的集群系统中，负载调度器只将请求调度到不同的后端服务器，后端服务器将应答的数据直接返回给用户。这样，负载调度器就可以处理大量的请求，它甚至可以调 度百台以上的服务器（同等规模的服务器），而它不会成为系统的瓶颈。即使负载调度器只有100Mbps的全双工网卡，整个系统的最大吞吐量可超过 1Gbps。所以，VS/TUN可以极大地增加负载调度器调度的服务器数量。VS/TUN调度器可以调度上百台服务器，而它本身不会成为系统的瓶颈，可以 用来构建高性能的超级服务器。</p>
-<p>VS/TUN技术对服务器有要求，即所有的服务器必须支持“IP Tunneling”或者“IP Encapsulation”协议。目前，VS/TUN的后端服务器主要运行Linux操作系统，我们没对其他操作系统进行测试。因为“IP Tunneling”正成为各个操作系统的标准协议，所以VS/TUN应该会适用运行其他操作系统的后端服务器。</p>
-<h3 id="6-3-Virtual-Server-via-Direct-Routing"><a href="#6-3-Virtual-Server-via-Direct-Routing" class="headerlink" title="6.3 Virtual Server via Direct Routing"></a>6.3 Virtual Server via Direct Routing</h3><p>跟VS/TUN方法一样，VS/DR调度器只处理客户到服务器端的连接，响应数据可以直接从独立的网络路由返回给客户。这可以极大地提高LVS集群系统的伸缩性。</p>
-<p>跟VS/TUN相比，这种方法没有IP隧道的开销，但是要求负载调度器与实际服务器都有一块网卡连在同一物理网段上，服务器网络设备（或者设备别名）不作ARP响应，或者能将报文重定向（Redirect）到本地的Socket端口上。</p>
-<h2 id="7-小结"><a href="#7-小结" class="headerlink" title="7 小结"></a>7 小结</h2><p>本文主要讲述了LVS集群中的三种IP负载均衡技术。在分析网络地址转换方法（VS/NAT）的缺点和网络服务的非对称性的基础上，我们给出了通过IP隧道实现虚拟服务器的方法VS/TUN，和通过直接路由实现虚拟服务器的方法VS/DR，极大地提高了系统的伸缩性。</p>
-<p>参考文献</p>
-<ol>
-<li>Eric Dean Katz, Michelle Butler, and Robert McGrath, “A Scalable HTTP Server: The NCSA Prototype”, Computer Networks and ISDN Systems, pp155-163, 1994.</li>
-<li>Thomas T. Kwan, Robert E. McGrath, and Daniel A. Reed, “NCSA’s World Wide Web Server: Design and Performance”, IEEE Computer, pp68-74, November 1995.</li>
-<li>C. Yoshikawa, B. Chun, P. Eastham, A. Vahdat, T. Anderson, and D. Culler. Using Smart Clients to Build Scalable Services. In Proceedings of the 1997 USENIX Technical Conference, January 1997.</li>
-<li>Zeus Technology, Inc. Zeus Load Balancer v1.1 User Guide. <a href="http://www.zeus.com/" target="_blank" rel="external">http://www.zeus.com/</a></li>
-<li>Edward Walker, “pWEB - A Parallel Web Server Harness”, <a href="http://www.ihpc.nus.edu.sg/STAFF/edward/pweb.html" target="_blank" rel="external">http://www.ihpc.nus.edu.sg/STAFF/edward/pweb.html</a>, April, 1997.</li>
-<li>Ralf S.Engelschall. Load Balancing Your Web Site: Practical Approaches for Distributing HTTP Traffic. Web Techniques Magazine, Volume 3, Issue 5, <a href="http://www.webtechniques.com" target="_blank" rel="external">http://www.webtechniques.com</a>, May 1998.</li>
-<li>Daniel Andresen, Tao Yang, Oscar H. Ibarra. Towards a Scalable Distributed WWW Server on Workstation Clusters. In Proceedings of 10th IEEE International Symposium Of Parallel Processing (IPPS’96), pp.850-856, <a href="http://www.cs.ucsb.edu-/Research/rapid_sweb/SWEB.html" target="_blank" rel="external">http://www.cs.ucsb.edu-/Research/rapid_sweb/SWEB.html</a>, April 1996.</li>
-<li>Eric Anderson, Dave Patterson, and Eric Brewer, “The Magicrouter: an Application of Fast Packet Interposing”, <a href="http://www.cs.berkeley.edu/~eanders-/magicrouter/" target="_blank" rel="external">http://www.cs.berkeley.edu/~eanders-/magicrouter/</a>, May, 1996.</li>
-<li>D. Dias, W. Kish, R. Mukherjee, and R. Tewari. A Scalable and Highly Available Server. In Proceeding of COMPCON 1996, IEEE-CS Press, Santa Clara, CA, USA, Febuary 1996, pp. 85-92.</li>
-<li>Guerney D.H. Hunt, German S. Goldszmidt, Richard P. King, and Rajat Mukherjee. Network Dispatcher: a connection router for scalable Internet services. In Proceedings of the 7th International WWW Conference, Brisbane, Australia, April 1998.</li>
-<li>Om P. Damani, P. Emerald Chung, Yennun Huang, “ONE-IP: Techniques for Hosting a Service on a Cluster of Machines”, <a href="http://www.cs.utexas.edu-/users/damani/" target="_blank" rel="external">http://www.cs.utexas.edu-/users/damani/</a>, August 1997.</li>
-<li>Microsoft Corporation. Microsoft Windows NT Load Balancing Service. <a href="http://www.micorsoft.com/ntserver/NTServerEnterprise/exec/feature/WLBS/" target="_blank" rel="external">http://www.micorsoft.com/ntserver/NTServerEnterprise/exec/feature/WLBS/</a>.</li>
-</ol>
-<p>关于作者</p>
-<p>章文嵩博士，开放源码及Linux内核的开发者，著名的Linux集群项目－－LVS(Linux Virtual Server)的创始人和主要开发人员。他目前工作于国家并行与分布式处理重点实验室，主要从事集群技术、操作系统、对象存储与数据库的研究。他一直在自 由软件的开发上花费大量时间，并以此为乐。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">docker rm -f -v $(docker ps -q);</div><div class="line">find /var/lib/kubelet | xargs -n 1 findmnt -n -t tmpfs -o TARGET -T | uniq | xargs -r umount -v;</div><div class="line">rm -r -f /etc/kubernetes /var/lib/kubelet /var/lib/etcd;</div></pre></td></tr></table></figure>
+<p>还有个坑，初始化以前记得一定要启动 kubelet，虽然你 systemctl status kubelet 看着他是启动失败，但是也得启动，否则绝壁卡死</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">systemctl enable kubelet</div><div class="line">systemctl start kubelet</div></pre></td></tr></table></figure>
+<p>等会等会，还有坑，新版本直接 init 会提示 ebtables not found in system path 错误，所以还得先安装一下这个包在初始化</p>
+<p><strong>安装 ebtables</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install -y ebtables</div></pre></td></tr></table></figure>
+<p>最后见证奇迹的时刻</p>
+<p><strong>初始化并指定 apiserver 监听地址</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubeadm init --api-advertise-addresses 192.168.1.167</div></pre></td></tr></table></figure>
+<p>完美截图如下</p>
+<p>init master</p>
+<p>这里再爆料一个坑，底下的 kubeadm join –token=b17964.5d8a3c14e99cf6aa 192.168.1.167 这条命令一定保存好，因为后期没法重现的，你们老大再让你添加机器的时候如果没这个你会哭的</p>
+<h3 id="3-5-加入-node"><a href="#3-5-加入-node" class="headerlink" title="3.5 加入 node"></a>3.5 加入 node</h3><p>上面所有坑大约说的差不多了，直接上命令了</p>
+<p><strong>处理主机名</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">echo &quot;192-168-1-189.node&quot; &gt; /etc/hostname </div><div class="line">echo &quot;127.0.0.1   192-168-1-189.node&quot; &gt;&gt; /etc/hosts</div><div class="line">sysctl kernel.hostname=192-168-1-189.node</div></pre></td></tr></table></figure>
+<p><strong>拉取镜像</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">images=(kube-proxy-amd64:v1.4.4 kube-discovery-amd64:1.0 kubedns-amd64:1.7 kube-scheduler-amd64:v1.4.4 kube-controller-manager-amd64:v1.4.4 kube-apiserver-amd64:v1.4.4 etcd-amd64:2.2.5 kube-dnsmasq-amd64:1.3 exechealthz-amd64:1.1 pause-amd64:3.0 kubernetes-dashboard-amd64:v1.4.1)</div><div class="line">for imageName in $&#123;images[@]&#125; ; do</div><div class="line">  docker pull mritd/$imageName</div><div class="line">  docker tag mritd/$imageName gcr.io/google_containers/$imageName</div><div class="line">  docker rmi mritd/$imageName</div><div class="line">done</div></pre></td></tr></table></figure>
+<p><strong>装 rpm</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">tee /etc/yum.repos.d/mritd.repo &lt;&lt; EOF</div><div class="line">[mritdrepo]</div><div class="line">name=Mritd Repository</div><div class="line">baseurl=https://rpm.mritd.me/centos/7/x86_64</div><div class="line">enabled=1</div><div class="line">gpgcheck=1</div><div class="line">gpgkey=https://cdn.mritd.me/keys/rpm.public.key</div><div class="line">EOF</div><div class="line">yum makecache</div><div class="line">yum install -y kubelet kubectl kubernetes-cni kubeadm ebtables</div></pre></td></tr></table></figure>
+<p><strong>清理目录(没初始化过只需要删目录)</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rm -r -f /etc/kubernetes /var/lib/kubelet /var/lib/etcd;</div></pre></td></tr></table></figure>
+<p><strong>启动 kubelet</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">systemctl enable kubelet</div><div class="line">systemctl start kubelet</div></pre></td></tr></table></figure>
+<p><strong>初始化加入集群</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubeadm join --token=b17964.5d8a3c14e99cf6aa 192.168.1.167</div></pre></td></tr></table></figure>
+<p>同样完美截图</p>
+<p>join master</p>
+<p>get node</p>
+<p>###3.6 部署 weave 网络</p>
+<p>再没部署 weave 时，dns 是启动不了的，如下</p>
+<p>dns not work</p>
+<p>官方给出的命令是这样的</p>
+<p>kubectl create -f <a href="https://git.io/weave-kube" target="_blank" rel="external">https://git.io/weave-kube</a><br>本着 “刨根问底挖祖坟” 的精神，先把这个 yaml 搞下来</p>
+<p>wget <a href="https://git.io/weave-kube" target="_blank" rel="external">https://git.io/weave-kube</a> -O weave-kube.yaml<br>然后同样的套路，打开看一下镜像，利用 Docker Hub 做中转，搞下来再 load 进去，然后 create -f 就行了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">docker pull mritd/weave-kube:1.7.2</div><div class="line">docker tag mritd/weave-kube:1.7.2 weaveworks/weave-kube:1.7.2</div><div class="line">docker rmi mritd/weave-kube:1.7.2</div><div class="line">kubectl create -f weave-kube.yaml</div></pre></td></tr></table></figure>
+<p>完美截图</p>
+<p>create weave</p>
+<h3 id="3-7-部署-dashboard"><a href="#3-7-部署-dashboard" class="headerlink" title="3.7 部署 dashboard"></a>3.7 部署 dashboard</h3><p>dashboard 的命令也跟 weave 的一样，不过有个大坑，默认的 yaml 文件中对于 image 拉取策略的定义是 无论何时都会去拉取镜像，导致即使你 load 进去也无卵用，所以还得先把 yaml 搞下来然后改一下镜像拉取策略，最后再 create -f 即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml -O kubernetes-dashboard.yaml</div></pre></td></tr></table></figure>
+<p>编辑 yaml 改一下 imagePullPolicy，把 Always 改成 IfNotPresent(本地没有再去拉取) 或者 Never(从不去拉取) 即可</p>
+<p>IfNotPresent</p>
+<p>最后再利用 Dokcer Hub 中转，然后创建(实际上 dashboard 已经有了 v1.4.1，我这里已经改了)</p>
+<p>kubectl create -f kubernetes-dashboard.yaml<br>截图如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">create dashboard</div></pre></td></tr></table></figure>
+<p>通过 describe 命令我们可以查看其暴露出的 NodePoint,然后便可访问</p>
+<p>describe dashboard</p>
+<p>show dashboard</p>
+<h2 id="四-其他的一些坑"><a href="#四-其他的一些坑" class="headerlink" title="四 其他的一些坑"></a>四 其他的一些坑</h2><p>还有一些其他的坑等着大家去摸索，其中有一个是 DNS 解析错误，表现形式为 POD 内的程序通过域名访问解析不了，cat 一下容器的 /etc/resolv.conf发现指向的 dns 服务器与 kubectl get svc –namespace=kube-system 中的 kube-dsn 地址不符；解决办法就是 编辑节点的 /etc/systemd/system/kubelet.service.d/10-kubeadm.conf 文件，更改 KUBELET_DNS_ARGS 地址为 get svc 中的 kube-dns 地址，然后重启 kubelet 服务，重新杀掉 POD 让 kubernetes 重建即可</p>
+<p>modify kube-dns</p>
+<p>其他坑欢迎大家补充</p>
 	  
 	</div>
 
@@ -400,18 +322,13 @@
 	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
     <ul id="tags" class="tag_box list-unstyled collapse in">	  
 	    
-  <li><a href="/tags/计算机网络-负载均衡-原理/">计算机网络[负载均衡|原理]<span>1</span></a></li>
+  <li><a href="/tags/操作系统-Linux-Kubernetes-Docker/">操作系统[Linux|Kubernetes|Docker]<span>2</span></a></li>
     </ul>
 	</div>
 		
 
 	<!-- toc -->
 	<div class="meta-widget">
-	
-	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
-	   <div id="toc" class="toc collapse in">
-			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#转-LVS集群中的IP负载均衡技术"><span class="toc-article-text">[转]LVS集群中的IP负载均衡技术</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#1-前言"><span class="toc-article-text">1 前言</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#2-实现虚拟服务的相关方法"><span class="toc-article-text">2 实现虚拟服务的相关方法</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#2-1-基于RR-DNS的解决方法"><span class="toc-article-text">2.1 基于RR-DNS的解决方法</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#2-2-基于客户端的解决方法"><span class="toc-article-text">2.2 基于客户端的解决方法</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#2-3-基于应用层负载均衡调度的解决方法"><span class="toc-article-text">2.3 基于应用层负载均衡调度的解决方法</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#2-4-基于IP层负载均衡调度的解决方法"><span class="toc-article-text">2.4 基于IP层负载均衡调度的解决方法</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#3-通过NAT实现虚拟服务器（VS-NAT）"><span class="toc-article-text">3 通过NAT实现虚拟服务器（VS/NAT）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#4-通过IP隧道实现虚拟服务器（VS-TUN）"><span class="toc-article-text">4 通过IP隧道实现虚拟服务器（VS/TUN）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#5-通过直接路由实现虚拟服务器（VS-DR）"><span class="toc-article-text">5 通过直接路由实现虚拟服务器（VS/DR）</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#6-三种方法的优缺点比较"><span class="toc-article-text">6 三种方法的优缺点比较</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#6-1-Virtual-Server-via-NAT"><span class="toc-article-text">6.1 Virtual Server via NAT</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#6-2-Virtual-Server-via-IP-Tunneling"><span class="toc-article-text">6.2 Virtual Server via IP Tunneling</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#6-3-Virtual-Server-via-Direct-Routing"><span class="toc-article-text">6.3 Virtual Server via Direct Routing</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#7-小结"><span class="toc-article-text">7 小结</span></a></li></ol></li></ol>
-		</div>
 	
 	</div>
 	
