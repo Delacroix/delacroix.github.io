@@ -1,0 +1,300 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>常用Centos命令 | Delacroix&#39; Blog</title>
+  <meta name="author" content="Delacroix">
+  
+  <meta name="description" content="安装方式：• yum安装[需联网]yum install vim [yum方式安装vim软件及相关依赖包，如有更新包，则提示是否更新]yum search vim [yum方式搜索vim软件是否存在]yum list |grep vim [yum方式列出vim安装状态、版本及包全名]• rpm安装r">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="常用Centos命令"/>
+  <meta property="og:site_name" content="Delacroix&#39; Blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/themes/bootstrap.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+       <a class="navbar-brand" href="/">Delacroix&#39; Blog</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/categories" title="All the categories.">
+			  <i class="fa fa-folder"></i>Categories
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/tags" title="All the tags.">
+			  <i class="fa fa-tags"></i>Tags
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header page-header-inverse ">		
+			<h1 class="title title-inverse "> 常用Centos命令</h1>
+		</div>		
+	
+
+
+
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h4 id="安装方式："><a href="#安装方式：" class="headerlink" title="安装方式："></a>安装方式：</h4><p><strong>• yum安装[需联网]</strong><br><code>yum install vim</code> [yum方式安装vim软件及相关依赖包，如有更新包，则提示是否更新]<br><code>yum search vim</code> [yum方式搜索vim软件是否存在]<br><code>yum list |grep vim</code> [yum方式列出vim安装状态、版本及包全名]<br><strong>• rpm安装</strong><br><code>rpm -ivh vim-minimal.x86_64.rpm</code> [rpm方式安装vim软件，如差依赖包，会有提示]<br><code>rpm -qa |grep vim</code> [查询系统是否安装vim软件，有则显示包全名及版本号]<br><code>rpm -ql yum</code> [列出yum软件所安装的文件]<br><strong>• 源码安装[常规安装方式]</strong><br><code>./configure</code> 配置源码包相关安装 –help 打印帮助文档<br><code>make</code> 编译代码<br><code>make install</code> 安装软件及输出安装信息</p>
+<blockquote>
+<p>注：Centos6及以下系统系统使用的pyton2.6，Centos7使用的python2.7，yum命令会使用python命令，系统版本对应python版本，请勿随意升级</p>
+</blockquote>
+<h4 id="查看端口："><a href="#查看端口：" class="headerlink" title="查看端口："></a>查看端口：</h4><p><strong>• netstat[Centos6及以下]</strong><br><code>netstat -nltp</code> [打印TCP协议，状态为LISTEN的端口信息，并打印PID号]<br><code>netstat -nultp</code> [打印TCP、UDP协议，状态为LISTEN的端口信息，并打印PID号]<br><code>netstat -anp</code> [打印TCP、UDP、SOCKET协议所有状态，并打印PID号]<br><code>netstat -rn</code> [打印路由表信息]<br><code>netstat -anp |awk ‘$1==”tcp”{print $6}’ |sort -n |uniq -c |sort -n</code> [打印TCP连接状态]</p>
+<blockquote>
+<p>注：UDP无LISTEN状态、LISTEN状态仅适用于TCP</p>
+</blockquote>
+<p><strong>• ss[Centos7]</strong><br>ss命令与netstat命令基本类似，参考以上命令</p>
+<h4 id="查看网络地址："><a href="#查看网络地址：" class="headerlink" title="查看网络地址："></a>查看网络地址：</h4><p><strong>• ifconfig[Centos6及以下]</strong><br><code>ifconfig -a</code> [打印所有网络设备信息]<br><code>ifconfig eth0</code> [打印eth0网卡信息]<br><code>ifconfig eth0 up/down</code> [启用或停用eth0网卡]<br><code>ifconfig eth0 mtu 1316</code> [更改eth0网卡MTU值为1316]</p>
+<blockquote>
+<p>注：建立VPN服务器，如果客户机不能上网，需确认MTU值是否正确</p>
+</blockquote>
+<p><strong>• ip[Centos7]</strong><br>ip命令与ifconfig命令基本类似，参考以上命令<br><strong>• route</strong><br><code>route -n</code> [打印路由表信息]</p>
+<blockquote>
+<p>注：添加/删除路由表需使用route命令</p>
+</blockquote>
+<h4 id="查看进程："><a href="#查看进程：" class="headerlink" title="查看进程："></a>查看进程：</h4><p><strong>• ps</strong><br><code>ps aux |grep bash</code>[查看bash进程信息，打印启动进程用户，PID，启动命令等]<br><code>ps -ef |grep bash</code> [查看bash进程信息，打印UID，PID，PPID，启动命令等]<br><strong>• pstree</strong><br><code>pstree -a</code> [打印进程之间子父关系]<br><strong>• top</strong><br><code>top M</code> [以兆字节显示系统硬件相关信息]</p>
+<h4 id="查看文件占用："><a href="#查看文件占用：" class="headerlink" title="查看文件占用："></a>查看文件占用：</h4><p><strong>• lsof</strong><br><code>lsof -Pi :10086</code> [查看10086端口连接情况，打印启动进程用户，PID，协议，命令等]<br><code>lsof -p 19523</code> [查看19523进程号信息，打印启动进程用户，PID，命令，类型，调用文件或目录情况等]<br><code>lsof redis.sh</code> [查看redis.sh文件被调用情况，打印命令，PID，启动进程用户等]<br><code>lsof +d /mnt</code> [查看/mnt目录被调用情况，打印命令，PID，启动进程用户，启动命令等]<br><code>lsof +D /mnt</code> [查看/mnt目录被调用情况，打印命令，PID，启动进程用户，启动命令等]</p>
+<blockquote>
+<p>注：小写d不包含子目录，大写D包含子目录下文件</p>
+</blockquote>
+<p><strong>• fuser</strong><br><code>fuser -nv tcp 53</code> [打印TCP协议端口为53的相关信息]<br><code>fuser -v 53/tcp</code> [同上]<br><strong>• ldd</strong><br><code>ldd -v /usr/bin/vim</code> [打印vim命令共享库调用情况]</p>
+<blockquote>
+<p>注：太多命令会调用GLIBC库，请勿随意升级或覆盖安装</p>
+</blockquote>
+<h4 id="查找文件："><a href="#查找文件：" class="headerlink" title="查找文件："></a>查找文件：</h4><p><strong>• find</strong><br><code>find . -type f -name “*tw*”</code> [查找当前目录及子目录下文件名含有tw的文件]<br><code>find / -maxdepth 3 -type f -name “*.log”</code> [查找/目录下文件名为log结尾的文件，深度只查找到第3层]<br><code>find . -type d -name “*log*”</code> [查找当前目录及子目录文件夹名含有log的文件夹]</p>
+<h4 id="查找文件内容："><a href="#查找文件内容：" class="headerlink" title="查找文件内容："></a>查找文件内容：</h4><p><strong>• grep</strong><br><code>grep “dir” *</code> [查找当前目录所有含有dir字符的文件，不扫描子目录]<br><strong>• find+grep</strong><br><code>find . |xargs grep “path”</code> [查找当前目录及子目录所有文件含有path字符的文件]</p>
+<blockquote>
+<p>注：请写明具体路径，不要直接填写为/，这会导致IO和CPU占用过高</p>
+</blockquote>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+<ul class="pagination">
+	 
+		
+          <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+        
+
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+
+		
+		   <li class="next"><a href="/2016/11/04/LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+        
+	
+</ul>
+</div>
+
+    </center>
+	</div>
+
+    <!-- share -->
+    
+        
+    <div class="bdsharebuttonbox">
+        <a href="#" class="bds_more" data-cmd="more"></a>
+        <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+        <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+        <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+        <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+        <a href="#" class="bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+        <a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a>
+        <a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a>
+        <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+    </div>
+    <script>
+        window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};
+        with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+    </script>
+
+
+        
+
+    
+	
+	<!-- comment -->
+	
+<section id="comment">
+  <h2 class="title">Comments</h2>
+
+  
+</section>
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2016-11-04 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Linux/">Linux<span>3</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+	
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
+    <ul id="tags" class="tag_box list-unstyled collapse in">	  
+	    
+  <li><a href="/tags/基础/">基础<span>1</span></a></li>
+    </ul>
+	</div>
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2016 Delacroix
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-freemind/">Freemind</a>.    
+</p> </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

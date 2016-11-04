@@ -4,22 +4,229 @@
   
     
     <entry>
+      <title><![CDATA[常用Centos命令]]></title>
+      <url>http://yoursite.com/2016/11/04/%E5%B8%B8%E7%94%A8Centos%E5%91%BD%E4%BB%A4/</url>
+      <content type="html"><![CDATA[<h4 id="安装方式："><a href="#安装方式：" class="headerlink" title="安装方式："></a>安装方式：</h4><p><strong>• yum安装[需联网]</strong><br><code>yum install vim</code> [yum方式安装vim软件及相关依赖包，如有更新包，则提示是否更新]<br><code>yum search vim</code> [yum方式搜索vim软件是否存在]<br><code>yum list |grep vim</code> [yum方式列出vim安装状态、版本及包全名]<br><strong>• rpm安装</strong><br><code>rpm -ivh vim-minimal.x86_64.rpm</code> [rpm方式安装vim软件，如差依赖包，会有提示]<br><code>rpm -qa |grep vim</code> [查询系统是否安装vim软件，有则显示包全名及版本号]<br><code>rpm -ql yum</code> [列出yum软件所安装的文件]<br><strong>• 源码安装[常规安装方式]</strong><br><code>./configure</code> 配置源码包相关安装 –help 打印帮助文档<br><code>make</code> 编译代码<br><code>make install</code> 安装软件及输出安装信息</p>
+<blockquote>
+<p>注：Centos6及以下系统系统使用的pyton2.6，Centos7使用的python2.7，yum命令会使用python命令，系统版本对应python版本，请勿随意升级</p>
+</blockquote>
+<h4 id="查看端口："><a href="#查看端口：" class="headerlink" title="查看端口："></a>查看端口：</h4><p><strong>• netstat[Centos6及以下]</strong><br><code>netstat -nltp</code> [打印TCP协议，状态为LISTEN的端口信息，并打印PID号]<br><code>netstat -nultp</code> [打印TCP、UDP协议，状态为LISTEN的端口信息，并打印PID号]<br><code>netstat -anp</code> [打印TCP、UDP、SOCKET协议所有状态，并打印PID号]<br><code>netstat -rn</code> [打印路由表信息]<br><code>netstat -anp |awk ‘$1==”tcp”{print $6}’ |sort -n |uniq -c |sort -n</code> [打印TCP连接状态]</p>
+<blockquote>
+<p>注：UDP无LISTEN状态、LISTEN状态仅适用于TCP</p>
+</blockquote>
+<p><strong>• ss[Centos7]</strong><br>ss命令与netstat命令基本类似，参考以上命令</p>
+<h4 id="查看网络地址："><a href="#查看网络地址：" class="headerlink" title="查看网络地址："></a>查看网络地址：</h4><p><strong>• ifconfig[Centos6及以下]</strong><br><code>ifconfig -a</code> [打印所有网络设备信息]<br><code>ifconfig eth0</code> [打印eth0网卡信息]<br><code>ifconfig eth0 up/down</code> [启用或停用eth0网卡]<br><code>ifconfig eth0 mtu 1316</code> [更改eth0网卡MTU值为1316]</p>
+<blockquote>
+<p>注：建立VPN服务器，如果客户机不能上网，需确认MTU值是否正确</p>
+</blockquote>
+<p><strong>• ip[Centos7]</strong><br>ip命令与ifconfig命令基本类似，参考以上命令<br><strong>• route</strong><br><code>route -n</code> [打印路由表信息]</p>
+<blockquote>
+<p>注：添加/删除路由表需使用route命令</p>
+</blockquote>
+<h4 id="查看进程："><a href="#查看进程：" class="headerlink" title="查看进程："></a>查看进程：</h4><p><strong>• ps</strong><br><code>ps aux |grep bash</code>[查看bash进程信息，打印启动进程用户，PID，启动命令等]<br><code>ps -ef |grep bash</code> [查看bash进程信息，打印UID，PID，PPID，启动命令等]<br><strong>• pstree</strong><br><code>pstree -a</code> [打印进程之间子父关系]<br><strong>• top</strong><br><code>top M</code> [以兆字节显示系统硬件相关信息]</p>
+<h4 id="查看文件占用："><a href="#查看文件占用：" class="headerlink" title="查看文件占用："></a>查看文件占用：</h4><p><strong>• lsof</strong><br><code>lsof -Pi :10086</code> [查看10086端口连接情况，打印启动进程用户，PID，协议，命令等]<br><code>lsof -p 19523</code> [查看19523进程号信息，打印启动进程用户，PID，命令，类型，调用文件或目录情况等]<br><code>lsof redis.sh</code> [查看redis.sh文件被调用情况，打印命令，PID，启动进程用户等]<br><code>lsof +d /mnt</code> [查看/mnt目录被调用情况，打印命令，PID，启动进程用户，启动命令等]<br><code>lsof +D /mnt</code> [查看/mnt目录被调用情况，打印命令，PID，启动进程用户，启动命令等]</p>
+<blockquote>
+<p>注：小写d不包含子目录，大写D包含子目录下文件</p>
+</blockquote>
+<p><strong>• fuser</strong><br><code>fuser -nv tcp 53</code> [打印TCP协议端口为53的相关信息]<br><code>fuser -v 53/tcp</code> [同上]<br><strong>• ldd</strong><br><code>ldd -v /usr/bin/vim</code> [打印vim命令共享库调用情况]</p>
+<blockquote>
+<p>注：太多命令会调用GLIBC库，请勿随意升级或覆盖安装</p>
+</blockquote>
+<h4 id="查找文件："><a href="#查找文件：" class="headerlink" title="查找文件："></a>查找文件：</h4><p><strong>• find</strong><br><code>find . -type f -name “*tw*”</code> [查找当前目录及子目录下文件名含有tw的文件]<br><code>find / -maxdepth 3 -type f -name “*.log”</code> [查找/目录下文件名为log结尾的文件，深度只查找到第3层]<br><code>find . -type d -name “*log*”</code> [查找当前目录及子目录文件夹名含有log的文件夹]</p>
+<h4 id="查找文件内容："><a href="#查找文件内容：" class="headerlink" title="查找文件内容："></a>查找文件内容：</h4><p><strong>• grep</strong><br><code>grep “dir” *</code> [查找当前目录所有含有dir字符的文件，不扫描子目录]<br><strong>• find+grep</strong><br><code>find . |xargs grep “path”</code> [查找当前目录及子目录所有文件含有path字符的文件]</p>
+<blockquote>
+<p>注：请写明具体路径，不要直接填写为/，这会导致IO和CPU占用过高</p>
+</blockquote>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志]]></title>
       <url>http://yoursite.com/2016/11/04/LOGSTASH-ELASTICSEARCH-%E5%A4%84%E7%90%86-MYSQL-%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/</url>
       <content type="html"><![CDATA[<h1 id="LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志"><a href="#LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志" class="headerlink" title="LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志"></a>LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志</h1><p>先确认慢查询日志是否开启, 然后找到日志文件的位置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&gt; show variables like &apos;%slow%&apos;;</div><div class="line">+---------------------+-------------------------------------+</div><div class="line">| Variable_name       | Value                               |</div><div class="line">+---------------------+-------------------------------------+</div><div class="line">| log_slow_queries    | ON                                  |</div><div class="line">| slow_launch_time    | 2                                   |</div><div class="line">| slow_query_log      | ON                                  |</div><div class="line">| slow_query_log_file | /data/mysqllog/20000/slow-query.log |</div><div class="line">+---------------------+-------------------------------------+</div></pre></td></tr></table></figure>
-<h2 id="2-慢查询日志"><a href="#2-慢查询日志" class="headerlink" title="2. 慢查询日志"></a>2. 慢查询日志</h2><p>格式基本如下, 当然, 格式如果有差异, 需要根据具体格式进行小的修改</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># Time: 160524  5:12:29</div><div class="line"># User@Host: user_a[xxxx] @  [10.166.140.109]</div><div class="line"># Query_time: 1.711086  Lock_time: 0.000040 Rows_sent: 385489  Rows_examined: 385489</div><div class="line">use dbname;</div><div class="line">SET timestamp=1464037949;</div><div class="line">SELECT 1 from dbname;</div></pre></td></tr></table></figure>
-<h2 id="3-使用-logstash-采集"><a href="#3-使用-logstash-采集" class="headerlink" title="3. 使用 logstash 采集"></a>3. 使用 logstash 采集</h2><p>采集, 无非是用multiline进行多行解析<br>但是, 需要处理的<br>第一, 去除没用的信息<br>第二, 慢查询 sql, 是会反复出现的, 所以, 执行次数成了一个很重要的指标. 我们要做的, 就是降噪(将参数去掉, 涉及带引号的内容 + 数字), 将参数类信息过滤掉, 留下核心的 sql, 然后计算出一个 hash, 这样就可以在查询, 根据这个字段进行聚合. 这里用到了 mutate 以及 checksum</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"># calculate unique hash</div><div class="line">  mutate &#123;</div><div class="line">    add_field =&gt; &#123;&quot;sql_for_hash&quot; =&gt; &quot;%&#123;sql&#125;&quot;&#125;</div><div class="line">  &#125;</div><div class="line">  mutate &#123;</div><div class="line">    gsub =&gt; [</div><div class="line">        &quot;sql_for_hash&quot;, &quot;&apos;.+?&apos;&quot;, &quot;&quot;,</div><div class="line">        &quot;sql_for_hash&quot;, &quot;-?\d*\.&#123;0,1&#125;\d+&quot;, &quot;&quot;</div><div class="line">    ]</div><div class="line">  &#125;</div><div class="line">  checksum &#123;</div><div class="line">    algorithm =&gt; &quot;md5&quot;</div><div class="line">    keys =&gt; [&quot;sql_for_hash&quot;]</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
-<p>最后算出来的 md5, 放入了logstash_checksum<br>完整的 logstash 配置文件 (具体使用可能需要根据自身日志格式做些小调整) 注意, 里面的 patternALLWORD [\s\S]*</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div></pre></td><td class="code"><pre><div class="line">input &#123;</div><div class="line">  file &#123;</div><div class="line">    path =&gt; [&quot;/data/mysqllog/20000/slow-query.log&quot;]</div><div class="line">    sincedb_path =&gt; &quot;/data/LogNew/logstash/sincedb/mysql.sincedb&quot;</div><div class="line">    type =&gt; &quot;mysql-slow-log&quot;</div><div class="line">    add_field =&gt; [&quot;env&quot;, &quot;PRODUCT&quot;]</div><div class="line">    codec =&gt; multiline &#123;</div><div class="line">      pattern =&gt; &quot;^# User@Host:&quot;</div><div class="line">      negate =&gt; true</div><div class="line">      what =&gt; previous</div><div class="line">    &#125;</div><div class="line">  &#125;&#125;filter &#123;</div><div class="line">  grok &#123;</div><div class="line">    # User@Host: logstash[logstash] @ localhost [127.0.0.1]</div><div class="line">    # User@Host: logstash[logstash] @  [127.0.0.1]</div><div class="line">    match =&gt; [ &quot;message&quot;, &quot;^# User@Host: %&#123;ALLWORD:user&#125;\[%&#123;ALLWAORD&#125;\] @ %&#123;ALLWORD:dbhost&#125;? \[%&#123;IP:ip&#125;\]&quot; ]</div><div class="line">  &#125;</div><div class="line">  grok &#123;</div><div class="line">    # Query_time: 102.413328  Lock_time: 0.000167 Rows_sent: 0  Rows_examined: 1970</div><div class="line">    match =&gt; [ &quot;message&quot;, &quot;^# Query_time: %&#123;NUMBER:duration:float&#125;%&#123;SPACE&#125;Lock_time: %&#123;NUMBER:lock_wait:float&#125;%&#123;SPACE&#125;Rows_sent: %&#123;NUMBER:results:int&#125;%&#123;SPACE&#125;Rows_examined:%&#123;SPACE&#125;%&#123;NUMBER:scanned:int&#125;%&#123;ALLWORD:sql&#125;&quot;]</div><div class="line">  &#125;</div><div class="line">	// remove useless data</div><div class="line">  mutate &#123;</div><div class="line">    gsub =&gt; [</div><div class="line">        &quot;sql&quot;, &quot;\nSET timestamp=\d+?;\n&quot;, &quot;&quot;,</div><div class="line">        &quot;sql&quot;, &quot;\nuse [a-zA-Z0-9\-\_]+?;&quot;, &quot;&quot;,</div><div class="line">        &quot;sql&quot;, &quot;\n# Time: \d+\s+\d+:\d+:\d+&quot;, &quot;&quot;,</div><div class="line">        &quot;sql&quot;, &quot;\n/usr/local/mysql/bin/mysqld.+$&quot;, &quot;&quot;,</div><div class="line">        &quot;sql&quot;, &quot;\nTcp port:.+$&quot;, &quot;&quot;,</div><div class="line">        &quot;sql&quot;, &quot;\nTime .+$&quot;, &quot;&quot;</div><div class="line">    ]</div><div class="line">  &#125;</div><div class="line">	# Capture the time the query happened</div><div class="line">  grok &#123;</div><div class="line">    match =&gt; [ &quot;message&quot;, &quot;^SET timestamp=%&#123;NUMBER:timestamp&#125;;&quot; ]</div><div class="line">  &#125;</div><div class="line">  date &#123;</div><div class="line">    match =&gt; [ &quot;timestamp&quot;, &quot;UNIX&quot; ]</div><div class="line">  &#125;</div><div class="line">	# calculate unique hash</div><div class="line">  mutate &#123;</div><div class="line">    add_field =&gt; &#123;&quot;sql_for_hash&quot; =&gt; &quot;%&#123;sql&#125;&quot;&#125;</div><div class="line">  &#125;</div><div class="line">  mutate &#123;</div><div class="line">    gsub =&gt; [</div><div class="line">        &quot;sql_for_hash&quot;, &quot;&apos;.+?&apos;&quot;, &quot;&quot;,</div><div class="line">        &quot;sql_for_hash&quot;, &quot;-?\d*\.&#123;0,1&#125;\d+&quot;, &quot;&quot;</div><div class="line">    ]</div><div class="line">  &#125;</div><div class="line">  checksum &#123;</div><div class="line">    algorithm =&gt; &quot;md5&quot;</div><div class="line">    keys =&gt; [&quot;sql_for_hash&quot;]</div><div class="line">  &#125;</div><div class="line">	# Drop the captured timestamp field since it has been moved to the time of the event</div><div class="line">  mutate &#123;</div><div class="line">    # TODO: remove the message field</div><div class="line">    remove_field =&gt; [&quot;timestamp&quot;, &quot;message&quot;, &quot;sql_for_hash&quot;]</div><div class="line">  &#125;&#125;output &#123;</div><div class="line">    #stdout&#123;</div><div class="line">    #    codec =&gt; rubydebug</div><div class="line">    #&#125;</div><div class="line">    #if (&quot;_grokparsefailure&quot; not in [tags]) &#123;</div><div class="line">    #    stdout&#123;</div><div class="line">    #        codec =&gt; rubydebug</div><div class="line">    #    &#125;</div><div class="line">    #&#125;</div><div class="line">    if (&quot;_grokparsefailure&quot; not in [tags]) &#123;</div><div class="line">        elasticsearch &#123;</div><div class="line">          hosts =&gt; [&quot;192.168.1.1:9200&quot;]</div><div class="line">          index =&gt; &quot;logstash-slowlog&quot;</div><div class="line">        &#125;</div><div class="line">    &#125;&#125;</div><div class="line">采集进去的内容</div><div class="line">	&#123;</div><div class="line">           &quot;@timestamp&quot; =&gt; &quot;2016-05-23T21:12:59.000Z&quot;,</div><div class="line">             &quot;@version&quot; =&gt; &quot;1&quot;,</div><div class="line">                 &quot;tags&quot; =&gt; [</div><div class="line">        [0] &quot;multiline&quot;</div><div class="line">    ],</div><div class="line">                 &quot;path&quot; =&gt; &quot;/Users/ken/tx/elk/logstash/data/slow_sql.log&quot;,</div><div class="line">                 &quot;host&quot; =&gt; &quot;Luna-mac-2.local&quot;,</div><div class="line">                 &quot;type&quot; =&gt; &quot;mysql-slow&quot;,</div><div class="line">                  &quot;env&quot; =&gt; &quot;PRODUCT&quot;,</div><div class="line">                 &quot;user&quot; =&gt; &quot;dba_bak_all_sel&quot;,</div><div class="line">                   &quot;ip&quot; =&gt; &quot;10.166.140.109&quot;,</div><div class="line">             &quot;duration&quot; =&gt; 28.812601,</div><div class="line">            &quot;lock_wait&quot; =&gt; 0.000132,</div><div class="line">              &quot;results&quot; =&gt; 749414,</div><div class="line">              &quot;scanned&quot; =&gt; 749414,</div><div class="line">                  &quot;sql&quot; =&gt; &quot;SELECT /*!40001 SQL_NO_CACHE */ * FROM `xxxxx`;&quot;,</div><div class="line">    &quot;logstash_checksum&quot; =&gt; &quot;3e3ccb89ee792de882a57e2bef6c5371&quot;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="4-写查询"><a href="#4-写查询" class="headerlink" title="4. 写查询"></a>4. 写查询</h2><p>查询, 我们需要按logstash_checksum进行聚合, 然后按照次数由多到少降序展示, 同时, 每个logstash_checksum需要有一条具体的 sql 进行展示<br>通过 es 的 Top hits Aggregation 可以完美地解决这个查询需求<br>查询的 query</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">	body = &#123;</div><div class="line">    &quot;from&quot;: 0,</div><div class="line">    &quot;size&quot;: 0,</div><div class="line">    &quot;query&quot;: &#123;</div><div class="line">        &quot;filtered&quot;: &#123;</div><div class="line">            &quot;query&quot;: &#123;</div><div class="line">                &quot;match&quot;: &#123;</div><div class="line">                    &quot;user&quot;: &quot;test&quot;</div><div class="line">                &#125;</div><div class="line">            &#125;,</div><div class="line">            &quot;filter&quot;: &#123;</div><div class="line">                &quot;range&quot;: &#123;</div><div class="line">                    &quot;@timestamp&quot;: &#123;</div><div class="line">                        &quot;gte&quot;: &quot;now-1d&quot;,</div><div class="line">                        &quot;lte&quot;: &quot;now&quot;</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;,</div><div class="line">    &quot;aggs&quot;: &#123;</div><div class="line">        &quot;top_errors&quot;: &#123;</div><div class="line">            &quot;terms&quot;: &#123;</div><div class="line">                &quot;field&quot;: &quot;logstash_checksum&quot;,</div><div class="line">                &quot;size&quot;: 20</div><div class="line">            &#125;,</div><div class="line">            &quot;aggs&quot;: &#123;</div><div class="line">                &quot;top_error_hits&quot;: &#123;</div><div class="line">                    &quot;top_hits&quot;: &#123;</div><div class="line">                        &quot;sort&quot;: [</div><div class="line">                            &#123;</div><div class="line">                                &quot;@timestamp&quot;:&#123;</div><div class="line">                                    &quot;order&quot;: &quot;desc&quot;</div><div class="line">                                &#125;</div><div class="line">                            &#125;</div><div class="line">                        ],</div><div class="line">                        &quot;_source&quot;: &#123;</div><div class="line">                            &quot;include&quot;: [</div><div class="line">                               &quot;user&quot; , &quot;sql&quot;, &quot;logstash_checksum&quot;, &quot;@timestamp&quot;, &quot;duration&quot;, &quot;lock_wait&quot;, &quot;results&quot;, &quot;scanned&quot;</div><div class="line">                            ]</div><div class="line">                        &#125;,</div><div class="line">                        &quot;size&quot; : 1</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>跟这个写法相关的几个参考链接: Terms Aggregation / Elasticsearch filter document group by field</p>
+<pre><code>&gt; show variables like &#39;%slow%&#39;;
++---------------------+-------------------------------------+
+| Variable_name       | Value                               |
++---------------------+-------------------------------------+
+| log_slow_queries    | ON                                  |
+| slow_launch_time    | 2                                   |
+| slow_query_log      | ON                                  |
+| slow_query_log_file | /data/mysqllog/20000/slow-query.log |
++---------------------+-------------------------------------+
+</code></pre><h2 id="2-慢查询日志"><a href="#2-慢查询日志" class="headerlink" title="2. 慢查询日志"></a>2. 慢查询日志</h2><p>格式基本如下, 当然, 格式如果有差异, 需要根据具体格式进行小的修改</p>
+<pre><code># Time: 160524  5:12:29
+# User@Host: user_a[xxxx] @  [10.166.140.109]
+# Query_time: 1.711086  Lock_time: 0.000040 Rows_sent: 385489  Rows_examined: 385489
+use dbname;
+SET timestamp=1464037949;
+SELECT 1 from dbname;
+</code></pre><h2 id="3-使用-logstash-采集"><a href="#3-使用-logstash-采集" class="headerlink" title="3. 使用 logstash 采集"></a>3. 使用 logstash 采集</h2><p>采集, 无非是用multiline进行多行解析<br>但是, 需要处理的<br>第一, 去除没用的信息<br>第二, 慢查询 sql, 是会反复出现的, 所以, 执行次数成了一个很重要的指标. 我们要做的, 就是降噪(将参数去掉, 涉及带引号的内容 + 数字), 将参数类信息过滤掉, 留下核心的 sql, 然后计算出一个 hash, 这样就可以在查询, 根据这个字段进行聚合. 这里用到了 mutate 以及 checksum</p>
+<pre><code># calculate unique hash
+  mutate {
+    add_field =&gt; {&quot;sql_for_hash&quot; =&gt; &quot;%{sql}&quot;}
+  }
+  mutate {
+    gsub =&gt; [
+        &quot;sql_for_hash&quot;, &quot;&#39;.+?&#39;&quot;, &quot;&quot;,
+        &quot;sql_for_hash&quot;, &quot;-?\d*\.{0,1}\d+&quot;, &quot;&quot;
+    ]
+  }
+  checksum {
+    algorithm =&gt; &quot;md5&quot;
+    keys =&gt; [&quot;sql_for_hash&quot;]
+  }
+</code></pre><p>最后算出来的 md5, 放入了logstash_checksum<br>完整的 logstash 配置文件 (具体使用可能需要根据自身日志格式做些小调整) 注意, 里面的 patternALLWORD [\s\S]*</p>
+<pre><code>input {
+  file {
+    path =&gt; [&quot;/data/mysqllog/20000/slow-query.log&quot;]
+    sincedb_path =&gt; &quot;/data/LogNew/logstash/sincedb/mysql.sincedb&quot;
+    type =&gt; &quot;mysql-slow-log&quot;
+    add_field =&gt; [&quot;env&quot;, &quot;PRODUCT&quot;]
+    codec =&gt; multiline {
+      pattern =&gt; &quot;^# User@Host:&quot;
+      negate =&gt; true
+      what =&gt; previous
+    }
+  }}filter {
+  grok {
+    # User@Host: logstash[logstash] @ localhost [127.0.0.1]
+    # User@Host: logstash[logstash] @  [127.0.0.1]
+    match =&gt; [ &quot;message&quot;, &quot;^# User@Host: %{ALLWORD:user}\[%{ALLWAORD}\] @ %{ALLWORD:dbhost}? \[%{IP:ip}\]&quot; ]
+  }
+  grok {
+    # Query_time: 102.413328  Lock_time: 0.000167 Rows_sent: 0  Rows_examined: 1970
+    match =&gt; [ &quot;message&quot;, &quot;^# Query_time: %{NUMBER:duration:float}%{SPACE}Lock_time: %{NUMBER:lock_wait:float}%{SPACE}Rows_sent: %{NUMBER:results:int}%{SPACE}Rows_examined:%{SPACE}%{NUMBER:scanned:int}%{ALLWORD:sql}&quot;]
+  }
+    // remove useless data
+  mutate {
+    gsub =&gt; [
+        &quot;sql&quot;, &quot;\nSET timestamp=\d+?;\n&quot;, &quot;&quot;,
+        &quot;sql&quot;, &quot;\nuse [a-zA-Z0-9\-\_]+?;&quot;, &quot;&quot;,
+        &quot;sql&quot;, &quot;\n# Time: \d+\s+\d+:\d+:\d+&quot;, &quot;&quot;,
+        &quot;sql&quot;, &quot;\n/usr/local/mysql/bin/mysqld.+$&quot;, &quot;&quot;,
+        &quot;sql&quot;, &quot;\nTcp port:.+$&quot;, &quot;&quot;,
+        &quot;sql&quot;, &quot;\nTime .+$&quot;, &quot;&quot;
+    ]
+  }
+    # Capture the time the query happened
+  grok {
+    match =&gt; [ &quot;message&quot;, &quot;^SET timestamp=%{NUMBER:timestamp};&quot; ]
+  }
+  date {
+    match =&gt; [ &quot;timestamp&quot;, &quot;UNIX&quot; ]
+  }
+    # calculate unique hash
+  mutate {
+    add_field =&gt; {&quot;sql_for_hash&quot; =&gt; &quot;%{sql}&quot;}
+  }
+  mutate {
+    gsub =&gt; [
+        &quot;sql_for_hash&quot;, &quot;&#39;.+?&#39;&quot;, &quot;&quot;,
+        &quot;sql_for_hash&quot;, &quot;-?\d*\.{0,1}\d+&quot;, &quot;&quot;
+    ]
+  }
+  checksum {
+    algorithm =&gt; &quot;md5&quot;
+    keys =&gt; [&quot;sql_for_hash&quot;]
+  }
+    # Drop the captured timestamp field since it has been moved to the time of the event
+  mutate {
+    # TODO: remove the message field
+    remove_field =&gt; [&quot;timestamp&quot;, &quot;message&quot;, &quot;sql_for_hash&quot;]
+  }}output {
+    #stdout{
+    #    codec =&gt; rubydebug
+    #}
+    #if (&quot;_grokparsefailure&quot; not in [tags]) {
+    #    stdout{
+    #        codec =&gt; rubydebug
+    #    }
+    #}
+    if (&quot;_grokparsefailure&quot; not in [tags]) {
+        elasticsearch {
+          hosts =&gt; [&quot;192.168.1.1:9200&quot;]
+          index =&gt; &quot;logstash-slowlog&quot;
+        }
+    }}
+采集进去的内容
+    {
+           &quot;@timestamp&quot; =&gt; &quot;2016-05-23T21:12:59.000Z&quot;,
+             &quot;@version&quot; =&gt; &quot;1&quot;,
+                 &quot;tags&quot; =&gt; [
+        [0] &quot;multiline&quot;
+    ],
+                 &quot;path&quot; =&gt; &quot;/Users/ken/tx/elk/logstash/data/slow_sql.log&quot;,
+                 &quot;host&quot; =&gt; &quot;Luna-mac-2.local&quot;,
+                 &quot;type&quot; =&gt; &quot;mysql-slow&quot;,
+                  &quot;env&quot; =&gt; &quot;PRODUCT&quot;,
+                 &quot;user&quot; =&gt; &quot;dba_bak_all_sel&quot;,
+                   &quot;ip&quot; =&gt; &quot;10.166.140.109&quot;,
+             &quot;duration&quot; =&gt; 28.812601,
+            &quot;lock_wait&quot; =&gt; 0.000132,
+              &quot;results&quot; =&gt; 749414,
+              &quot;scanned&quot; =&gt; 749414,
+                  &quot;sql&quot; =&gt; &quot;SELECT /*!40001 SQL_NO_CACHE */ * FROM `xxxxx`;&quot;,
+    &quot;logstash_checksum&quot; =&gt; &quot;3e3ccb89ee792de882a57e2bef6c5371&quot;
+}
+</code></pre><h2 id="4-写查询"><a href="#4-写查询" class="headerlink" title="4. 写查询"></a>4. 写查询</h2><p>查询, 我们需要按logstash_checksum进行聚合, 然后按照次数由多到少降序展示, 同时, 每个logstash_checksum需要有一条具体的 sql 进行展示<br>通过 es 的 Top hits Aggregation 可以完美地解决这个查询需求<br>查询的 query</p>
+<pre><code>    body = {
+    &quot;from&quot;: 0,
+    &quot;size&quot;: 0,
+    &quot;query&quot;: {
+        &quot;filtered&quot;: {
+            &quot;query&quot;: {
+                &quot;match&quot;: {
+                    &quot;user&quot;: &quot;test&quot;
+                }
+            },
+            &quot;filter&quot;: {
+                &quot;range&quot;: {
+                    &quot;@timestamp&quot;: {
+                        &quot;gte&quot;: &quot;now-1d&quot;,
+                        &quot;lte&quot;: &quot;now&quot;
+                    }
+                }
+            }
+        }
+    },
+    &quot;aggs&quot;: {
+        &quot;top_errors&quot;: {
+            &quot;terms&quot;: {
+                &quot;field&quot;: &quot;logstash_checksum&quot;,
+                &quot;size&quot;: 20
+            },
+            &quot;aggs&quot;: {
+                &quot;top_error_hits&quot;: {
+                    &quot;top_hits&quot;: {
+                        &quot;sort&quot;: [
+                            {
+                                &quot;@timestamp&quot;:{
+                                    &quot;order&quot;: &quot;desc&quot;
+                                }
+                            }
+                        ],
+                        &quot;_source&quot;: {
+                            &quot;include&quot;: [
+                               &quot;user&quot; , &quot;sql&quot;, &quot;logstash_checksum&quot;, &quot;@timestamp&quot;, &quot;duration&quot;, &quot;lock_wait&quot;, &quot;results&quot;, &quot;scanned&quot;
+                            ]
+                        },
+                        &quot;size&quot; : 1
+                    }
+                }
+            }
+        }
+    }
+}
+</code></pre><p>跟这个写法相关的几个参考链接: Terms Aggregation / Elasticsearch filter document group by field</p>
 <h2 id="5-渲染页面"><a href="#5-渲染页面" class="headerlink" title="5. 渲染页面"></a>5. 渲染页面</h2><p>python 的后台, 使用sqlparse包, 将 sql 进行格式化 (换行 / 缩进 / 大小写), 再往前端传. sqlparse</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; sql = &apos;select * from foo where id in (select id from bar);&apos;</div><div class="line">&gt;&gt;&gt; print sqlparse.format(sql, reindent=True, keyword_case=&apos;upper&apos;)</div><div class="line">SELECT *</div><div class="line">FROM foo</div><div class="line">WHERE id IN</div><div class="line">  (SELECT id</div><div class="line">   FROM bar);</div></pre></td></tr></table></figure>
-]]></content>
+<pre><code>&gt;&gt;&gt; sql = &#39;select * from foo where id in (select id from bar);&#39;
+&gt;&gt;&gt; print sqlparse.format(sql, reindent=True, keyword_case=&#39;upper&#39;)
+SELECT *
+FROM foo
+WHERE id IN
+  (SELECT id
+   FROM bar);
+</code></pre>]]></content>
     </entry>
     
     <entry>
@@ -131,55 +338,109 @@
 <p><img src="/images/kubeadm/1478154397493.png" alt="Alt text"></p>
 <p>最后根据这些版本去 github 上准备相应的 Dockerfile，在利用 Docker Hub 的自动构建 build 一下，再 pull 下来 tag 成对应的镜像名称即可</p>
 <h2 id="三-搭建集群"><a href="#三-搭建集群" class="headerlink" title="三 搭建集群"></a>三 搭建集群</h2><h3 id="3-1-主机名处理"><a href="#3-1-主机名处理" class="headerlink" title="3.1 主机名处理"></a>3.1 主机名处理</h3><p>经过亲测，节点主机名最好为 xxx.xxx 这种域名格式，否则在某些情况下，POD 中跑的程序使用域名解析时可能出现问题，所以先要处理一下主机名</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">#写入 hostname(node 节点后缀改成 .node)</div><div class="line">echo &quot;192-168-1-167.master&quot; &gt; /etc/hostname </div><div class="line">#加入 hosts</div><div class="line">echo &quot;127.0.0.1   192-168-1-167.master&quot; &gt;&gt; /etc/hosts</div><div class="line">#不重启情况下使内核生效</div><div class="line">sysctl kernel.hostname=192-168-1-167.master</div><div class="line">#验证是否修改成功</div><div class="line">➜  ~ hostname</div><div class="line">192-168-1-167.master</div></pre></td></tr></table></figure>
-<h3 id="3-2-load-镜像"><a href="#3-2-load-镜像" class="headerlink" title="3.2 load 镜像"></a>3.2 load 镜像</h3><p>由于本人已经在 Docker Hub 上处理好了相关镜像，所以直接 pull 下来 tag 一下即可，</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">images=(kube-proxy-amd64:v1.4.4 kube-discovery-amd64:1.0 kubedns-amd64:1.7 kube-scheduler-amd64:v1.4.4 kube-controller-manager-amd64:v1.4.4 kube-apiserver-amd64:v1.4.4 etcd-amd64:2.2.5 kube-dnsmasq-amd64:1.3 exechealthz-amd64:1.1 pause-amd64:3.0 kubernetes-dashboard-amd64:v1.4.1)</div><div class="line">for imageName in $&#123;images[@]&#125; ; do</div><div class="line">  docker pull mritd/$imageName</div><div class="line">  docker tag mritd/$imageName gcr.io/google_containers/$imageName</div><div class="line">  docker rmi mritd/$imageName</div><div class="line">done</div></pre></td></tr></table></figure>
-<h3 id="3-3-安装-rpm"><a href="#3-3-安装-rpm" class="headerlink" title="3.3 安装 rpm"></a>3.3 安装 rpm</h3><p>rpm 获取办法上文已经提到，可以自己编译，这里我已经编译好并维护了一个 yum 源，直接yum install 即可(懒)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">#添加 yum 源</div><div class="line">tee /etc/yum.repos.d/mritd.repo &lt;&lt; EOF</div><div class="line">[mritdrepo]</div><div class="line">name=Mritd Repository</div><div class="line">baseurl=https://rpm.mritd.me/centos/7/x86_64</div><div class="line">enabled=1</div><div class="line">gpgcheck=1</div><div class="line">gpgkey=https://cdn.mritd.me/keys/rpm.public.key</div><div class="line">EOF</div><div class="line">#刷新cache</div><div class="line">yum makecache</div><div class="line">#安装</div><div class="line">yum install -y kubelet kubectl kubernetes-cni kubeadm</div></pre></td></tr></table></figure>
-<h3 id="3-4-初始化-master"><a href="#3-4-初始化-master" class="headerlink" title="3.4 初始化 master"></a>3.4 初始化 master</h3><p>等会有个坑，kubeadm 等相关 rpm 安装后会生成 /etc/kubernetes 目录，而 kubeadm init 时候又会检测这些目录是否存在，如果存在则停止初始化，所以要先清理一下，以下清理脚本来源于 官方文档 Tear down 部分，该脚本同样适用于初始化失败进行重置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">systemctl stop kubelet;</div><div class="line">#注意: 下面这条命令会干掉所有正在运行的 docker 容器，</div><div class="line">#如果要进行重置操作，最好先确定当前运行的所有容器都能干掉(干掉不影响业务)，</div><div class="line">#否则的话最好手动删除 kubeadm 创建的相关容器(gcr.io 相关的)</div><div class="line">docker rm -f -v $(docker ps -q);</div><div class="line">find /var/lib/kubelet | xargs -n 1 findmnt -n -t tmpfs -o TARGET -T | uniq | xargs -r umount -v;</div><div class="line">rm -r -f /etc/kubernetes /var/lib/kubelet /var/lib/etcd;</div></pre></td></tr></table></figure>
-<p>还有个坑，初始化以前记得一定要启动 kubelet，虽然你 systemctl status kubelet 看着他是启动失败，但是也得启动，否则绝壁卡死</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">systemctl enable kubelet</div><div class="line">systemctl start kubelet</div></pre></td></tr></table></figure>
-<p>等会等会，还有坑，新版本直接 init 会提示 ebtables not found in system path 错误，所以还得先安装一下这个包在初始化</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#安装 ebtables</div><div class="line">yum install -y ebtables</div></pre></td></tr></table></figure>
-<p>最后见证奇迹的时刻</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#初始化并指定 apiserver 监听地址</div><div class="line">kubeadm init --api-advertise-addresses 192.168.1.167</div></pre></td></tr></table></figure>
-<p>完美截图如下</p>
+<pre><code>#写入 hostname(node 节点后缀改成 .node)
+echo &quot;192-168-1-167.master&quot; &gt; /etc/hostname 
+#加入 hosts
+echo &quot;127.0.0.1   192-168-1-167.master&quot; &gt;&gt; /etc/hosts
+#不重启情况下使内核生效
+sysctl kernel.hostname=192-168-1-167.master
+#验证是否修改成功
+➜  ~ hostname
+192-168-1-167.master
+</code></pre><h3 id="3-2-load-镜像"><a href="#3-2-load-镜像" class="headerlink" title="3.2 load 镜像"></a>3.2 load 镜像</h3><p>由于本人已经在 Docker Hub 上处理好了相关镜像，所以直接 pull 下来 tag 一下即可，</p>
+<pre><code>images=(kube-proxy-amd64:v1.4.4 kube-discovery-amd64:1.0 kubedns-amd64:1.7 kube-scheduler-amd64:v1.4.4 kube-controller-manager-amd64:v1.4.4 kube-apiserver-amd64:v1.4.4 etcd-amd64:2.2.5 kube-dnsmasq-amd64:1.3 exechealthz-amd64:1.1 pause-amd64:3.0 kubernetes-dashboard-amd64:v1.4.1)
+for imageName in ${images[@]} ; do
+  docker pull mritd/$imageName
+  docker tag mritd/$imageName gcr.io/google_containers/$imageName
+  docker rmi mritd/$imageName
+done
+</code></pre><h3 id="3-3-安装-rpm"><a href="#3-3-安装-rpm" class="headerlink" title="3.3 安装 rpm"></a>3.3 安装 rpm</h3><p>rpm 获取办法上文已经提到，可以自己编译，这里我已经编译好并维护了一个 yum 源，直接yum install 即可(懒)</p>
+<pre><code>#添加 yum 源
+tee /etc/yum.repos.d/mritd.repo &lt;&lt; EOF
+[mritdrepo]
+name=Mritd Repository
+baseurl=https://rpm.mritd.me/centos/7/x86_64
+enabled=1
+gpgcheck=1
+gpgkey=https://cdn.mritd.me/keys/rpm.public.key
+EOF
+#刷新cache
+yum makecache
+#安装
+yum install -y kubelet kubectl kubernetes-cni kubeadm
+</code></pre><h3 id="3-4-初始化-master"><a href="#3-4-初始化-master" class="headerlink" title="3.4 初始化 master"></a>3.4 初始化 master</h3><p>等会有个坑，kubeadm 等相关 rpm 安装后会生成 /etc/kubernetes 目录，而 kubeadm init 时候又会检测这些目录是否存在，如果存在则停止初始化，所以要先清理一下，以下清理脚本来源于 官方文档 Tear down 部分，该脚本同样适用于初始化失败进行重置</p>
+<pre><code>systemctl stop kubelet;
+#注意: 下面这条命令会干掉所有正在运行的 docker 容器，
+#如果要进行重置操作，最好先确定当前运行的所有容器都能干掉(干掉不影响业务)，
+#否则的话最好手动删除 kubeadm 创建的相关容器(gcr.io 相关的)
+docker rm -f -v $(docker ps -q);
+find /var/lib/kubelet | xargs -n 1 findmnt -n -t tmpfs -o TARGET -T | uniq | xargs -r umount -v;
+rm -r -f /etc/kubernetes /var/lib/kubelet /var/lib/etcd;
+</code></pre><p>还有个坑，初始化以前记得一定要启动 kubelet，虽然你 systemctl status kubelet 看着他是启动失败，但是也得启动，否则绝壁卡死</p>
+<pre><code>systemctl enable kubelet
+systemctl start kubelet
+</code></pre><p>等会等会，还有坑，新版本直接 init 会提示 ebtables not found in system path 错误，所以还得先安装一下这个包在初始化</p>
+<pre><code>#安装 ebtables
+yum install -y ebtables
+</code></pre><p>最后见证奇迹的时刻</p>
+<pre><code>#初始化并指定 apiserver 监听地址
+kubeadm init --api-advertise-addresses 192.168.1.167
+</code></pre><p>完美截图如下</p>
 <p><img src="/images/kubeadm/1478154409993.png" alt="Alt text"></p>
 <p>这里再爆料一个坑，底下的 kubeadm join –token=b17964.5d8a3c14e99cf6aa 192.168.1.167 这条命令一定保存好，因为后期没法重现的，你们老大再让你添加机器的时候如果没这个你会哭的</p>
 <h3 id="3-5-加入-node"><a href="#3-5-加入-node" class="headerlink" title="3.5 加入 node"></a>3.5 加入 node</h3><p>上面所有坑大约说的差不多了，直接上命令了</p>
 <p><strong>处理主机名</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">echo &quot;192-168-1-189.node&quot; &gt; /etc/hostname </div><div class="line">echo &quot;127.0.0.1   192-168-1-189.node&quot; &gt;&gt; /etc/hosts</div><div class="line">sysctl kernel.hostname=192-168-1-189.node</div></pre></td></tr></table></figure>
-<p><strong>拉取镜像</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">images=(kube-proxy-amd64:v1.4.4 kube-discovery-amd64:1.0 kubedns-amd64:1.7 kube-scheduler-amd64:v1.4.4 kube-controller-manager-amd64:v1.4.4 kube-apiserver-amd64:v1.4.4 etcd-amd64:2.2.5 kube-dnsmasq-amd64:1.3 exechealthz-amd64:1.1 pause-amd64:3.0 kubernetes-dashboard-amd64:v1.4.1)</div><div class="line">for imageName in $&#123;images[@]&#125; ; do</div><div class="line">  docker pull mritd/$imageName</div><div class="line">  docker tag mritd/$imageName gcr.io/google_containers/$imageName</div><div class="line">  docker rmi mritd/$imageName</div><div class="line">done</div></pre></td></tr></table></figure>
-<p><strong>装 rpm</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">tee /etc/yum.repos.d/mritd.repo &lt;&lt; EOF</div><div class="line">[mritdrepo]</div><div class="line">name=Mritd Repository</div><div class="line">baseurl=https://rpm.mritd.me/centos/7/x86_64</div><div class="line">enabled=1</div><div class="line">gpgcheck=1</div><div class="line">gpgkey=https://cdn.mritd.me/keys/rpm.public.key</div><div class="line">EOF</div><div class="line">yum makecache</div><div class="line">yum install -y kubelet kubectl kubernetes-cni kubeadm ebtables</div></pre></td></tr></table></figure>
-<p><strong>清理目录(没初始化过只需要删目录)</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rm -r -f /etc/kubernetes /var/lib/kubelet /var/lib/etcd;</div></pre></td></tr></table></figure>
-<p><strong>启动 kubelet</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">systemctl enable kubelet</div><div class="line">systemctl start kubelet</div></pre></td></tr></table></figure>
-<p><strong>初始化加入集群</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubeadm join --token=b17964.5d8a3c14e99cf6aa 192.168.1.167</div></pre></td></tr></table></figure>
-<p>同样完美截图</p>
+<pre><code>echo &quot;192-168-1-189.node&quot; &gt; /etc/hostname 
+echo &quot;127.0.0.1   192-168-1-189.node&quot; &gt;&gt; /etc/hosts
+sysctl kernel.hostname=192-168-1-189.node
+</code></pre><p><strong>拉取镜像</strong></p>
+<pre><code>images=(kube-proxy-amd64:v1.4.4 kube-discovery-amd64:1.0 kubedns-amd64:1.7 kube-scheduler-amd64:v1.4.4 kube-controller-manager-amd64:v1.4.4 kube-apiserver-amd64:v1.4.4 etcd-amd64:2.2.5 kube-dnsmasq-amd64:1.3 exechealthz-amd64:1.1 pause-amd64:3.0 kubernetes-dashboard-amd64:v1.4.1)
+for imageName in ${images[@]} ; do
+  docker pull mritd/$imageName
+  docker tag mritd/$imageName gcr.io/google_containers/$imageName
+  docker rmi mritd/$imageName
+done
+</code></pre><p><strong>装 rpm</strong></p>
+<pre><code>tee /etc/yum.repos.d/mritd.repo &lt;&lt; EOF
+[mritdrepo]
+name=Mritd Repository
+baseurl=https://rpm.mritd.me/centos/7/x86_64
+enabled=1
+gpgcheck=1
+gpgkey=https://cdn.mritd.me/keys/rpm.public.key
+EOF
+yum makecache
+yum install -y kubelet kubectl kubernetes-cni kubeadm ebtables
+</code></pre><p><strong>清理目录(没初始化过只需要删目录)</strong></p>
+<pre><code>rm -r -f /etc/kubernetes /var/lib/kubelet /var/lib/etcd;
+</code></pre><p><strong>启动 kubelet</strong></p>
+<pre><code>systemctl enable kubelet
+systemctl start kubelet
+</code></pre><p><strong>初始化加入集群</strong></p>
+<pre><code>kubeadm join --token=b17964.5d8a3c14e99cf6aa 192.168.1.167
+</code></pre><p>同样完美截图</p>
 <p><img src="/images/kubeadm/1478154421337.png" alt="Alt text"></p>
 <p><img src="/images/kubeadm/1478154426189.png" alt="Alt text"></p>
 <h3 id="3-6-部署-weave-网络"><a href="#3-6-部署-weave-网络" class="headerlink" title="3.6 部署 weave 网络"></a>3.6 部署 weave 网络</h3><p>再没部署 weave 时，dns 是启动不了的，如下</p>
 <p><img src="/images/kubeadm/1478154432781.png" alt="Alt text"></p>
 <p>官方给出的命令是这样的</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create -f https://git.io/weave-kube</div></pre></td></tr></table></figure>
-<p>本着 “刨根问底挖祖坟” 的精神，先把这个 yaml 搞下来</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget https://git.io/weave-kube -O weave-kube.yaml</div></pre></td></tr></table></figure>
-<p>然后同样的套路，打开看一下镜像，利用 Docker Hub 做中转，搞下来再 load 进去，然后 create -f 就行了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">docker pull mritd/weave-kube:1.7.2</div><div class="line">docker tag mritd/weave-kube:1.7.2 weaveworks/weave-kube:1.7.2</div><div class="line">docker rmi mritd/weave-kube:1.7.2</div><div class="line">kubectl create -f weave-kube.yaml</div></pre></td></tr></table></figure>
-<p>完美截图</p>
+<pre><code>kubectl create -f https://git.io/weave-kube
+</code></pre><p>本着 “刨根问底挖祖坟” 的精神，先把这个 yaml 搞下来</p>
+<pre><code>wget https://git.io/weave-kube -O weave-kube.yaml
+</code></pre><p>然后同样的套路，打开看一下镜像，利用 Docker Hub 做中转，搞下来再 load 进去，然后 create -f 就行了</p>
+<pre><code>docker pull mritd/weave-kube:1.7.2
+docker tag mritd/weave-kube:1.7.2 weaveworks/weave-kube:1.7.2
+docker rmi mritd/weave-kube:1.7.2
+kubectl create -f weave-kube.yaml
+</code></pre><p>完美截图</p>
 <p><img src="/images/kubeadm/1478154439419.png" alt="Alt text"></p>
 <h3 id="3-7-部署-dashboard"><a href="#3-7-部署-dashboard" class="headerlink" title="3.7 部署 dashboard"></a>3.7 部署 dashboard</h3><p>dashboard 的命令也跟 weave 的一样，不过有个大坑，默认的 yaml 文件中对于 image 拉取策略的定义是 无论何时都会去拉取镜像，导致即使你 load 进去也无卵用，所以还得先把 yaml 搞下来然后改一下镜像拉取策略，最后再 create -f 即可</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml -O kubernetes-dashboard.yaml</div></pre></td></tr></table></figure>
-<p>编辑 yaml 改一下 imagePullPolicy，把 Always 改成 IfNotPresent(本地没有再去拉取) 或者 Never(从不去拉取) 即可</p>
+<pre><code>wget https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml -O kubernetes-dashboard.yaml
+</code></pre><p>编辑 yaml 改一下 imagePullPolicy，把 Always 改成 IfNotPresent(本地没有再去拉取) 或者 Never(从不去拉取) 即可</p>
 <p><img src="/images/kubeadm/1478154446474.png" alt="Alt text"></p>
 <p>最后再利用 Dokcer Hub 中转，然后创建(实际上 dashboard 已经有了 v1.4.1，我这里已经改了)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create -f kubernetes-dashboard.yaml</div></pre></td></tr></table></figure>
-<p>截图如下</p>
+<pre><code>kubectl create -f kubernetes-dashboard.yaml
+</code></pre><p>截图如下</p>
 <p><img src="/images/kubeadm/1478154451592.png" alt="Alt text"></p>
 <p>通过 describe 命令我们可以查看其暴露出的 NodePoint,然后便可访问</p>
 <p><img src="/images/kubeadm/1478154456805.png" alt="Alt text"></p>
