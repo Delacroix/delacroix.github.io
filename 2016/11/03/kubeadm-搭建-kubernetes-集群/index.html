@@ -218,109 +218,55 @@
 <p><img src="/images/kubeadm/1478154397493.png" alt="Alt text"></p>
 <p>最后根据这些版本去 github 上准备相应的 Dockerfile，在利用 Docker Hub 的自动构建 build 一下，再 pull 下来 tag 成对应的镜像名称即可</p>
 <h2 id="三-搭建集群"><a href="#三-搭建集群" class="headerlink" title="三 搭建集群"></a>三 搭建集群</h2><h3 id="3-1-主机名处理"><a href="#3-1-主机名处理" class="headerlink" title="3.1 主机名处理"></a>3.1 主机名处理</h3><p>经过亲测，节点主机名最好为 xxx.xxx 这种域名格式，否则在某些情况下，POD 中跑的程序使用域名解析时可能出现问题，所以先要处理一下主机名</p>
-<pre><code>#写入 hostname(node 节点后缀改成 .node)
-echo &quot;192-168-1-167.master&quot; &gt; /etc/hostname 
-#加入 hosts
-echo &quot;127.0.0.1   192-168-1-167.master&quot; &gt;&gt; /etc/hosts
-#不重启情况下使内核生效
-sysctl kernel.hostname=192-168-1-167.master
-#验证是否修改成功
-➜  ~ hostname
-192-168-1-167.master
-</code></pre><h3 id="3-2-load-镜像"><a href="#3-2-load-镜像" class="headerlink" title="3.2 load 镜像"></a>3.2 load 镜像</h3><p>由于本人已经在 Docker Hub 上处理好了相关镜像，所以直接 pull 下来 tag 一下即可，</p>
-<pre><code>images=(kube-proxy-amd64:v1.4.4 kube-discovery-amd64:1.0 kubedns-amd64:1.7 kube-scheduler-amd64:v1.4.4 kube-controller-manager-amd64:v1.4.4 kube-apiserver-amd64:v1.4.4 etcd-amd64:2.2.5 kube-dnsmasq-amd64:1.3 exechealthz-amd64:1.1 pause-amd64:3.0 kubernetes-dashboard-amd64:v1.4.1)
-for imageName in ${images[@]} ; do
-  docker pull mritd/$imageName
-  docker tag mritd/$imageName gcr.io/google_containers/$imageName
-  docker rmi mritd/$imageName
-done
-</code></pre><h3 id="3-3-安装-rpm"><a href="#3-3-安装-rpm" class="headerlink" title="3.3 安装 rpm"></a>3.3 安装 rpm</h3><p>rpm 获取办法上文已经提到，可以自己编译，这里我已经编译好并维护了一个 yum 源，直接yum install 即可(懒)</p>
-<pre><code>#添加 yum 源
-tee /etc/yum.repos.d/mritd.repo &lt;&lt; EOF
-[mritdrepo]
-name=Mritd Repository
-baseurl=https://rpm.mritd.me/centos/7/x86_64
-enabled=1
-gpgcheck=1
-gpgkey=https://cdn.mritd.me/keys/rpm.public.key
-EOF
-#刷新cache
-yum makecache
-#安装
-yum install -y kubelet kubectl kubernetes-cni kubeadm
-</code></pre><h3 id="3-4-初始化-master"><a href="#3-4-初始化-master" class="headerlink" title="3.4 初始化 master"></a>3.4 初始化 master</h3><p>等会有个坑，kubeadm 等相关 rpm 安装后会生成 /etc/kubernetes 目录，而 kubeadm init 时候又会检测这些目录是否存在，如果存在则停止初始化，所以要先清理一下，以下清理脚本来源于 官方文档 Tear down 部分，该脚本同样适用于初始化失败进行重置</p>
-<pre><code>systemctl stop kubelet;
-#注意: 下面这条命令会干掉所有正在运行的 docker 容器，
-#如果要进行重置操作，最好先确定当前运行的所有容器都能干掉(干掉不影响业务)，
-#否则的话最好手动删除 kubeadm 创建的相关容器(gcr.io 相关的)
-docker rm -f -v $(docker ps -q);
-find /var/lib/kubelet | xargs -n 1 findmnt -n -t tmpfs -o TARGET -T | uniq | xargs -r umount -v;
-rm -r -f /etc/kubernetes /var/lib/kubelet /var/lib/etcd;
-</code></pre><p>还有个坑，初始化以前记得一定要启动 kubelet，虽然你 systemctl status kubelet 看着他是启动失败，但是也得启动，否则绝壁卡死</p>
-<pre><code>systemctl enable kubelet
-systemctl start kubelet
-</code></pre><p>等会等会，还有坑，新版本直接 init 会提示 ebtables not found in system path 错误，所以还得先安装一下这个包在初始化</p>
-<pre><code>#安装 ebtables
-yum install -y ebtables
-</code></pre><p>最后见证奇迹的时刻</p>
-<pre><code>#初始化并指定 apiserver 监听地址
-kubeadm init --api-advertise-addresses 192.168.1.167
-</code></pre><p>完美截图如下</p>
+<figure class="highlight subunit"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">#写入 hostname(node 节点后缀改成 .node)</div><div class="line">echo "192<span class="string">-168</span><span class="string">-1</span><span class="string">-167</span>.master" &gt; /etc/hostname </div><div class="line">#加入 hosts</div><div class="line">echo "127.0.0.1   192<span class="string">-168</span><span class="string">-1</span><span class="string">-167</span>.master" &gt;&gt; /etc/hosts</div><div class="line">#不重启情况下使内核生效</div><div class="line">sysctl kernel.hostname=192<span class="string">-168</span><span class="string">-1</span><span class="string">-167</span>.master</div><div class="line">#验证是否修改成功</div><div class="line">➜  ~ hostname</div><div class="line">192<span class="string">-168</span><span class="string">-1</span><span class="string">-167</span>.master</div></pre></td></tr></table></figure>
+<h3 id="3-2-load-镜像"><a href="#3-2-load-镜像" class="headerlink" title="3.2 load 镜像"></a>3.2 load 镜像</h3><p>由于本人已经在 Docker Hub 上处理好了相关镜像，所以直接 pull 下来 tag 一下即可，</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">images=(kube-proxy-<span class="string">amd64:</span>v1<span class="number">.4</span><span class="number">.4</span> kube-discovery-<span class="string">amd64:</span><span class="number">1.0</span> kubedns-<span class="string">amd64:</span><span class="number">1.7</span> kube-scheduler-<span class="string">amd64:</span>v1<span class="number">.4</span><span class="number">.4</span> kube-controller-manager-<span class="string">amd64:</span>v1<span class="number">.4</span><span class="number">.4</span> kube-apiserver-<span class="string">amd64:</span>v1<span class="number">.4</span><span class="number">.4</span> etcd-<span class="string">amd64:</span><span class="number">2.2</span><span class="number">.5</span> kube-dnsmasq-<span class="string">amd64:</span><span class="number">1.3</span> exechealthz-<span class="string">amd64:</span><span class="number">1.1</span> pause-<span class="string">amd64:</span><span class="number">3.0</span> kubernetes-dashboard-<span class="string">amd64:</span>v1<span class="number">.4</span><span class="number">.1</span>)</div><div class="line"><span class="keyword">for</span> imageName <span class="keyword">in</span> $&#123;images[@]&#125; ; do</div><div class="line">  docker pull mritd/$imageName</div><div class="line">  docker tag mritd<span class="regexp">/$imageName gcr.io/</span>google_containers/$imageName</div><div class="line">  docker rmi mritd/$imageName</div><div class="line">done</div></pre></td></tr></table></figure>
+<h3 id="3-3-安装-rpm"><a href="#3-3-安装-rpm" class="headerlink" title="3.3 安装 rpm"></a>3.3 安装 rpm</h3><p>rpm 获取办法上文已经提到，可以自己编译，这里我已经编译好并维护了一个 yum 源，直接yum install 即可(懒)</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#添加 yum 源</span></div><div class="line">tee /etc/yum.repos.d/mritd.repo &lt;&lt; EOF</div><div class="line">[mritdrepo]</div><div class="line">name=Mritd Repository</div><div class="line">baseurl=https://rpm.mritd.me/centos/7/x86_64</div><div class="line">enabled=1</div><div class="line">gpgcheck=1</div><div class="line">gpgkey=https://cdn.mritd.me/keys/rpm.public.key</div><div class="line">EOF</div><div class="line"><span class="comment">#刷新cache</span></div><div class="line">yum makecache</div><div class="line"><span class="comment">#安装</span></div><div class="line">yum install -y kubelet kubectl kubernetes-cni kubeadm</div></pre></td></tr></table></figure>
+<h3 id="3-4-初始化-master"><a href="#3-4-初始化-master" class="headerlink" title="3.4 初始化 master"></a>3.4 初始化 master</h3><p>等会有个坑，kubeadm 等相关 rpm 安装后会生成 /etc/kubernetes 目录，而 kubeadm init 时候又会检测这些目录是否存在，如果存在则停止初始化，所以要先清理一下，以下清理脚本来源于 官方文档 Tear down 部分，该脚本同样适用于初始化失败进行重置</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">systemctl stop kubelet;</div><div class="line"><span class="comment">#注意: 下面这条命令会干掉所有正在运行的 docker 容器，</span></div><div class="line"><span class="comment">#如果要进行重置操作，最好先确定当前运行的所有容器都能干掉(干掉不影响业务)，</span></div><div class="line"><span class="comment">#否则的话最好手动删除 kubeadm 创建的相关容器(gcr.io 相关的)</span></div><div class="line">docker rm -f -v $(docker ps -q);</div><div class="line">find /var/<span class="class"><span class="keyword">lib</span>/<span class="title">kubelet</span> | <span class="title">xargs</span> -<span class="title">n</span> 1 <span class="title">findmnt</span> -<span class="title">n</span> -<span class="title">t</span> <span class="title">tmpfs</span> -<span class="title">o</span> <span class="title">TARGET</span> -<span class="title">T</span> | <span class="title">uniq</span> | <span class="title">xargs</span> -<span class="title">r</span> <span class="title">umount</span> -<span class="title">v</span>;</span></div><div class="line">rm -r -f /etc/kubernetes /var/<span class="class"><span class="keyword">lib</span>/<span class="title">kubelet</span> /<span class="title">var</span>/<span class="title">lib</span>/<span class="title">etcd</span>;</span></div></pre></td></tr></table></figure>
+<p>还有个坑，初始化以前记得一定要启动 kubelet，虽然你 systemctl status kubelet 看着他是启动失败，但是也得启动，否则绝壁卡死</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">systemctl <span class="built_in">enable</span> kubelet</div><div class="line">systemctl start kubelet</div></pre></td></tr></table></figure>
+<p>等会等会，还有坑，新版本直接 init 会提示 ebtables not found in system path 错误，所以还得先安装一下这个包在初始化</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#安装 ebtables</span></div><div class="line">yum <span class="keyword">install</span> -y ebtables</div></pre></td></tr></table></figure>
+<p>最后见证奇迹的时刻</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#初始化并指定 <span class="selector-tag">apiserver</span> 监听地址</div><div class="line"><span class="selector-tag">kubeadm</span> <span class="selector-tag">init</span> <span class="selector-tag">--api-advertise-addresses</span> 192<span class="selector-class">.168</span><span class="selector-class">.1</span><span class="selector-class">.167</span></div></pre></td></tr></table></figure>
+<p>完美截图如下</p>
 <p><img src="/images/kubeadm/1478154409993.png" alt="Alt text"></p>
 <p>这里再爆料一个坑，底下的 kubeadm join –token=b17964.5d8a3c14e99cf6aa 192.168.1.167 这条命令一定保存好，因为后期没法重现的，你们老大再让你添加机器的时候如果没这个你会哭的</p>
 <h3 id="3-5-加入-node"><a href="#3-5-加入-node" class="headerlink" title="3.5 加入 node"></a>3.5 加入 node</h3><p>上面所有坑大约说的差不多了，直接上命令了</p>
 <p><strong>处理主机名</strong></p>
-<pre><code>echo &quot;192-168-1-189.node&quot; &gt; /etc/hostname 
-echo &quot;127.0.0.1   192-168-1-189.node&quot; &gt;&gt; /etc/hosts
-sysctl kernel.hostname=192-168-1-189.node
-</code></pre><p><strong>拉取镜像</strong></p>
-<pre><code>images=(kube-proxy-amd64:v1.4.4 kube-discovery-amd64:1.0 kubedns-amd64:1.7 kube-scheduler-amd64:v1.4.4 kube-controller-manager-amd64:v1.4.4 kube-apiserver-amd64:v1.4.4 etcd-amd64:2.2.5 kube-dnsmasq-amd64:1.3 exechealthz-amd64:1.1 pause-amd64:3.0 kubernetes-dashboard-amd64:v1.4.1)
-for imageName in ${images[@]} ; do
-  docker pull mritd/$imageName
-  docker tag mritd/$imageName gcr.io/google_containers/$imageName
-  docker rmi mritd/$imageName
-done
-</code></pre><p><strong>装 rpm</strong></p>
-<pre><code>tee /etc/yum.repos.d/mritd.repo &lt;&lt; EOF
-[mritdrepo]
-name=Mritd Repository
-baseurl=https://rpm.mritd.me/centos/7/x86_64
-enabled=1
-gpgcheck=1
-gpgkey=https://cdn.mritd.me/keys/rpm.public.key
-EOF
-yum makecache
-yum install -y kubelet kubectl kubernetes-cni kubeadm ebtables
-</code></pre><p><strong>清理目录(没初始化过只需要删目录)</strong></p>
-<pre><code>rm -r -f /etc/kubernetes /var/lib/kubelet /var/lib/etcd;
-</code></pre><p><strong>启动 kubelet</strong></p>
-<pre><code>systemctl enable kubelet
-systemctl start kubelet
-</code></pre><p><strong>初始化加入集群</strong></p>
-<pre><code>kubeadm join --token=b17964.5d8a3c14e99cf6aa 192.168.1.167
-</code></pre><p>同样完美截图</p>
+<figure class="highlight subunit"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">echo "192<span class="string">-168</span><span class="string">-1</span><span class="string">-189</span>.node" &gt; /etc/hostname </div><div class="line">echo "127.0.0.1   192<span class="string">-168</span><span class="string">-1</span><span class="string">-189</span>.node" &gt;&gt; /etc/hosts</div><div class="line">sysctl kernel.hostname=192<span class="string">-168</span><span class="string">-1</span><span class="string">-189</span>.node</div></pre></td></tr></table></figure>
+<p><strong>拉取镜像</strong></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">images=(kube-proxy-<span class="string">amd64:</span>v1<span class="number">.4</span><span class="number">.4</span> kube-discovery-<span class="string">amd64:</span><span class="number">1.0</span> kubedns-<span class="string">amd64:</span><span class="number">1.7</span> kube-scheduler-<span class="string">amd64:</span>v1<span class="number">.4</span><span class="number">.4</span> kube-controller-manager-<span class="string">amd64:</span>v1<span class="number">.4</span><span class="number">.4</span> kube-apiserver-<span class="string">amd64:</span>v1<span class="number">.4</span><span class="number">.4</span> etcd-<span class="string">amd64:</span><span class="number">2.2</span><span class="number">.5</span> kube-dnsmasq-<span class="string">amd64:</span><span class="number">1.3</span> exechealthz-<span class="string">amd64:</span><span class="number">1.1</span> pause-<span class="string">amd64:</span><span class="number">3.0</span> kubernetes-dashboard-<span class="string">amd64:</span>v1<span class="number">.4</span><span class="number">.1</span>)</div><div class="line"><span class="keyword">for</span> imageName <span class="keyword">in</span> $&#123;images[@]&#125; ; do</div><div class="line">  docker pull mritd/$imageName</div><div class="line">  docker tag mritd<span class="regexp">/$imageName gcr.io/</span>google_containers/$imageName</div><div class="line">  docker rmi mritd/$imageName</div><div class="line">done</div></pre></td></tr></table></figure>
+<p><strong>装 rpm</strong></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">tee /etc/yum<span class="selector-class">.repos</span><span class="selector-class">.d</span>/mritd<span class="selector-class">.repo</span> &lt;&lt; EOF</div><div class="line">[mritdrepo]</div><div class="line">name=Mritd Repository</div><div class="line">baseurl=https:<span class="comment">//rpm.mritd.me/centos/7/x86_64</span></div><div class="line">enabled=<span class="number">1</span></div><div class="line">gpgcheck=<span class="number">1</span></div><div class="line">gpgkey=https:<span class="comment">//cdn.mritd.me/keys/rpm.public.key</span></div><div class="line">EOF</div><div class="line">yum makecache</div><div class="line">yum install -y kubelet kubectl kubernetes-cni kubeadm ebtables</div></pre></td></tr></table></figure>
+<p><strong>清理目录(没初始化过只需要删目录)</strong></p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rm -r -f /etc/kubernetes /var/<span class="class"><span class="keyword">lib</span>/<span class="title">kubelet</span> /<span class="title">var</span>/<span class="title">lib</span>/<span class="title">etcd</span>;</span></div></pre></td></tr></table></figure>
+<p><strong>启动 kubelet</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">systemctl <span class="built_in">enable</span> kubelet</div><div class="line">systemctl start kubelet</div></pre></td></tr></table></figure>
+<p><strong>初始化加入集群</strong></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubeadm join --token=b17964<span class="number">.5</span>d8a3c14e99cf6aa <span class="number">192.168</span><span class="number">.1</span><span class="number">.167</span></div></pre></td></tr></table></figure>
+<p>同样完美截图</p>
 <p><img src="/images/kubeadm/1478154421337.png" alt="Alt text"></p>
 <p><img src="/images/kubeadm/1478154426189.png" alt="Alt text"></p>
 <h3 id="3-6-部署-weave-网络"><a href="#3-6-部署-weave-网络" class="headerlink" title="3.6 部署 weave 网络"></a>3.6 部署 weave 网络</h3><p>再没部署 weave 时，dns 是启动不了的，如下</p>
 <p><img src="/images/kubeadm/1478154432781.png" alt="Alt text"></p>
 <p>官方给出的命令是这样的</p>
-<pre><code>kubectl create -f https://git.io/weave-kube
-</code></pre><p>本着 “刨根问底挖祖坟” 的精神，先把这个 yaml 搞下来</p>
-<pre><code>wget https://git.io/weave-kube -O weave-kube.yaml
-</code></pre><p>然后同样的套路，打开看一下镜像，利用 Docker Hub 做中转，搞下来再 load 进去，然后 create -f 就行了</p>
-<pre><code>docker pull mritd/weave-kube:1.7.2
-docker tag mritd/weave-kube:1.7.2 weaveworks/weave-kube:1.7.2
-docker rmi mritd/weave-kube:1.7.2
-kubectl create -f weave-kube.yaml
-</code></pre><p>完美截图</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl <span class="keyword">create</span> -f https:<span class="comment">//git.io/weave-kube</span></div></pre></td></tr></table></figure>
+<p>本着 “刨根问底挖祖坟” 的精神，先把这个 yaml 搞下来</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget <span class="string">https:</span><span class="comment">//git.io/weave-kube -O weave-kube.yaml</span></div></pre></td></tr></table></figure>
+<p>然后同样的套路，打开看一下镜像，利用 Docker Hub 做中转，搞下来再 load 进去，然后 create -f 就行了</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">docker pull mritd/weave-<span class="string">kube:</span><span class="number">1.7</span><span class="number">.2</span></div><div class="line">docker tag mritd<span class="regexp">/weave-kube:1.7.2 weaveworks/</span>weave-<span class="string">kube:</span><span class="number">1.7</span><span class="number">.2</span></div><div class="line">docker rmi mritd/weave-<span class="string">kube:</span><span class="number">1.7</span><span class="number">.2</span></div><div class="line">kubectl create -f weave-kube.yaml</div></pre></td></tr></table></figure>
+<p>完美截图</p>
 <p><img src="/images/kubeadm/1478154439419.png" alt="Alt text"></p>
 <h3 id="3-7-部署-dashboard"><a href="#3-7-部署-dashboard" class="headerlink" title="3.7 部署 dashboard"></a>3.7 部署 dashboard</h3><p>dashboard 的命令也跟 weave 的一样，不过有个大坑，默认的 yaml 文件中对于 image 拉取策略的定义是 无论何时都会去拉取镜像，导致即使你 load 进去也无卵用，所以还得先把 yaml 搞下来然后改一下镜像拉取策略，最后再 create -f 即可</p>
-<pre><code>wget https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml -O kubernetes-dashboard.yaml
-</code></pre><p>编辑 yaml 改一下 imagePullPolicy，把 Always 改成 IfNotPresent(本地没有再去拉取) 或者 Never(从不去拉取) 即可</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget https:<span class="regexp">//</span>rawgit.com<span class="regexp">/kubernetes/</span>dashboard<span class="regexp">/master/</span>src<span class="regexp">/deploy/</span>kubernetes-dashboard.yaml -O kubernetes-dashboard.yaml</div></pre></td></tr></table></figure>
+<p>编辑 yaml 改一下 imagePullPolicy，把 Always 改成 IfNotPresent(本地没有再去拉取) 或者 Never(从不去拉取) 即可</p>
 <p><img src="/images/kubeadm/1478154446474.png" alt="Alt text"></p>
 <p>最后再利用 Dokcer Hub 中转，然后创建(实际上 dashboard 已经有了 v1.4.1，我这里已经改了)</p>
-<pre><code>kubectl create -f kubernetes-dashboard.yaml
-</code></pre><p>截图如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create <span class="_">-f</span> kubernetes-dashboard.yaml</div></pre></td></tr></table></figure>
+<p>截图如下</p>
 <p><img src="/images/kubeadm/1478154451592.png" alt="Alt text"></p>
 <p>通过 describe 命令我们可以查看其暴露出的 NodePoint,然后便可访问</p>
 <p><img src="/images/kubeadm/1478154456805.png" alt="Alt text"></p>

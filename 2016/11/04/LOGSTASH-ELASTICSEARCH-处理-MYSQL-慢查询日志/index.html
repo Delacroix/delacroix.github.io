@@ -7,8 +7,7 @@
   <meta name="author" content="Delacroix">
   
   <meta name="description" content="LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志先确认慢查询日志是否开启, 然后找到日志文件的位置
-&amp;gt; show variables like &amp;#39;%slow%&amp;#39;;
-+---------------------+---------------------">
+123456789&amp;gt; show variables like &#39;%slow%&#39;;+---------------------+---------------------">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -114,189 +113,19 @@
 	  		
 
 	  <h1 id="LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志"><a href="#LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志" class="headerlink" title="LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志"></a>LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志</h1><p>先确认慢查询日志是否开启, 然后找到日志文件的位置</p>
-<pre><code>&gt; show variables like &#39;%slow%&#39;;
-+---------------------+-------------------------------------+
-| Variable_name       | Value                               |
-+---------------------+-------------------------------------+
-| log_slow_queries    | ON                                  |
-| slow_launch_time    | 2                                   |
-| slow_query_log      | ON                                  |
-| slow_query_log_file | /data/mysqllog/20000/slow-query.log |
-+---------------------+-------------------------------------+
-</code></pre><h2 id="2-慢查询日志"><a href="#2-慢查询日志" class="headerlink" title="2. 慢查询日志"></a>2. 慢查询日志</h2><p>格式基本如下, 当然, 格式如果有差异, 需要根据具体格式进行小的修改</p>
-<pre><code># Time: 160524  5:12:29
-# User@Host: user_a[xxxx] @  [10.166.140.109]
-# Query_time: 1.711086  Lock_time: 0.000040 Rows_sent: 385489  Rows_examined: 385489
-use dbname;
-SET timestamp=1464037949;
-SELECT 1 from dbname;
-</code></pre><h2 id="3-使用-logstash-采集"><a href="#3-使用-logstash-采集" class="headerlink" title="3. 使用 logstash 采集"></a>3. 使用 logstash 采集</h2><p>采集, 无非是用multiline进行多行解析<br>但是, 需要处理的<br>第一, 去除没用的信息<br>第二, 慢查询 sql, 是会反复出现的, 所以, 执行次数成了一个很重要的指标. 我们要做的, 就是降噪(将参数去掉, 涉及带引号的内容 + 数字), 将参数类信息过滤掉, 留下核心的 sql, 然后计算出一个 hash, 这样就可以在查询, 根据这个字段进行聚合. 这里用到了 mutate 以及 checksum</p>
-<pre><code># calculate unique hash
-  mutate {
-    add_field =&gt; {&quot;sql_for_hash&quot; =&gt; &quot;%{sql}&quot;}
-  }
-  mutate {
-    gsub =&gt; [
-        &quot;sql_for_hash&quot;, &quot;&#39;.+?&#39;&quot;, &quot;&quot;,
-        &quot;sql_for_hash&quot;, &quot;-?\d*\.{0,1}\d+&quot;, &quot;&quot;
-    ]
-  }
-  checksum {
-    algorithm =&gt; &quot;md5&quot;
-    keys =&gt; [&quot;sql_for_hash&quot;]
-  }
-</code></pre><p>最后算出来的 md5, 放入了logstash_checksum<br>完整的 logstash 配置文件 (具体使用可能需要根据自身日志格式做些小调整) 注意, 里面的 patternALLWORD [\s\S]*</p>
-<pre><code>input {
-  file {
-    path =&gt; [&quot;/data/mysqllog/20000/slow-query.log&quot;]
-    sincedb_path =&gt; &quot;/data/LogNew/logstash/sincedb/mysql.sincedb&quot;
-    type =&gt; &quot;mysql-slow-log&quot;
-    add_field =&gt; [&quot;env&quot;, &quot;PRODUCT&quot;]
-    codec =&gt; multiline {
-      pattern =&gt; &quot;^# User@Host:&quot;
-      negate =&gt; true
-      what =&gt; previous
-    }
-  }}filter {
-  grok {
-    # User@Host: logstash[logstash] @ localhost [127.0.0.1]
-    # User@Host: logstash[logstash] @  [127.0.0.1]
-    match =&gt; [ &quot;message&quot;, &quot;^# User@Host: %{ALLWORD:user}\[%{ALLWAORD}\] @ %{ALLWORD:dbhost}? \[%{IP:ip}\]&quot; ]
-  }
-  grok {
-    # Query_time: 102.413328  Lock_time: 0.000167 Rows_sent: 0  Rows_examined: 1970
-    match =&gt; [ &quot;message&quot;, &quot;^# Query_time: %{NUMBER:duration:float}%{SPACE}Lock_time: %{NUMBER:lock_wait:float}%{SPACE}Rows_sent: %{NUMBER:results:int}%{SPACE}Rows_examined:%{SPACE}%{NUMBER:scanned:int}%{ALLWORD:sql}&quot;]
-  }
-    // remove useless data
-  mutate {
-    gsub =&gt; [
-        &quot;sql&quot;, &quot;\nSET timestamp=\d+?;\n&quot;, &quot;&quot;,
-        &quot;sql&quot;, &quot;\nuse [a-zA-Z0-9\-\_]+?;&quot;, &quot;&quot;,
-        &quot;sql&quot;, &quot;\n# Time: \d+\s+\d+:\d+:\d+&quot;, &quot;&quot;,
-        &quot;sql&quot;, &quot;\n/usr/local/mysql/bin/mysqld.+$&quot;, &quot;&quot;,
-        &quot;sql&quot;, &quot;\nTcp port:.+$&quot;, &quot;&quot;,
-        &quot;sql&quot;, &quot;\nTime .+$&quot;, &quot;&quot;
-    ]
-  }
-    # Capture the time the query happened
-  grok {
-    match =&gt; [ &quot;message&quot;, &quot;^SET timestamp=%{NUMBER:timestamp};&quot; ]
-  }
-  date {
-    match =&gt; [ &quot;timestamp&quot;, &quot;UNIX&quot; ]
-  }
-    # calculate unique hash
-  mutate {
-    add_field =&gt; {&quot;sql_for_hash&quot; =&gt; &quot;%{sql}&quot;}
-  }
-  mutate {
-    gsub =&gt; [
-        &quot;sql_for_hash&quot;, &quot;&#39;.+?&#39;&quot;, &quot;&quot;,
-        &quot;sql_for_hash&quot;, &quot;-?\d*\.{0,1}\d+&quot;, &quot;&quot;
-    ]
-  }
-  checksum {
-    algorithm =&gt; &quot;md5&quot;
-    keys =&gt; [&quot;sql_for_hash&quot;]
-  }
-    # Drop the captured timestamp field since it has been moved to the time of the event
-  mutate {
-    # TODO: remove the message field
-    remove_field =&gt; [&quot;timestamp&quot;, &quot;message&quot;, &quot;sql_for_hash&quot;]
-  }}output {
-    #stdout{
-    #    codec =&gt; rubydebug
-    #}
-    #if (&quot;_grokparsefailure&quot; not in [tags]) {
-    #    stdout{
-    #        codec =&gt; rubydebug
-    #    }
-    #}
-    if (&quot;_grokparsefailure&quot; not in [tags]) {
-        elasticsearch {
-          hosts =&gt; [&quot;192.168.1.1:9200&quot;]
-          index =&gt; &quot;logstash-slowlog&quot;
-        }
-    }}
-采集进去的内容
-    {
-           &quot;@timestamp&quot; =&gt; &quot;2016-05-23T21:12:59.000Z&quot;,
-             &quot;@version&quot; =&gt; &quot;1&quot;,
-                 &quot;tags&quot; =&gt; [
-        [0] &quot;multiline&quot;
-    ],
-                 &quot;path&quot; =&gt; &quot;/Users/ken/tx/elk/logstash/data/slow_sql.log&quot;,
-                 &quot;host&quot; =&gt; &quot;Luna-mac-2.local&quot;,
-                 &quot;type&quot; =&gt; &quot;mysql-slow&quot;,
-                  &quot;env&quot; =&gt; &quot;PRODUCT&quot;,
-                 &quot;user&quot; =&gt; &quot;dba_bak_all_sel&quot;,
-                   &quot;ip&quot; =&gt; &quot;10.166.140.109&quot;,
-             &quot;duration&quot; =&gt; 28.812601,
-            &quot;lock_wait&quot; =&gt; 0.000132,
-              &quot;results&quot; =&gt; 749414,
-              &quot;scanned&quot; =&gt; 749414,
-                  &quot;sql&quot; =&gt; &quot;SELECT /*!40001 SQL_NO_CACHE */ * FROM `xxxxx`;&quot;,
-    &quot;logstash_checksum&quot; =&gt; &quot;3e3ccb89ee792de882a57e2bef6c5371&quot;
-}
-</code></pre><h2 id="4-写查询"><a href="#4-写查询" class="headerlink" title="4. 写查询"></a>4. 写查询</h2><p>查询, 我们需要按logstash_checksum进行聚合, 然后按照次数由多到少降序展示, 同时, 每个logstash_checksum需要有一条具体的 sql 进行展示<br>通过 es 的 Top hits Aggregation 可以完美地解决这个查询需求<br>查询的 query</p>
-<pre><code>    body = {
-    &quot;from&quot;: 0,
-    &quot;size&quot;: 0,
-    &quot;query&quot;: {
-        &quot;filtered&quot;: {
-            &quot;query&quot;: {
-                &quot;match&quot;: {
-                    &quot;user&quot;: &quot;test&quot;
-                }
-            },
-            &quot;filter&quot;: {
-                &quot;range&quot;: {
-                    &quot;@timestamp&quot;: {
-                        &quot;gte&quot;: &quot;now-1d&quot;,
-                        &quot;lte&quot;: &quot;now&quot;
-                    }
-                }
-            }
-        }
-    },
-    &quot;aggs&quot;: {
-        &quot;top_errors&quot;: {
-            &quot;terms&quot;: {
-                &quot;field&quot;: &quot;logstash_checksum&quot;,
-                &quot;size&quot;: 20
-            },
-            &quot;aggs&quot;: {
-                &quot;top_error_hits&quot;: {
-                    &quot;top_hits&quot;: {
-                        &quot;sort&quot;: [
-                            {
-                                &quot;@timestamp&quot;:{
-                                    &quot;order&quot;: &quot;desc&quot;
-                                }
-                            }
-                        ],
-                        &quot;_source&quot;: {
-                            &quot;include&quot;: [
-                               &quot;user&quot; , &quot;sql&quot;, &quot;logstash_checksum&quot;, &quot;@timestamp&quot;, &quot;duration&quot;, &quot;lock_wait&quot;, &quot;results&quot;, &quot;scanned&quot;
-                            ]
-                        },
-                        &quot;size&quot; : 1
-                    }
-                }
-            }
-        }
-    }
-}
-</code></pre><p>跟这个写法相关的几个参考链接: Terms Aggregation / Elasticsearch filter document group by field</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="section">&gt; show variables like '%slow%';</span></div><div class="line">+---------------------+-------------------------------------+</div><div class="line"><span class="section">| Variable_name       | Value                               |</span></div><div class="line">+---------------------+-------------------------------------+</div><div class="line">| log<span class="emphasis">_slow_</span>queries    | ON                                  |</div><div class="line">| slow<span class="emphasis">_launch_</span>time    | 2                                   |</div><div class="line">| slow<span class="emphasis">_query_</span>log      | ON                                  |</div><div class="line"><span class="section">| slow_query_log_file | /data/mysqllog/20000/slow-query.log |</span></div><div class="line">+---------------------+-------------------------------------+</div></pre></td></tr></table></figure>
+<h2 id="2-慢查询日志"><a href="#2-慢查询日志" class="headerlink" title="2. 慢查询日志"></a>2. 慢查询日志</h2><p>格式基本如下, 当然, 格式如果有差异, 需要根据具体格式进行小的修改</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Time: 160524  5:12:29</span></div><div class="line"><span class="comment"># User@Host: user_a[xxxx] @  [10.166.140.109]</span></div><div class="line"><span class="comment"># Query_time: 1.711086  Lock_time: 0.000040 Rows_sent: 385489  Rows_examined: 385489</span></div><div class="line">use dbname<span class="comment">;</span></div><div class="line">SET timestamp=<span class="number">1464037949</span><span class="comment">;</span></div><div class="line">SELECT <span class="number">1</span> from dbname<span class="comment">;</span></div></pre></td></tr></table></figure>
+<h2 id="3-使用-logstash-采集"><a href="#3-使用-logstash-采集" class="headerlink" title="3. 使用 logstash 采集"></a>3. 使用 logstash 采集</h2><p>采集, 无非是用multiline进行多行解析<br>但是, 需要处理的<br>第一, 去除没用的信息<br>第二, 慢查询 sql, 是会反复出现的, 所以, 执行次数成了一个很重要的指标. 我们要做的, 就是降噪(将参数去掉, 涉及带引号的内容 + 数字), 将参数类信息过滤掉, 留下核心的 sql, 然后计算出一个 hash, 这样就可以在查询, 根据这个字段进行聚合. 这里用到了 mutate 以及 checksum</p>
+<figure class="highlight puppet"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># calculate unique hash</span></div><div class="line">  <span class="keyword">mutate</span> &#123;</div><div class="line">    <span class="attr">add_field</span> =&gt; &#123;<span class="string">"sql_for_hash"</span> =&gt; <span class="string">"%&#123;sql&#125;"</span>&#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">mutate</span> &#123;</div><div class="line">    <span class="attr">gsub</span> =&gt; [</div><div class="line">        <span class="string">"sql_for_hash"</span>, <span class="string">"'.+?'"</span>, <span class="string">""</span>,</div><div class="line">        <span class="string">"sql_for_hash"</span>, <span class="string">"-?\d*\.&#123;0,1&#125;\d+"</span>, <span class="string">""</span></div><div class="line">    ]</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">checksum</span> &#123;</div><div class="line">    <span class="attr">algorithm</span> =&gt; <span class="string">"md5"</span></div><div class="line">    <span class="attr">keys</span> =&gt; [<span class="string">"sql_for_hash"</span>]</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>最后算出来的 md5, 放入了logstash_checksum<br>完整的 logstash 配置文件 (具体使用可能需要根据自身日志格式做些小调整) 注意, 里面的 patternALLWORD [\s\S]*</p>
+<figure class="highlight puppet"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">input</span> &#123;</div><div class="line">  file &#123;</div><div class="line">    <span class="attr">path</span> =&gt; [<span class="string">"/data/mysqllog/20000/slow-query.log"</span>]</div><div class="line">    <span class="attr">sincedb_path</span> =&gt; <span class="string">"/data/LogNew/logstash/sincedb/mysql.sincedb"</span></div><div class="line">    <span class="attr">type</span> =&gt; <span class="string">"mysql-slow-log"</span></div><div class="line">    <span class="attr">add_field</span> =&gt; [<span class="string">"env"</span>, <span class="string">"PRODUCT"</span>]</div><div class="line">    <span class="attr">codec</span> =&gt; multiline &#123;</div><div class="line">      <span class="attr">pattern</span> =&gt; <span class="string">"^# User@Host:"</span></div><div class="line">      <span class="attr">negate</span> =&gt; <span class="keyword">true</span></div><div class="line">      <span class="attr">what</span> =&gt; previous</div><div class="line">    &#125;</div><div class="line">  &#125;&#125;<span class="keyword">filter</span> &#123;</div><div class="line">  grok &#123;</div><div class="line">    <span class="comment"># User@Host: logstash[logstash] @ localhost [127.0.0.1]</span></div><div class="line">    <span class="comment"># User@Host: logstash[logstash] @  [127.0.0.1]</span></div><div class="line">    <span class="attr">match</span> =&gt; [ <span class="string">"message"</span>, <span class="string">"^# User@Host: %&#123;ALLWORD:user&#125;\[%&#123;ALLWAORD&#125;\] @ %&#123;ALLWORD:dbhost&#125;? \[%&#123;IP:ip&#125;\]"</span> ]</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">grok</span> &#123;</div><div class="line">    <span class="comment"># Query_time: 102.413328  Lock_time: 0.000167 Rows_sent: 0  Rows_examined: 1970</span></div><div class="line">    <span class="attr">match</span> =&gt; [ <span class="string">"message"</span>, <span class="string">"^# Query_time: %&#123;NUMBER:duration:float&#125;%&#123;SPACE&#125;Lock_time: %&#123;NUMBER:lock_wait:float&#125;%&#123;SPACE&#125;Rows_sent: %&#123;NUMBER:results:int&#125;%&#123;SPACE&#125;Rows_examined:%&#123;SPACE&#125;%&#123;NUMBER:scanned:int&#125;%&#123;ALLWORD:sql&#125;"</span>]</div><div class="line">  &#125;</div><div class="line">	// remove useless data</div><div class="line">  <span class="keyword">mutate</span> &#123;</div><div class="line">    <span class="attr">gsub</span> =&gt; [</div><div class="line">        <span class="string">"sql"</span>, <span class="string">"\nSET timestamp=\d+?;\n"</span>, <span class="string">""</span>,</div><div class="line">        <span class="string">"sql"</span>, <span class="string">"\nuse [a-zA-Z0-9\-\_]+?;"</span>, <span class="string">""</span>,</div><div class="line">        <span class="string">"sql"</span>, <span class="string">"\n# Time: \d+\s+\d+:\d+:\d+"</span>, <span class="string">""</span>,</div><div class="line">        <span class="string">"sql"</span>, <span class="string">"\n/usr/local/mysql/bin/mysqld.+$"</span>, <span class="string">""</span>,</div><div class="line">        <span class="string">"sql"</span>, <span class="string">"\nTcp port:.+$"</span>, <span class="string">""</span>,</div><div class="line">        <span class="string">"sql"</span>, <span class="string">"\nTime .+$"</span>, <span class="string">""</span></div><div class="line">    ]</div><div class="line">  &#125;</div><div class="line">	# Capture the time the query happened</div><div class="line">  <span class="keyword">grok</span> &#123;</div><div class="line">    <span class="attr">match</span> =&gt; [ <span class="string">"message"</span>, <span class="string">"^SET timestamp=%&#123;NUMBER:timestamp&#125;;"</span> ]</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">date</span> &#123;</div><div class="line">    <span class="attr">match</span> =&gt; [ <span class="string">"timestamp"</span>, <span class="string">"UNIX"</span> ]</div><div class="line">  &#125;</div><div class="line">	# calculate unique hash</div><div class="line">  <span class="keyword">mutate</span> &#123;</div><div class="line">    <span class="attr">add_field</span> =&gt; &#123;<span class="string">"sql_for_hash"</span> =&gt; <span class="string">"%&#123;sql&#125;"</span>&#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">mutate</span> &#123;</div><div class="line">    <span class="attr">gsub</span> =&gt; [</div><div class="line">        <span class="string">"sql_for_hash"</span>, <span class="string">"'.+?'"</span>, <span class="string">""</span>,</div><div class="line">        <span class="string">"sql_for_hash"</span>, <span class="string">"-?\d*\.&#123;0,1&#125;\d+"</span>, <span class="string">""</span></div><div class="line">    ]</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">checksum</span> &#123;</div><div class="line">    <span class="attr">algorithm</span> =&gt; <span class="string">"md5"</span></div><div class="line">    <span class="attr">keys</span> =&gt; [<span class="string">"sql_for_hash"</span>]</div><div class="line">  &#125;</div><div class="line">	# Drop the captured timestamp field since it has been moved to the time of the event</div><div class="line">  <span class="keyword">mutate</span> &#123;</div><div class="line">    <span class="comment"># <span class="doctag">TODO:</span> remove the message field</span></div><div class="line">    <span class="attr">remove_field</span> =&gt; [<span class="string">"timestamp"</span>, <span class="string">"message"</span>, <span class="string">"sql_for_hash"</span>]</div><div class="line">  &#125;&#125;<span class="keyword">output</span> &#123;</div><div class="line">    <span class="comment">#stdout&#123;</span></div><div class="line">    <span class="comment">#    codec =&gt; rubydebug</span></div><div class="line">    <span class="comment">#&#125;</span></div><div class="line">    <span class="comment">#if ("_grokparsefailure" not in [tags]) &#123;</span></div><div class="line">    <span class="comment">#    stdout&#123;</span></div><div class="line">    <span class="comment">#        codec =&gt; rubydebug</span></div><div class="line">    <span class="comment">#    &#125;</span></div><div class="line">    <span class="comment">#&#125;</span></div><div class="line">    <span class="keyword">if</span> (<span class="string">"_grokparsefailure"</span> not <span class="keyword">in</span> [tags]) &#123;</div><div class="line">        elasticsearch &#123;</div><div class="line">          <span class="attr">hosts</span> =&gt; [<span class="string">"192.168.1.1:9200"</span>]</div><div class="line">          <span class="attr">index</span> =&gt; <span class="string">"logstash-slowlog"</span></div><div class="line">        &#125;</div><div class="line">    &#125;&#125;</div><div class="line">采集进去的内容</div><div class="line">	&#123;</div><div class="line">           <span class="string">"@timestamp"</span> =&gt; <span class="string">"2016-05-23T21:12:59.000Z"</span>,</div><div class="line">             <span class="string">"@version"</span> =&gt; <span class="string">"1"</span>,</div><div class="line">                 <span class="string">"tags"</span> =&gt; [</div><div class="line">        [0] <span class="string">"multiline"</span></div><div class="line">    ],</div><div class="line">                 <span class="string">"path"</span> =&gt; <span class="string">"/Users/ken/tx/elk/logstash/data/slow_sql.log"</span>,</div><div class="line">                 <span class="string">"host"</span> =&gt; <span class="string">"Luna-mac-2.local"</span>,</div><div class="line">                 <span class="string">"type"</span> =&gt; <span class="string">"mysql-slow"</span>,</div><div class="line">                  <span class="string">"env"</span> =&gt; <span class="string">"PRODUCT"</span>,</div><div class="line">                 <span class="string">"user"</span> =&gt; <span class="string">"dba_bak_all_sel"</span>,</div><div class="line">                   <span class="string">"ip"</span> =&gt; <span class="string">"10.166.140.109"</span>,</div><div class="line">             <span class="string">"duration"</span> =&gt; 28.812601,</div><div class="line">            <span class="string">"lock_wait"</span> =&gt; 0.000132,</div><div class="line">              <span class="string">"results"</span> =&gt; 749414,</div><div class="line">              <span class="string">"scanned"</span> =&gt; 749414,</div><div class="line">                  <span class="string">"sql"</span> =&gt; <span class="string">"SELECT /*!40001 SQL_NO_CACHE */ * FROM `xxxxx`;"</span>,</div><div class="line">    <span class="string">"logstash_checksum"</span> =&gt; <span class="string">"3e3ccb89ee792de882a57e2bef6c5371"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="4-写查询"><a href="#4-写查询" class="headerlink" title="4. 写查询"></a>4. 写查询</h2><p>查询, 我们需要按logstash_checksum进行聚合, 然后按照次数由多到少降序展示, 同时, 每个logstash_checksum需要有一条具体的 sql 进行展示<br>通过 es 的 Top hits Aggregation 可以完美地解决这个查询需求<br>查询的 query</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">	body = &#123;</div><div class="line">    <span class="string">"from"</span>: <span class="number">0</span>,</div><div class="line">    <span class="string">"size"</span>: <span class="number">0</span>,</div><div class="line">    <span class="string">"query"</span>: &#123;</div><div class="line">        <span class="string">"filtered"</span>: &#123;</div><div class="line">            <span class="string">"query"</span>: &#123;</div><div class="line">                <span class="string">"match"</span>: &#123;</div><div class="line">                    <span class="string">"user"</span>: <span class="string">"test"</span></div><div class="line">                &#125;</div><div class="line">            &#125;,</div><div class="line">            <span class="string">"filter"</span>: &#123;</div><div class="line">                <span class="string">"range"</span>: &#123;</div><div class="line">                    <span class="string">"@timestamp"</span>: &#123;</div><div class="line">                        <span class="string">"gte"</span>: <span class="string">"now-1d"</span>,</div><div class="line">                        <span class="string">"lte"</span>: <span class="string">"now"</span></div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;,</div><div class="line">    <span class="string">"aggs"</span>: &#123;</div><div class="line">        <span class="string">"top_errors"</span>: &#123;</div><div class="line">            <span class="string">"terms"</span>: &#123;</div><div class="line">                <span class="string">"field"</span>: <span class="string">"logstash_checksum"</span>,</div><div class="line">                <span class="string">"size"</span>: <span class="number">20</span></div><div class="line">            &#125;,</div><div class="line">            <span class="string">"aggs"</span>: &#123;</div><div class="line">                <span class="string">"top_error_hits"</span>: &#123;</div><div class="line">                    <span class="string">"top_hits"</span>: &#123;</div><div class="line">                        <span class="string">"sort"</span>: [</div><div class="line">                            &#123;</div><div class="line">                                <span class="string">"@timestamp"</span>:&#123;</div><div class="line">                                    <span class="string">"order"</span>: <span class="string">"desc"</span></div><div class="line">                                &#125;</div><div class="line">                            &#125;</div><div class="line">                        ],</div><div class="line">                        <span class="string">"_source"</span>: &#123;</div><div class="line">                            <span class="string">"include"</span>: [</div><div class="line">                               <span class="string">"user"</span> , <span class="string">"sql"</span>, <span class="string">"logstash_checksum"</span>, <span class="string">"@timestamp"</span>, <span class="string">"duration"</span>, <span class="string">"lock_wait"</span>, <span class="string">"results"</span>, <span class="string">"scanned"</span></div><div class="line">                            ]</div><div class="line">                        &#125;,</div><div class="line">                        <span class="string">"size"</span> : <span class="number">1</span></div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>跟这个写法相关的几个参考链接: Terms Aggregation / Elasticsearch filter document group by field</p>
 <h2 id="5-渲染页面"><a href="#5-渲染页面" class="headerlink" title="5. 渲染页面"></a>5. 渲染页面</h2><p>python 的后台, 使用sqlparse包, 将 sql 进行格式化 (换行 / 缩进 / 大小写), 再往前端传. sqlparse</p>
-<pre><code>&gt;&gt;&gt; sql = &#39;select * from foo where id in (select id from bar);&#39;
-&gt;&gt;&gt; print sqlparse.format(sql, reindent=True, keyword_case=&#39;upper&#39;)
-SELECT *
-FROM foo
-WHERE id IN
-  (SELECT id
-   FROM bar);
-</code></pre>	  
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; sql = '<span class="built_in">select</span> * from foo <span class="built_in">where</span> id in (<span class="built_in">select</span> id from <span class="built_in">bar</span>);'</div><div class="line">&gt;&gt;&gt; <span class="keyword">print</span> sqlparse.<span class="keyword">format</span>(sql, reindent=True, keyword_case='<span class="built_in">upper</span>')</div><div class="line"><span class="built_in">SELECT</span> *</div><div class="line">FROM foo</div><div class="line"><span class="built_in">WHERE</span> id IN</div><div class="line">  (<span class="built_in">SELECT</span> id</div><div class="line">   FROM <span class="built_in">bar</span>);</div></pre></td></tr></table></figure>
+	  
 	</div>
 
 	<div>
