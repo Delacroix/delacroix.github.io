@@ -10,7 +10,8 @@
 本文在分析服务器集群实现虚拟网络服务的相关技术上，详细描述了LVS集群中实现的三种IP负载均衡技术（VS/NAT、VS/TUN和VS/DR）的工作原理，以及它们的优缺点。
 
 
-1 前言在前面文章中，讲述了可伸缩网络服务的几种结构，它们都需要一个前端的负载调度器（">
+1 前言在前面文章中，讲述了可伸缩网络服务的几种结构，它们都需要一个前端的负载调度器（或者多个进行主从备份）。我们先分析实现虚拟网络服务的主要技术，指出 IP负载均衡技术是在负载调度器的实现技术中效率最高的。在已有的IP负载均衡技术中，主要有通过网络地址转换（Network Address Translation）将一组服务器构成一个高性能的、高可用的虚拟服务器，我们称之为VS/NAT技术（Virtual Server via Network Address Translation）。在分析VS/NAT的缺点和网络服务的非对称性的基础上，我们提出了通过IP隧道实现虚拟服务器的方法VS/TUN （Virtual Server via IP Tunneling），和通过直接路由实现虚拟服务器的方法VS/DR（Virtual Server via Direct Routing），它们可以极大地提高系统的伸缩性。VS/NAT、VS/TUN和VS/DR技术是LVS集群中实现的三种IP负载均衡技术，我们将在文 章中详细描述它们的工作原理和各自的优缺点。
+在以下描述中，我们称客户的socket和服务器的socket之间的数据通讯为连接，无论它们是使用TCP还是UDP协议。下面简述当前用服务器集群实现高可伸缩、高可用网络服务的几种负载调度方法，并列举几个在这方面有代表性的研究项目。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -121,6 +122,7 @@
 <hr>
 <h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><p>在前面文章中，讲述了可伸缩网络服务的几种结构，它们都需要一个前端的负载调度器（或者多个进行主从备份）。我们先分析实现虚拟网络服务的主要技术，指出 IP负载均衡技术是在负载调度器的实现技术中效率最高的。在已有的IP负载均衡技术中，主要有通过网络地址转换（Network Address Translation）将一组服务器构成一个高性能的、高可用的虚拟服务器，我们称之为VS/NAT技术（Virtual Server via Network Address Translation）。在分析VS/NAT的缺点和网络服务的非对称性的基础上，我们提出了通过IP隧道实现虚拟服务器的方法VS/TUN （Virtual Server via IP Tunneling），和通过直接路由实现虚拟服务器的方法VS/DR（Virtual Server via Direct Routing），它们可以极大地提高系统的伸缩性。VS/NAT、VS/TUN和VS/DR技术是LVS集群中实现的三种IP负载均衡技术，我们将在文 章中详细描述它们的工作原理和各自的优缺点。</p>
 <p>在以下描述中，我们称客户的socket和服务器的socket之间的数据通讯为连接，无论它们是使用TCP还是UDP协议。下面简述当前用服务器集群实现高可伸缩、高可用网络服务的几种负载调度方法，并列举几个在这方面有代表性的研究项目。</p>
+<a id="more"></a>
 <h2 id="2-实现虚拟服务的相关方法"><a href="#2-实现虚拟服务的相关方法" class="headerlink" title="2 实现虚拟服务的相关方法"></a>2 实现虚拟服务的相关方法</h2><p>在网络服务中，一端是客户程序，另一端是服务程序，在中间可能有代理程序。由此看来，可以在不同的层次上实现多台服务器的负载均衡。用集群解决网络服务性能问题的现有方法主要分为以下四类。</p>
 <h3 id="2-1-基于RR-DNS的解决方法"><a href="#2-1-基于RR-DNS的解决方法" class="headerlink" title="2.1 基于RR-DNS的解决方法"></a>2.1 基于RR-DNS的解决方法</h3><p>NCSA的可伸缩的WEB服务器系统就是最早基于RR-DNS（Round-Robin Domain Name System）的原型系统[1,2]。它的结构和工作流程如下图所示：<br><img src="/images/1478135814491.png" alt="&quot;图1：基于RR-DNS的可伸缩WEB服务器&quot;|center"></p>
 <p>有一组WEB服务器，他们通过分布式文件系统AFS(Andrew File System)来共享所有的HTML文档。这组服务器拥有相同的域名（如www.ncsa.uiuc.edu），当用户按照这个域名访问时, RR-DNS服务器会把域名轮流解析到这组服务器的不同IP地址，从而将访问负载分到各台服务器上。</p>
@@ -395,7 +397,7 @@
     <ul id="categorys" class="tag_box list-unstyled collapse in">
           
   <li>
-    <li><a href="/categories/Network/">Network<span>1</span></a></li>
+    <li><a href="/categories/Network/">Network<span>2</span></a></li>
   </li>
 
     </ul>

@@ -4,9 +4,39 @@
   
     
     <entry>
+      <title><![CDATA[OSPF的基本原理与实现]]></title>
+      <url>http://yoursite.com/2016/11/04/OSPF%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/</url>
+      <content type="html"><![CDATA[<h1 id="OSPF的基本原理与实现"><a href="#OSPF的基本原理与实现" class="headerlink" title="OSPF的基本原理与实现"></a>OSPF的基本原理与实现</h1><p>OSPF（Open Shortest Path First，开放最短路径优先）是由IETF开发路径选择协议。<br>OSPF是开放的链路状态路由协议。<br>OSPFv2应用于IPv4中，由RFC2328规范。</p>
+<h2 id="OSPF的特征："><a href="#OSPF的特征：" class="headerlink" title="OSPF的特征："></a>OSPF的特征：</h2><ol>
+<li>收敛快速；</li>
+<li>支持支持大规模的网络；</li>
+<li>使用Area的概念；</li>
+<li>Classless（无类）路由协议。支持VLSM、CIDR、不连续子网；</li>
+<li>支持无大小限制、任意的度量值；</li>
+<li>支持多条等价路径的负载匀衡；</li>
+<li>使用保留的组播地址（224.0.0.5和224.0.0.6）；</li>
+<li>支持更安全的路由选择认证；</li>
+<li>使用可以跟踪外部路由的路由标记；</li>
+</ol>
+<a id="more"></a>
+<h2 id="OSPF基本的工作过程："><a href="#OSPF基本的工作过程：" class="headerlink" title="OSPF基本的工作过程："></a>OSPF基本的工作过程：</h2><ol>
+<li>Neighbor（邻居）<br>宣告OSPF的路由器从所有启动0SPF协议的接口上发出Hello数据包。如果两台路由器共享一条公共数据链路,并且能够相互成功协商它们各自Hello数据包中所指定的某些参数,那么它们就成为了邻居(Neighbor)。</li>
+<li>Adjacency（邻接）<br>可以想象成为一条点到点的虚链路,它是在一些邻居路由器之间构成的。OSPF协议定义了一些网络类型和一些路由器类型的邻接关系。邻接关系的建立是由交换Hello信息的路由器类型和交换Hello信息的网络类型决定的。</li>
+<li>LSA（Link State Advertisement，链路状态通告）<br>每一台路由器都会在所有形成邻接关系的邻居之间发送链路状态通告(Link State Advertisement，链路状态通告)。LSA描述了路由器所有的链路、接口、路由器的邻居以及链路状态信息。这些链路可以是到一个末梢网络(stub network,是指没有和其他路由器相连的网络)的链路、到其他OSPF路由器的链路、到其他区域网络的链路,或是到外部网络(从其他的路由选择进程学习到的网络)的链路。由于这些链路状态信息的多样性,OSPF协议定义了许多LSA类型。</li>
+<li>LSDB（Link State Database，链路状态数据库）<br>每一台收到从邻居路由器发出的LSA的路由器都会把这些LSA记录在它的LSDB（Link State Database，链路状态数据库）当中,并且发送一份LSA的拷贝给该路由器的其他所有邻居。</li>
+<li>Full（完全邻接）<br>通过LSA泛洪扩散到整个区域,所有的路由器都会形成同样的链路状态数据库。</li>
+<li>SPF（Short Path First，最短路径优先）<br>当这些邻接的OSPF路由器的数据库完全相同时,每—台路由器都将以其自身为根,使用SPF算法来计算一个无环路的拓扑图,以描述它所知道的到达每一个目的地的最短路径(最小的路径代价)。这个拓扑图就是SPF算法树。</li>
+<li>IP Routing Table（IP路由表）<br>每一台路由器都将从SPF算法树中构建出自己的路由表。</li>
+</ol>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[常用Centos命令]]></title>
       <url>http://yoursite.com/2016/11/04/%E5%B8%B8%E7%94%A8Centos%E5%91%BD%E4%BB%A4/</url>
-      <content type="html"><![CDATA[<h4 id="安装方式："><a href="#安装方式：" class="headerlink" title="安装方式："></a>安装方式：</h4><p><strong>• yum安装[需联网]</strong><br><code>yum install vim</code> [yum方式安装vim软件及相关依赖包，如有更新包，则提示是否更新]<br><code>yum search vim</code> [yum方式搜索vim软件是否存在]<br><code>yum list |grep vim</code> [yum方式列出vim安装状态、版本及包全名]<br><strong>• rpm安装</strong><br><code>rpm -ivh vim-minimal.x86_64.rpm</code> [rpm方式安装vim软件，如差依赖包，会有提示]<br><code>rpm -qa |grep vim</code> [查询系统是否安装vim软件，有则显示包全名及版本号]<br><code>rpm -ql yum</code> [列出yum软件所安装的文件]<br><strong>• 源码安装[常规安装方式]</strong><br><code>./configure</code> 配置源码包相关安装 –help 打印帮助文档<br><code>make</code> 编译代码<br><code>make install</code> 安装软件及输出安装信息</p>
+      <content type="html"><![CDATA[<h4 id="安装方式："><a href="#安装方式：" class="headerlink" title="安装方式："></a>安装方式：</h4><p><strong>• yum安装[需联网]</strong><br><code>yum install vim</code> [yum方式安装vim软件及相关依赖包，如有更新包，则提示是否更新]<br><code>yum search vim</code> [yum方式搜索vim软件是否存在]<br><code>yum list |grep vim</code> [yum方式列出vim安装状态、版本及包全名]</p>
+<a id="more"></a>
+<p><strong>• rpm安装</strong><br><code>rpm -ivh vim-minimal.x86_64.rpm</code> [rpm方式安装vim软件，如差依赖包，会有提示]<br><code>rpm -qa |grep vim</code> [查询系统是否安装vim软件，有则显示包全名及版本号]<br><code>rpm -ql yum</code> [列出yum软件所安装的文件]<br><strong>• 源码安装[常规安装方式]</strong><br><code>./configure</code> 配置源码包相关安装 –help 打印帮助文档<br><code>make</code> 编译代码<br><code>make install</code> 安装软件及输出安装信息</p>
 <blockquote>
 <p>注：Centos6及以下系统系统使用的pyton2.6，Centos7使用的python2.7，yum命令会使用python命令，系统版本对应python版本，请勿随意升级</p>
 </blockquote>
@@ -45,6 +75,7 @@
       <url>http://yoursite.com/2016/11/04/LOGSTASH-ELASTICSEARCH-%E5%A4%84%E7%90%86-MYSQL-%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/</url>
       <content type="html"><![CDATA[<h1 id="LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志"><a href="#LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志" class="headerlink" title="LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志"></a>LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志</h1><p>先确认慢查询日志是否开启, 然后找到日志文件的位置</p>
 <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="section">&gt; show variables like '%slow%';</span></div><div class="line">+---------------------+-------------------------------------+</div><div class="line"><span class="section">| Variable_name       | Value                               |</span></div><div class="line">+---------------------+-------------------------------------+</div><div class="line">| log<span class="emphasis">_slow_</span>queries    | ON                                  |</div><div class="line">| slow<span class="emphasis">_launch_</span>time    | 2                                   |</div><div class="line">| slow<span class="emphasis">_query_</span>log      | ON                                  |</div><div class="line"><span class="section">| slow_query_log_file | /data/mysqllog/20000/slow-query.log |</span></div><div class="line">+---------------------+-------------------------------------+</div></pre></td></tr></table></figure>
+<a id="more"></a>
 <h2 id="2-慢查询日志"><a href="#2-慢查询日志" class="headerlink" title="2. 慢查询日志"></a>2. 慢查询日志</h2><p>格式基本如下, 当然, 格式如果有差异, 需要根据具体格式进行小的修改</p>
 <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Time: 160524  5:12:29</span></div><div class="line"><span class="comment"># User@Host: user_a[xxxx] @  [10.166.140.109]</span></div><div class="line"><span class="comment"># Query_time: 1.711086  Lock_time: 0.000040 Rows_sent: 385489  Rows_examined: 385489</span></div><div class="line">use dbname<span class="comment">;</span></div><div class="line">SET timestamp=<span class="number">1464037949</span><span class="comment">;</span></div><div class="line">SELECT <span class="number">1</span> from dbname<span class="comment">;</span></div></pre></td></tr></table></figure>
 <h2 id="3-使用-logstash-采集"><a href="#3-使用-logstash-采集" class="headerlink" title="3. 使用 logstash 采集"></a>3. 使用 logstash 采集</h2><p>采集, 无非是用multiline进行多行解析<br>但是, 需要处理的<br>第一, 去除没用的信息<br>第二, 慢查询 sql, 是会反复出现的, 所以, 执行次数成了一个很重要的指标. 我们要做的, 就是降噪(将参数去掉, 涉及带引号的内容 + 数字), 将参数类信息过滤掉, 留下核心的 sql, 然后计算出一个 hash, 这样就可以在查询, 根据这个字段进行聚合. 这里用到了 mutate 以及 checksum</p>
@@ -87,6 +118,7 @@
 </tr>
 </tbody>
 </table>
+<a id="more"></a>
 <p>然后每台机器安装好 docker，至于 rpm 安装包版本下面介绍</p>
 <h2 id="2-说点正经事"><a href="#2-说点正经事" class="headerlink" title="2 说点正经事"></a>2 说点正经事</h2><h3 id="2-1-安装包从哪来"><a href="#2-1-安装包从哪来" class="headerlink" title="2.1 安装包从哪来"></a>2.1 安装包从哪来</h3><p>官方的文档页面更新并不及时，同时他的 yum 源更新也很慢，再者…那他妈可是 Google 的服务器，能特么连上吗？以前总是在国外服务器使用 yumdownloader 下载，然后 scp 到本地，虽然能解决问题，但是蛋碎一地…最后找到了源头，如下</p>
 <p>Kubernetes 编译的各种发行版安装包来源于 Github 上的另一个叫 release 的项目，地址 点这里，把这个项目 clone 下来，由于本人是 Centos 用户，所以进入 rpm 目录，在安装好 docker 的机器上执行那个 docker-build.sh 脚本即可编译 rpm 包，最后会生成到当前目录的 output 目录下,截图如下</p>
@@ -235,6 +267,7 @@
 <hr>
 <h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1 前言"></a>1 前言</h2><p>在前面文章中，讲述了可伸缩网络服务的几种结构，它们都需要一个前端的负载调度器（或者多个进行主从备份）。我们先分析实现虚拟网络服务的主要技术，指出 IP负载均衡技术是在负载调度器的实现技术中效率最高的。在已有的IP负载均衡技术中，主要有通过网络地址转换（Network Address Translation）将一组服务器构成一个高性能的、高可用的虚拟服务器，我们称之为VS/NAT技术（Virtual Server via Network Address Translation）。在分析VS/NAT的缺点和网络服务的非对称性的基础上，我们提出了通过IP隧道实现虚拟服务器的方法VS/TUN （Virtual Server via IP Tunneling），和通过直接路由实现虚拟服务器的方法VS/DR（Virtual Server via Direct Routing），它们可以极大地提高系统的伸缩性。VS/NAT、VS/TUN和VS/DR技术是LVS集群中实现的三种IP负载均衡技术，我们将在文 章中详细描述它们的工作原理和各自的优缺点。</p>
 <p>在以下描述中，我们称客户的socket和服务器的socket之间的数据通讯为连接，无论它们是使用TCP还是UDP协议。下面简述当前用服务器集群实现高可伸缩、高可用网络服务的几种负载调度方法，并列举几个在这方面有代表性的研究项目。</p>
+<a id="more"></a>
 <h2 id="2-实现虚拟服务的相关方法"><a href="#2-实现虚拟服务的相关方法" class="headerlink" title="2 实现虚拟服务的相关方法"></a>2 实现虚拟服务的相关方法</h2><p>在网络服务中，一端是客户程序，另一端是服务程序，在中间可能有代理程序。由此看来，可以在不同的层次上实现多台服务器的负载均衡。用集群解决网络服务性能问题的现有方法主要分为以下四类。</p>
 <h3 id="2-1-基于RR-DNS的解决方法"><a href="#2-1-基于RR-DNS的解决方法" class="headerlink" title="2.1 基于RR-DNS的解决方法"></a>2.1 基于RR-DNS的解决方法</h3><p>NCSA的可伸缩的WEB服务器系统就是最早基于RR-DNS（Round-Robin Domain Name System）的原型系统[1,2]。它的结构和工作流程如下图所示：<br><img src="/images/1478135814491.png" alt="&quot;图1：基于RR-DNS的可伸缩WEB服务器&quot;|center"></p>
 <p>有一组WEB服务器，他们通过分布式文件系统AFS(Andrew File System)来共享所有的HTML文档。这组服务器拥有相同的域名（如www.ncsa.uiuc.edu），当用户按照这个域名访问时, RR-DNS服务器会把域名轮流解析到这组服务器的不同IP地址，从而将访问负载分到各台服务器上。</p>

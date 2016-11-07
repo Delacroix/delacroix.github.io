@@ -1,0 +1,301 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>OSPF的基本原理与实现 | Delacroix&#39; Blog</title>
+  <meta name="author" content="Delacroix">
+  
+  <meta name="description" content="OSPF的基本原理与实现OSPF（Open Shortest Path First，开放最短路径优先）是由IETF开发路径选择协议。OSPF是开放的链路状态路由协议。OSPFv2应用于IPv4中，由RFC2328规范。
+OSPF的特征：
+收敛快速；
+支持支持大规模的网络；
+使用Area的概念；
+Classless（无类）路由协议。支持VLSM、CIDR、不连续子网；
+支持无大小限制、任意的度量值；
+支持多条等价路径的负载匀衡；
+使用保留的组播地址（224.0.0.5和224.0.0.6）；
+支持更安全的路由选择认证；
+使用可以跟踪外部路由的路由标记；">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="OSPF的基本原理与实现"/>
+  <meta property="og:site_name" content="Delacroix&#39; Blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/themes/bootstrap.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+       <a class="navbar-brand" href="/">Delacroix&#39; Blog</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/categories" title="All the categories.">
+			  <i class="fa fa-folder"></i>Categories
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/tags" title="All the tags.">
+			  <i class="fa fa-tags"></i>Tags
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header page-header-inverse ">		
+			<h1 class="title title-inverse "> OSPF的基本原理与实现</h1>
+		</div>		
+	
+
+
+
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h1 id="OSPF的基本原理与实现"><a href="#OSPF的基本原理与实现" class="headerlink" title="OSPF的基本原理与实现"></a>OSPF的基本原理与实现</h1><p>OSPF（Open Shortest Path First，开放最短路径优先）是由IETF开发路径选择协议。<br>OSPF是开放的链路状态路由协议。<br>OSPFv2应用于IPv4中，由RFC2328规范。</p>
+<h2 id="OSPF的特征："><a href="#OSPF的特征：" class="headerlink" title="OSPF的特征："></a>OSPF的特征：</h2><ol>
+<li>收敛快速；</li>
+<li>支持支持大规模的网络；</li>
+<li>使用Area的概念；</li>
+<li>Classless（无类）路由协议。支持VLSM、CIDR、不连续子网；</li>
+<li>支持无大小限制、任意的度量值；</li>
+<li>支持多条等价路径的负载匀衡；</li>
+<li>使用保留的组播地址（224.0.0.5和224.0.0.6）；</li>
+<li>支持更安全的路由选择认证；</li>
+<li>使用可以跟踪外部路由的路由标记；</li>
+</ol>
+<a id="more"></a>
+<h2 id="OSPF基本的工作过程："><a href="#OSPF基本的工作过程：" class="headerlink" title="OSPF基本的工作过程："></a>OSPF基本的工作过程：</h2><ol>
+<li>Neighbor（邻居）<br>宣告OSPF的路由器从所有启动0SPF协议的接口上发出Hello数据包。如果两台路由器共享一条公共数据链路,并且能够相互成功协商它们各自Hello数据包中所指定的某些参数,那么它们就成为了邻居(Neighbor)。</li>
+<li>Adjacency（邻接）<br>可以想象成为一条点到点的虚链路,它是在一些邻居路由器之间构成的。OSPF协议定义了一些网络类型和一些路由器类型的邻接关系。邻接关系的建立是由交换Hello信息的路由器类型和交换Hello信息的网络类型决定的。</li>
+<li>LSA（Link State Advertisement，链路状态通告）<br>每一台路由器都会在所有形成邻接关系的邻居之间发送链路状态通告(Link State Advertisement，链路状态通告)。LSA描述了路由器所有的链路、接口、路由器的邻居以及链路状态信息。这些链路可以是到一个末梢网络(stub network,是指没有和其他路由器相连的网络)的链路、到其他OSPF路由器的链路、到其他区域网络的链路,或是到外部网络(从其他的路由选择进程学习到的网络)的链路。由于这些链路状态信息的多样性,OSPF协议定义了许多LSA类型。</li>
+<li>LSDB（Link State Database，链路状态数据库）<br>每一台收到从邻居路由器发出的LSA的路由器都会把这些LSA记录在它的LSDB（Link State Database，链路状态数据库）当中,并且发送一份LSA的拷贝给该路由器的其他所有邻居。</li>
+<li>Full（完全邻接）<br>通过LSA泛洪扩散到整个区域,所有的路由器都会形成同样的链路状态数据库。</li>
+<li>SPF（Short Path First，最短路径优先）<br>当这些邻接的OSPF路由器的数据库完全相同时,每—台路由器都将以其自身为根,使用SPF算法来计算一个无环路的拓扑图,以描述它所知道的到达每一个目的地的最短路径(最小的路径代价)。这个拓扑图就是SPF算法树。</li>
+<li>IP Routing Table（IP路由表）<br>每一台路由器都将从SPF算法树中构建出自己的路由表。</li>
+</ol>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+<ul class="pagination">
+	 
+		
+          <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>Prev</a></li>
+        
+
+        <li><a href="/archives"><i class="fa fa-archive"></i>Archive</a></li>
+
+		
+		   <li class="next"><a href="/2016/11/04/常用Centos命令/" class="alignright next">Next<i class="fa fa-arrow-circle-o-right"></i></a></li>         
+        
+	
+</ul>
+</div>
+
+    </center>
+	</div>
+
+    <!-- share -->
+    
+        
+    <div class="bdsharebuttonbox">
+        <a href="#" class="bds_more" data-cmd="more"></a>
+        <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+        <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+        <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+        <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+        <a href="#" class="bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+        <a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a>
+        <a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a>
+        <a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+    </div>
+    <script>
+        window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};
+        with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+    </script>
+
+
+        
+
+    
+	
+	<!-- comment -->
+	
+<section id="comment">
+  <h2 class="title">Comments</h2>
+
+  
+</section>
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2016-11-04 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Network/">Network<span>2</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+	
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#tags"><i class="fa fa-tags"></i></a>		  
+    <ul id="tags" class="tag_box list-unstyled collapse in">	  
+	    
+  <li><a href="/tags/OSPF/">OSPF<span>1</span></a></li>
+    </ul>
+	</div>
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2016 Delacroix
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-freemind/">Freemind</a>.    
+</p> </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

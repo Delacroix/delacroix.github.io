@@ -7,7 +7,27 @@
   <meta name="author" content="Delacroix">
   
   <meta name="description" content="[转]kubeadm 搭建 kubernetes 集群原作者链接：点我
-距离上一篇 kubernetes 1.4 集群搭建 发布间隔不算太久，自己也不断地在生产和测试环境鼓捣，有不少 “逗比” 的经历，准备写一下具体的 kubeadm 搭建集群的一些坑和踩坑的经验，如果没有使用过 kubeadm 的">
+距离上一篇 kubernetes 1.4 集群搭建 发布间隔不算太久，自己也不断地在生产和测试环境鼓捣，有不少 “逗比” 的经历，准备写一下具体的 kubeadm 搭建集群的一些坑和踩坑的经验，如果没有使用过 kubeadm 的同学，最好先看下上面的文章，然后鼓捣一遍，也许并不会成功，但大部分坑再来看此文会有收获
+1 环境准备首先环境还是三台虚拟机，虚拟机地址如下
+
+
+
+IP 地址
+节点
+
+
+
+
+192.168.1.167
+master
+
+
+192.168.1.189
+node1
+
+
+192.168.1.189
+node2">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -137,6 +157,7 @@
 </tr>
 </tbody>
 </table>
+<a id="more"></a>
 <p>然后每台机器安装好 docker，至于 rpm 安装包版本下面介绍</p>
 <h2 id="2-说点正经事"><a href="#2-说点正经事" class="headerlink" title="2 说点正经事"></a>2 说点正经事</h2><h3 id="2-1-安装包从哪来"><a href="#2-1-安装包从哪来" class="headerlink" title="2.1 安装包从哪来"></a>2.1 安装包从哪来</h3><p>官方的文档页面更新并不及时，同时他的 yum 源更新也很慢，再者…那他妈可是 Google 的服务器，能特么连上吗？以前总是在国外服务器使用 yumdownloader 下载，然后 scp 到本地，虽然能解决问题，但是蛋碎一地…最后找到了源头，如下</p>
 <p>Kubernetes 编译的各种发行版安装包来源于 Github 上的另一个叫 release 的项目，地址 点这里，把这个项目 clone 下来，由于本人是 Centos 用户，所以进入 rpm 目录，在安装好 docker 的机器上执行那个 docker-build.sh 脚本即可编译 rpm 包，最后会生成到当前目录的 output 目录下,截图如下</p>
