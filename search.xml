@@ -28,6 +28,16 @@
 <li>SPF（Short Path First，最短路径优先）<br>当这些邻接的OSPF路由器的数据库完全相同时,每—台路由器都将以其自身为根,使用SPF算法来计算一个无环路的拓扑图,以描述它所知道的到达每一个目的地的最短路径(最小的路径代价)。这个拓扑图就是SPF算法树。</li>
 <li>IP Routing Table（IP路由表）<br>每一台路由器都将从SPF算法树中构建出自己的路由表。</li>
 </ol>
+<p><div id="disqus_thread"></div></p>
+<script>
+
+<p>/**</p>
+<ul>
+<li>RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.</li>
+<li>LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: <a href="https://disqus.com/admin/universalcode/#configuration-variables*/">https://disqus.com/admin/universalcode/#configuration-variables*/</a><br>/<em><br>var disqus_config = function () {<br>this.page.url = PAGE_URL;  // Replace PAGE_URL with your page’s canonical URL variable<br>this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page’s unique identifier variable<br>};
+</em>/<br>(function() { // DON’T EDIT BELOW THIS LINE<br>var d = document, s = d.createElement(‘script’);<br>s.src = ‘//delacroixsblog.disqus.com/embed.js’;<br>s.setAttribute(‘data-timestamp’, +new Date());<br>(d.head || d.body).appendChild(s);<br>})();<br></script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" target="_blank" rel="external">comments powered by Disqus.</a></noscript>
+
+
 ]]></content>
     </entry>
     
