@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Operations,�Զ���,��ά," />
+  <meta name="keywords" content="Operations,自动化,运维," />
 
 
 
@@ -84,19 +84,25 @@
 
 
 
-<meta name="description" content="Jenkins + Ansibleʵ���Զ�������ǰ�������������н���Ӧ�÷���ʱ�����ô����ֹ��ķ�ʽ�Ӳ��Ի�������WAR����������Ŀ¼���б��ݡ����������������Ȳ�����Ϊ��������������Ч�����⣬�Լ������ܱ����˹��������ɵĲ���Ԥ֪��ʧ����׼�������Զ����ķ�ʽ">
+<meta name="description" content="Jenkins + Ansible实现自动化发布前期在生产环境中进行应用发布时，采用纯粹手工的方式从测试环境拷贝WAR到生产环境目录进行备份、部署、重启服务等操作。为解决批量部署的效率问题，以及尽可能避免人工操作造成的不可预知的失误，准备采用自动化的方式来实现应用的发布。
+
+本文档适用的前提：测试环境已经通过CI工具完成自动化编译、打包，并生成了路径、命名固定的WAR包，生产环境只需拷贝该WAR包">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Jenkins + Ansibleʵ���Զ�������">
+<meta property="og:title" content="Jenkins + Ansible实现自动化发布">
 <meta property="og:url" content="http://yoursite.com/2016/12/21/Jenkins + Ansible实现自动化发布/index.html">
 <meta property="og:site_name" content="Delacroix' Blog">
-<meta property="og:description" content="Jenkins + Ansibleʵ���Զ�������ǰ�������������н���Ӧ�÷���ʱ�����ô����ֹ��ķ�ʽ�Ӳ��Ի�������WAR����������Ŀ¼���б��ݡ����������������Ȳ�����Ϊ��������������Ч�����⣬�Լ������ܱ����˹��������ɵĲ���Ԥ֪��ʧ����׼�������Զ����ķ�ʽ">
+<meta property="og:description" content="Jenkins + Ansible实现自动化发布前期在生产环境中进行应用发布时，采用纯粹手工的方式从测试环境拷贝WAR到生产环境目录进行备份、部署、重启服务等操作。为解决批量部署的效率问题，以及尽可能避免人工操作造成的不可预知的失误，准备采用自动化的方式来实现应用的发布。
+
+本文档适用的前提：测试环境已经通过CI工具完成自动化编译、打包，并生成了路径、命名固定的WAR包，生产环境只需拷贝该WAR包">
 <meta property="og:image" content="http://yoursite.com/images/jenkins_ansible_autodeploy/jenkins_invoke_ansible.png">
 <meta property="og:image" content="http://yoursite.com/images/jenkins_ansible_autodeploy/run_project.png">
 <meta property="og:image" content="http://yoursite.com/images/jenkins_ansible_autodeploy/run_project_console_output.png">
-<meta property="og:updated_time" content="2016-12-21T03:17:04.125Z">
+<meta property="og:updated_time" content="2016-12-21T03:18:44.317Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Jenkins + Ansibleʵ���Զ�������">
-<meta name="twitter:description" content="Jenkins + Ansibleʵ���Զ�������ǰ�������������н���Ӧ�÷���ʱ�����ô����ֹ��ķ�ʽ�Ӳ��Ի�������WAR����������Ŀ¼���б��ݡ����������������Ȳ�����Ϊ��������������Ч�����⣬�Լ������ܱ����˹��������ɵĲ���Ԥ֪��ʧ����׼�������Զ����ķ�ʽ">
+<meta name="twitter:title" content="Jenkins + Ansible实现自动化发布">
+<meta name="twitter:description" content="Jenkins + Ansible实现自动化发布前期在生产环境中进行应用发布时，采用纯粹手工的方式从测试环境拷贝WAR到生产环境目录进行备份、部署、重启服务等操作。为解决批量部署的效率问题，以及尽可能避免人工操作造成的不可预知的失误，准备采用自动化的方式来实现应用的发布。
+
+本文档适用的前提：测试环境已经通过CI工具完成自动化编译、打包，并生成了路径、命名固定的WAR包，生产环境只需拷贝该WAR包">
 <meta name="twitter:image" content="http://yoursite.com/images/jenkins_ansible_autodeploy/jenkins_invoke_ansible.png">
 
 
@@ -121,7 +127,7 @@
   <link rel="canonical" href="http://yoursite.com/2016/12/21/Jenkins + Ansible实现自动化发布/"/>
 
 
-  <title> Jenkins + Ansibleʵ���Զ������� | Delacroix' Blog </title>
+  <title> Jenkins + Ansible实现自动化发布 | Delacroix' Blog </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -264,7 +270,7 @@
             
             
               
-                Jenkins + Ansibleʵ���Զ�������
+                Jenkins + Ansible实现自动化发布
               
             
           </h1>
@@ -330,39 +336,39 @@
       
 
       
-        <h1 id="Jenkins-Ansibleʵ���Զ�������"><a href="#Jenkins-Ansibleʵ���Զ�������" class="headerlink" title="Jenkins + Ansibleʵ���Զ�������"></a>Jenkins + Ansibleʵ���Զ�������</h1><p>ǰ�������������н���Ӧ�÷���ʱ�����ô����ֹ��ķ�ʽ�Ӳ��Ի�������WAR����������Ŀ¼���б��ݡ����������������Ȳ�����Ϊ��������������Ч�����⣬�Լ������ܱ����˹��������ɵĲ���Ԥ֪��ʧ����׼�������Զ����ķ�ʽ��ʵ��Ӧ�õķ�����</p>
+        <h1 id="Jenkins-Ansible实现自动化发布"><a href="#Jenkins-Ansible实现自动化发布" class="headerlink" title="Jenkins + Ansible实现自动化发布"></a>Jenkins + Ansible实现自动化发布</h1><p>前期在生产环境中进行应用发布时，采用纯粹手工的方式从测试环境拷贝WAR到生产环境目录进行备份、部署、重启服务等操作。为解决批量部署的效率问题，以及尽可能避免人工操作造成的不可预知的失误，准备采用自动化的方式来实现应用的发布。</p>
 <blockquote>
-<p><strong>���ĵ����õ�ǰ�᣺</strong><br>���Ի����Ѿ�ͨ��CI���������Զ������롢��������������·���������̶���WAR������������ֻ�追����WAR����ָ��Ŀ¼��ѹ���ɵĳ�����</p>
+<p><strong>本文档适用的前提：</strong><br>测试环境已经通过CI工具完成自动化编译、打包，并生成了路径、命名固定的WAR包，生产环境只需拷贝该WAR包到指定目录解压即可的场景。</p>
 </blockquote>
-<h2 id="Jenkins��װ"><a href="#Jenkins��װ" class="headerlink" title="Jenkins��װ"></a>Jenkins��װ</h2><blockquote>
-<p><strong>���𻷾���</strong><br>����ϵͳ��ubuntu 14.04<br>������IP��192.168.1.1</p>
+<h2 id="Jenkins安装"><a href="#Jenkins安装" class="headerlink" title="Jenkins安装"></a>Jenkins安装</h2><blockquote>
+<p><strong>部署环境：</strong><br>操作系统：ubuntu 14.04<br>服务器IP：192.168.1.1</p>
 </blockquote>
-<p><strong>��һ�ַ�ʽ</strong><br>ǰ��Jenkins����<a href="https://pkg.jenkins.io/debian-stable/�����ٷ�Jenkins" target="_blank" rel="external">https://pkg.jenkins.io/debian-stable/�����ٷ�Jenkins</a> key���롣</p>
+<p><strong>第一种方式</strong><br>前往Jenkins官网<a href="https://pkg.jenkins.io/debian-stable/，将官方Jenkins" target="_blank" rel="external">https://pkg.jenkins.io/debian-stable/，将官方Jenkins</a> key引入。</p>
 <figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget -<span class="selector-tag">q</span> -O - https:<span class="comment">//pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -</span></div></pre></td></tr></table></figure>
-<p>Ȼ����������Դ�б���</p>
+<p>然后将其加入源列表。</p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">deb https:<span class="regexp">//</span>pkg.jenkins.io<span class="regexp">/debian-stable binary/</span></div></pre></td></tr></table></figure>
-<p>���󣬸��±��ذ�����������װ�ȶ���Jenkins</p>
+<p>最后，更新本地包索引，并安装稳定版Jenkins</p>
 <figure class="highlight q"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="built_in">get</span> <span class="keyword">update</span></div><div class="line">sudo apt-<span class="built_in">get</span> install jenkins</div></pre></td></tr></table></figure>
 <a id="more"></a>
-<p><strong>�ڶ��ַ�ʽ</strong><br>ǰ��Jenkins����<a href="https://pkg.jenkins.io/debian-stable/������deb��" target="_blank" rel="external">https://pkg.jenkins.io/debian-stable/������deb��</a></p>
+<p><strong>第二种方式</strong><br>前往Jenkins官网<a href="https://pkg.jenkins.io/debian-stable/，下载deb包" target="_blank" rel="external">https://pkg.jenkins.io/debian-stable/，下载deb包</a></p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget https:<span class="regexp">//</span>pkg.jenkins.io<span class="regexp">/debian-stable/</span>binary<span class="regexp">/jenkins_2.19.4_all.deb</span></div></pre></td></tr></table></figure>
-<p>��װdeb��</p>
+<p>安装deb包</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">dpkg</span> <span class="selector-tag">-i</span> <span class="selector-tag">jenkins_2</span><span class="selector-class">.19</span><span class="selector-class">.4_all</span><span class="selector-class">.deb</span></div></pre></td></tr></table></figure>
-<p>���ղ�����ʾ�������а�װ�����ɺ�ͨ������������������</p>
+<p>按照操作提示步骤进行安装。完成后通过以下命令进行启动</p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="regexp">/etc/i</span>nit.d<span class="regexp">/jenkins start</span></div></pre></td></tr></table></figure>
-<p>��������JenkinsĬ�Ͻ�������8080�˿ڡ�</p>
-<h2 id="��װAnsible"><a href="#��װAnsible" class="headerlink" title="��װAnsible"></a>��װAnsible</h2><p>������<br>Ansible��װ���ɺ�����Ҫ�����¹�����</p>
-<h3 id="ʵ�ֱ��ط��������ܵ�½"><a href="#ʵ�ֱ��ط��������ܵ�½" class="headerlink" title="ʵ�ֱ��ط��������ܵ�½"></a>ʵ�ֱ��ط��������ܵ�½</h3><p>��Ansible���ط�������Jenkins�û��£�ִ����������������Կ�ԣ�</p>
+<p>启动后，Jenkins默认将会监听8080端口。</p>
+<h2 id="安装Ansible"><a href="#安装Ansible" class="headerlink" title="安装Ansible"></a>安装Ansible</h2><p>过程略<br>Ansible安装完成后，需要做以下工作：</p>
+<h3 id="实现被控服务器免密登陆"><a href="#实现被控服务器免密登陆" class="headerlink" title="实现被控服务器免密登陆"></a>实现被控服务器免密登陆</h3><p>在Ansible主控服务器的Jenkins用户下，执行以下命令生产密钥对：</p>
 <figure class="highlight ebnf"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">ssh-keygen -t rsa</span></div></pre></td></tr></table></figure>
-<p>��jenkins�û��Ĺ�Կ���������ط�������sshĿ¼�£�</p>
+<p>将jenkins用户的公钥拷贝到被控服务器的ssh目录下：</p>
 <figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ssh-copy-id -<span class="selector-tag">i</span> .ssh/id_rsa<span class="selector-class">.pub</span> app@<span class="number">192.168</span>.<span class="number">1.2</span></div><div class="line">ssh-copy-id -<span class="selector-tag">i</span> .ssh/id_rsa<span class="selector-class">.pub</span> app@<span class="number">172.16</span>.<span class="number">1.2</span></div></pre></td></tr></table></figure>
-<p>���ˣ�Ansible�ܹ�ͨ��jenkins�û����ܵ�½Ӧ�÷��������������Ի�����</p>
-<p>##Jenkins����Ansible<br>���ȣ���Ҫ��Jenkins�ϰ�װAnsible�Ĳ�������Ϊ <strong>Ansible plugin</strong>���ڲ�����������������װ���ɡ�<br>Ȼ������Jenkins�½�<strong>Freestyle Project</strong></p>
+<p>至此，Ansible能够通过jenkins用户免密登陆应用服务器生产、测试环境。</p>
+<p>##Jenkins调用Ansible<br>首先，需要在Jenkins上安装Ansible的插件，名为 <strong>Ansible plugin</strong>，在插件管理界面搜索安装即可。<br>然后，在Jenkins新建<strong>Freestyle Project</strong></p>
 <p><img src="/images/jenkins_ansible_autodeploy/jenkins_invoke_ansible.png" alt="Alt text"></p>
-<p>���õ�Ansible-playbookʾ�����£�</p>
-<figure class="highlight xquery"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line">- hosts: <span class="number">192.168</span>.<span class="number">1.2</span></div><div class="line">  vars:</div><div class="line">    testIP: <span class="number">172.16</span>.<span class="number">1.2</span></div><div class="line">    testhome: /home/app/api-tomcat/webapps</div><div class="line">    warname: api.war</div><div class="line">    oldhome: /home/app/api-tomcat</div><div class="line">    backupwebapps: /home/app/tomcat.bak</div><div class="line">    newwar: /home/app/newwar</div><div class="line">    zipname: api</div><div class="line">  remote_user: app</div><div class="line">  tasks:</div><div class="line">    - name: ɾ��/home/app/newwarĿ¼</div><div class="line">      file: path=&#123;&#123; newwar &#125;&#125; state=absent</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: ����/home/app/newwarĿ¼.��Ȩ��</div><div class="line">      file: path=&#123;&#123; newwar &#125;&#125; recurse=yes mode=<span class="number">775</span> owner=app <span class="keyword">group</span>=app state=directory</div><div class="line">    - name: �Ӳ��Ի�������war����/home/app/newwarĿ¼</div><div class="line">      shell: scp app@&#123;&#123; testIP &#125;&#125;:&#123;&#123; testhome &#125;&#125;/&#123;&#123; warname &#125;&#125; &#123;&#123; newwar &#125;&#125;</div><div class="line">    - name: ��/home/app/newwar�ݹ���Ȩ��</div><div class="line">      file: dest=&#123;&#123; newwar&#125;&#125; recurse=yes mode=<span class="number">775</span> owner=app <span class="keyword">group</span>=app</div><div class="line">    - name: ��ѹ/home/app/newwarĿ¼�ڵ�war���ڱ�Ŀ¼��</div><div class="line">      shell: unzip -oq &#123;&#123; newwar &#125;&#125;/&#123;&#123; warname &#125;&#125; -d &#123;&#123; newwar &#125;&#125;/&#123;&#123; zipname &#125;&#125;</div><div class="line">    - name: �ٴθ�/home/app/newwar�ݹ���Ȩ��</div><div class="line">      file: dest=&#123;&#123; newwar&#125;&#125; recurse=yes mode=<span class="number">775</span> owner=app <span class="keyword">group</span>=app</div><div class="line">    - name: ��������webappsĿ¼/home/app/tomcat.bak����Ȩ��</div><div class="line">      file: path=&#123;&#123; backupwebapps &#125;&#125;/&#123;&#123; zipname &#125;&#125; recurse=yes mode=<span class="number">775</span> owner=app <span class="keyword">group</span>=app state=directory</div><div class="line">    - name: ����webapps��Ŀ¼/home/app/tomcat.bak�²�����ʱ����</div><div class="line">      shell: cp -a &#123;&#123; oldhome &#125;&#125;/webapps &#123;&#123; backupwebapps &#125;&#125;/&#123;&#123; zipname &#125;&#125;/webapps-`date +<span class="meta">%Y</span><span class="meta">%m</span><span class="meta">%d</span><span class="meta">%H</span><span class="meta">%M</span>`</div><div class="line">    - name: kill���̷�ʽֹͣ����.���Դ��󷵻�ֵ</div><div class="line">      shell: ps -ef | grep &#123;&#123; oldhome &#125;&#125; | grep -v grep | xargs kill</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: kill���̷�ʽֹͣ����.���Դ��󷵻�ֵ</div><div class="line">      shell: ps -ef | grep &#123;&#123; oldhome &#125;&#125; | grep -v grep | xargs kill</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: �ٴ�kill���̷�ʽֹͣ����.���Դ��󷵻�ֵ</div><div class="line">      shell: ps -ef | grep &#123;&#123; oldhome &#125;&#125; | grep -v grep | xargs kill</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: �鿴ֹͣ�����Ľ���.�����Ƿ�����</div><div class="line">      shell: ps -ef | grep &#123;&#123; oldhome &#125;&#125;</div><div class="line">    - name: ɾ��ԭ����webappsĿ¼�µ�war��</div><div class="line">      file: path=&#123;&#123; oldhome &#125;&#125;/webapps/&#123;&#123; warname &#125;&#125; state=absent</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: ɾ��ԭ����webappsĿ¼�µĳ���Ŀ¼</div><div class="line">      file: path=&#123;&#123; oldhome &#125;&#125;/webapps/&#123;&#123; zipname &#125;&#125; state=absent</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: ����/home/app/newwarĿ¼�µĽ�ѹ���³���Ŀ¼��webappsĿ¼��</div><div class="line">      shell: cp -a &#123;&#123; newwar &#125;&#125;/&#123;&#123; zipname &#125;&#125; &#123;&#123; oldhome &#125;&#125;/webapps/</div><div class="line">    - name: ����/home/app/newwarĿ¼�µ�war����webappsĿ¼��</div><div class="line">      shell: cp -a &#123;&#123; newwar &#125;&#125;/&#123;&#123; warname &#125;&#125; &#123;&#123; oldhome &#125;&#125;/webapps/</div><div class="line">    - name: ��������</div><div class="line">      shell: <span class="string">"source /etc/profile;nohup &#123;&#123; oldhome &#125;&#125;/bin/startup.sh &amp;"</span></div><div class="line">    - name: �鿴�������Ƿ����������ķ���</div><div class="line">      shell: ps -ef | grep &#123;&#123; oldhome &#125;&#125;</div></pre></td></tr></table></figure>
-<p>ִ��RUN����ʼ����������<br><img src="/images/jenkins_ansible_autodeploy/run_project.png" alt="Alt text"></p>
-<p>Ȼ���Ϳ�����CONSOLE���濴��ִ�еĽ�����<br><img src="/images/jenkins_ansible_autodeploy/run_project_console_output.png" alt="Alt text"></p>
+<p>调用的Ansible-playbook示例如下：</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line">- hosts: <span class="number">192.168</span>.<span class="number">1.2</span></div><div class="line">  vars:</div><div class="line">    testIP: <span class="number">172.16</span>.<span class="number">1.2</span></div><div class="line">    testhome: /home/app/api-tomcat/webapps</div><div class="line">    warname: api.war</div><div class="line">    oldhome: /home/app/api-tomcat</div><div class="line">    backupwebapps: /home/app/tomcat.bak</div><div class="line">    newwar: /home/app/newwar</div><div class="line">    zipname: api</div><div class="line">  remote_user: app</div><div class="line">  tasks:</div><div class="line">    - name: 删除/home/app/newwar目录</div><div class="line">      file: path=&#123;&#123; newwar &#125;&#125; state=absent</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: 创建/home/app/newwar目录.改权限</div><div class="line">      file: path=&#123;&#123; newwar &#125;&#125; recurse=yes mode=<span class="number">775</span> owner=app <span class="keyword">group</span>=app state=directory</div><div class="line">    - name: 从测试环境复制war包到/home/app/newwar目录</div><div class="line">      shell: scp app@&#123;&#123; testIP &#125;&#125;:&#123;&#123; testhome &#125;&#125;/&#123;&#123; warname &#125;&#125; &#123;&#123; newwar &#125;&#125;</div><div class="line">    - name: 给/home/app/newwar递归改权限</div><div class="line">      file: dest=&#123;&#123; newwar&#125;&#125; recurse=yes mode=<span class="number">775</span> owner=app <span class="keyword">group</span>=app</div><div class="line">    - name: 解压/home/app/newwar目录内的war包在本目录内</div><div class="line">      shell: unzip -oq &#123;&#123; newwar &#125;&#125;/&#123;&#123; warname &#125;&#125; -d &#123;&#123; newwar &#125;&#125;/&#123;&#123; zipname &#125;&#125;</div><div class="line">    - name: 再次给/home/app/newwar递归改权限</div><div class="line">      file: dest=&#123;&#123; newwar&#125;&#125; recurse=yes mode=<span class="number">775</span> owner=app <span class="keyword">group</span>=app</div><div class="line">    - name: 创建备份webapps目录/home/app/tomcat.bak并改权限</div><div class="line">      file: path=&#123;&#123; backupwebapps &#125;&#125;/&#123;&#123; zipname &#125;&#125; recurse=yes mode=<span class="number">775</span> owner=app <span class="keyword">group</span>=app state=directory</div><div class="line">    - name: 备份webapps到目录/home/app/tomcat.bak下并加上时间戳</div><div class="line">      shell: cp -a &#123;&#123; oldhome &#125;&#125;/webapps &#123;&#123; backupwebapps &#125;&#125;/&#123;&#123; zipname &#125;&#125;/webapps-`date +<span class="meta">%Y</span><span class="meta">%m</span><span class="meta">%d</span><span class="meta">%H</span><span class="meta">%M</span>`</div><div class="line">    - name: kill进程方式停止服务.忽略错误返回值</div><div class="line">      shell: ps -ef | grep &#123;&#123; oldhome &#125;&#125; | grep -v grep | xargs kill</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: kill进程方式停止服务.忽略错误返回值</div><div class="line">      shell: ps -ef | grep &#123;&#123; oldhome &#125;&#125; | grep -v grep | xargs kill</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: 再次kill进程方式停止服务.忽略错误返回值</div><div class="line">      shell: ps -ef | grep &#123;&#123; oldhome &#125;&#125; | grep -v grep | xargs kill</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: 查看停止服务的结果.进程是否还在</div><div class="line">      shell: ps -ef | grep &#123;&#123; oldhome &#125;&#125;</div><div class="line">    - name: 删除原来的webapps目录下的war包</div><div class="line">      file: path=&#123;&#123; oldhome &#125;&#125;/webapps/&#123;&#123; warname &#125;&#125; state=absent</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: 删除原来的webapps目录下的程序目录</div><div class="line">      file: path=&#123;&#123; oldhome &#125;&#125;/webapps/&#123;&#123; zipname &#125;&#125; state=absent</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: 复制/home/app/newwar目录下的解压的新程序目录到webapps目录下</div><div class="line">      shell: cp -a &#123;&#123; newwar &#125;&#125;/&#123;&#123; zipname &#125;&#125; &#123;&#123; oldhome &#125;&#125;/webapps/</div><div class="line">    - name: 复制/home/app/newwar目录下的war包到webapps目录下</div><div class="line">      shell: cp -a &#123;&#123; newwar &#125;&#125;/&#123;&#123; warname &#125;&#125; &#123;&#123; oldhome &#125;&#125;/webapps/</div><div class="line">    - name: 启动服务</div><div class="line">      shell: <span class="string">"source /etc/profile;nohup &#123;&#123; oldhome &#125;&#125;/bin/startup.sh &amp;"</span></div><div class="line">    - name: 查看进程中是否存在启动的服务</div><div class="line">      shell: ps -ef | grep &#123;&#123; oldhome &#125;&#125;</div></pre></td></tr></table></figure>
+<p>执行RUN，开始部署操作：<br><img src="/images/jenkins_ansible_autodeploy/run_project.png" alt="Alt text"></p>
+<p>然后就可以在CONSOLE界面看到执行的结果：<br><img src="/images/jenkins_ansible_autodeploy/run_project_console_output.png" alt="Alt text"></p>
 
       
     </div>
@@ -387,9 +393,9 @@
           
             <a href="/tags/Operations/" rel="tag">#Operations</a>
           
-            <a href="/tags/�Զ���/" rel="tag">#�Զ���</a>
+            <a href="/tags/自动化/" rel="tag">#自动化</a>
           
-            <a href="/tags/��ά/" rel="tag">#��ά</a>
+            <a href="/tags/运维/" rel="tag">#运维</a>
           
         </div>
       
@@ -525,7 +531,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Jenkins-Ansibleʵ���Զ�������"><span class="nav-number">1.</span> <span class="nav-text">Jenkins + Ansibleʵ���Զ�������</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Jenkins��װ"><span class="nav-number">1.1.</span> <span class="nav-text">Jenkins��װ</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#��װAnsible"><span class="nav-number">1.2.</span> <span class="nav-text">��װAnsible</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ʵ�ֱ��ط��������ܵ�½"><span class="nav-number">1.2.1.</span> <span class="nav-text">ʵ�ֱ��ط��������ܵ�½</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Jenkins-Ansible实现自动化发布"><span class="nav-number">1.</span> <span class="nav-text">Jenkins + Ansible实现自动化发布</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Jenkins安装"><span class="nav-number">1.1.</span> <span class="nav-text">Jenkins安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装Ansible"><span class="nav-number">1.2.</span> <span class="nav-text">安装Ansible</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现被控服务器免密登陆"><span class="nav-number">1.2.1.</span> <span class="nav-text">实现被控服务器免密登陆</span></a></li></ol></li></ol></li></ol></div>
             
           </div>
         </section>
@@ -653,7 +659,7 @@
     <script type="text/javascript">
       var disqus_shortname = 'delacroixsblog.disqus.com';
       var disqus_identifier = '2016/12/21/Jenkins + Ansible实现自动化发布/';
-      var disqus_title = "Jenkins + Ansibleʵ���Զ�������";
+      var disqus_title = "Jenkins + Ansible实现自动化发布";
       var disqus_url = 'http://yoursite.com/2016/12/21/Jenkins + Ansible实现自动化发布/';
 
       function run_disqus_script(disqus_script){

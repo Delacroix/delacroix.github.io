@@ -260,7 +260,7 @@
               
                 
                 <a class="post-title-link" href="/2016/12/21/Jenkins + Ansible实现自动化发布/" itemprop="url">
-                  Jenkins + Ansibleʵ���Զ�������
+                  Jenkins + Ansible实现自动化发布
                 </a>
               
             
@@ -328,18 +328,18 @@
 
       
         
-          <h1 id="Jenkins-Ansibleʵ���Զ�������"><a href="#Jenkins-Ansibleʵ���Զ�������" class="headerlink" title="Jenkins + Ansibleʵ���Զ�������"></a>Jenkins + Ansibleʵ���Զ�������</h1><p>ǰ�������������н���Ӧ�÷���ʱ�����ô����ֹ��ķ�ʽ�Ӳ��Ի�������WAR����������Ŀ¼���б��ݡ����������������Ȳ�����Ϊ��������������Ч�����⣬�Լ������ܱ����˹��������ɵĲ���Ԥ֪��ʧ����׼�������Զ����ķ�ʽ��ʵ��Ӧ�õķ�����</p>
+          <h1 id="Jenkins-Ansible实现自动化发布"><a href="#Jenkins-Ansible实现自动化发布" class="headerlink" title="Jenkins + Ansible实现自动化发布"></a>Jenkins + Ansible实现自动化发布</h1><p>前期在生产环境中进行应用发布时，采用纯粹手工的方式从测试环境拷贝WAR到生产环境目录进行备份、部署、重启服务等操作。为解决批量部署的效率问题，以及尽可能避免人工操作造成的不可预知的失误，准备采用自动化的方式来实现应用的发布。</p>
 <blockquote>
-<p><strong>���ĵ����õ�ǰ�᣺</strong><br>���Ի����Ѿ�ͨ��CI���������Զ������롢��������������·���������̶���WAR������������ֻ�追����WAR����ָ��Ŀ¼��ѹ���ɵĳ�����</p>
+<p><strong>本文档适用的前提：</strong><br>测试环境已经通过CI工具完成自动化编译、打包，并生成了路径、命名固定的WAR包，生产环境只需拷贝该WAR包到指定目录解压即可的场景。</p>
 </blockquote>
-<h2 id="Jenkins��װ"><a href="#Jenkins��װ" class="headerlink" title="Jenkins��װ"></a>Jenkins��װ</h2><blockquote>
-<p><strong>���𻷾���</strong><br>����ϵͳ��ubuntu 14.04<br>������IP��192.168.1.1</p>
+<h2 id="Jenkins安装"><a href="#Jenkins安装" class="headerlink" title="Jenkins安装"></a>Jenkins安装</h2><blockquote>
+<p><strong>部署环境：</strong><br>操作系统：ubuntu 14.04<br>服务器IP：192.168.1.1</p>
 </blockquote>
-<p><strong>��һ�ַ�ʽ</strong><br>ǰ��Jenkins����<a href="https://pkg.jenkins.io/debian-stable/�����ٷ�Jenkins">https://pkg.jenkins.io/debian-stable/�����ٷ�Jenkins</a> key���롣</p>
+<p><strong>第一种方式</strong><br>前往Jenkins官网<a href="https://pkg.jenkins.io/debian-stable/，将官方Jenkins">https://pkg.jenkins.io/debian-stable/，将官方Jenkins</a> key引入。</p>
 <figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget -<span class="selector-tag">q</span> -O - https:<span class="comment">//pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -</span></div></pre></td></tr></table></figure>
-<p>Ȼ����������Դ�б���</p>
+<p>然后将其加入源列表。</p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">deb https:<span class="regexp">//</span>pkg.jenkins.io<span class="regexp">/debian-stable binary/</span></div></pre></td></tr></table></figure>
-<p>���󣬸��±��ذ�����������װ�ȶ���Jenkins</p>
+<p>最后，更新本地包索引，并安装稳定版Jenkins</p>
 <figure class="highlight q"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="built_in">get</span> <span class="keyword">update</span></div><div class="line">sudo apt-<span class="built_in">get</span> install jenkins</div></pre></td></tr></table></figure>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/12/21/Jenkins + Ansible实现自动化发布/#more" rel="contents">
