@@ -19,6 +19,7 @@
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">deb https:<span class="regexp">//</span>pkg.jenkins.io<span class="regexp">/debian-stable binary/</span></div></pre></td></tr></table></figure>
 <p>���󣬸��±��ذ�����������װ�ȶ���Jenkins</p>
 <figure class="highlight q"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="built_in">get</span> <span class="keyword">update</span></div><div class="line">sudo apt-<span class="built_in">get</span> install jenkins</div></pre></td></tr></table></figure>
+<a id="more"></a>
 <p><strong>�ڶ��ַ�ʽ</strong><br>ǰ��Jenkins����<a href="https://pkg.jenkins.io/debian-stable/������deb��" target="_blank" rel="external">https://pkg.jenkins.io/debian-stable/������deb��</a></p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget https:<span class="regexp">//</span>pkg.jenkins.io<span class="regexp">/debian-stable/</span>binary<span class="regexp">/jenkins_2.19.4_all.deb</span></div></pre></td></tr></table></figure>
 <p>��װdeb��</p>
