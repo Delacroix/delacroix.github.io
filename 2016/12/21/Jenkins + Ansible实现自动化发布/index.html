@@ -97,7 +97,7 @@
 <meta property="og:image" content="http://yoursite.com/images/jenkins_ansible_autodeploy/jenkins_invoke_ansible.png">
 <meta property="og:image" content="http://yoursite.com/images/jenkins_ansible_autodeploy/run_project.png">
 <meta property="og:image" content="http://yoursite.com/images/jenkins_ansible_autodeploy/run_project_console_output.png">
-<meta property="og:updated_time" content="2016-12-21T03:34:15.709Z">
+<meta property="og:updated_time" content="2016-12-21T03:35:44.936Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Jenkins + Ansible实现自动化发布">
 <meta name="twitter:description" content="Jenkins + Ansible实现自动化发布前期在生产环境中进行应用发布时，采用纯粹手工的方式从测试环境拷贝WAR到生产环境目录进行备份、部署、重启服务等操作。为解决批量部署的效率问题，以及尽可能避免人工操作造成的不可预知的失误，准备采用自动化的方式来实现应用的发布。
@@ -349,6 +349,7 @@
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">deb https:<span class="regexp">//</span>pkg.jenkins.io<span class="regexp">/debian-stable binary/</span></div></pre></td></tr></table></figure>
 <p>最后，更新本地包索引，并安装稳定版Jenkins</p>
 <figure class="highlight q"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="built_in">get</span> <span class="keyword">update</span></div><div class="line">sudo apt-<span class="built_in">get</span> install jenkins</div></pre></td></tr></table></figure>
+<a id="more"></a>
 <p><strong>第二种方式</strong><br>前往Jenkins官网<a href="https://pkg.jenkins.io/debian-stable/，下载deb包" target="_blank" rel="external">https://pkg.jenkins.io/debian-stable/，下载deb包</a></p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget https:<span class="regexp">//</span>pkg.jenkins.io<span class="regexp">/debian-stable/</span>binary<span class="regexp">/jenkins_2.19.4_all.deb</span></div></pre></td></tr></table></figure>
 <p>安装deb包</p>

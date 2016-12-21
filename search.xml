@@ -19,6 +19,7 @@
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">deb https:<span class="regexp">//</span>pkg.jenkins.io<span class="regexp">/debian-stable binary/</span></div></pre></td></tr></table></figure>
 <p>最后，更新本地包索引，并安装稳定版Jenkins</p>
 <figure class="highlight q"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="built_in">get</span> <span class="keyword">update</span></div><div class="line">sudo apt-<span class="built_in">get</span> install jenkins</div></pre></td></tr></table></figure>
+<a id="more"></a>
 <p><strong>第二种方式</strong><br>前往Jenkins官网<a href="https://pkg.jenkins.io/debian-stable/，下载deb包" target="_blank" rel="external">https://pkg.jenkins.io/debian-stable/，下载deb包</a></p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget https:<span class="regexp">//</span>pkg.jenkins.io<span class="regexp">/debian-stable/</span>binary<span class="regexp">/jenkins_2.19.4_all.deb</span></div></pre></td></tr></table></figure>
 <p>安装deb包</p>
