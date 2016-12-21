@@ -1,0 +1,820 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Operations,�Զ���,��ά," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="Jenkins + Ansibleʵ���Զ�������ǰ�������������н���Ӧ�÷���ʱ�����ô����ֹ��ķ�ʽ�Ӳ��Ի�������WAR����������Ŀ¼���б��ݡ����������������Ȳ�����Ϊ��������������Ч�����⣬�Լ������ܱ����˹��������ɵĲ���Ԥ֪��ʧ����׼�������Զ����ķ�ʽ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jenkins + Ansibleʵ���Զ�������">
+<meta property="og:url" content="http://yoursite.com/2016/12/21/Jenkins + Ansible实现自动化发布/index.html">
+<meta property="og:site_name" content="Delacroix' Blog">
+<meta property="og:description" content="Jenkins + Ansibleʵ���Զ�������ǰ�������������н���Ӧ�÷���ʱ�����ô����ֹ��ķ�ʽ�Ӳ��Ի�������WAR����������Ŀ¼���б��ݡ����������������Ȳ�����Ϊ��������������Ч�����⣬�Լ������ܱ����˹��������ɵĲ���Ԥ֪��ʧ����׼�������Զ����ķ�ʽ">
+<meta property="og:image" content="http://yoursite.com/images/jenkins_ansible_autodeploy/jenkins_invoke_ansible.png">
+<meta property="og:image" content="http://yoursite.com/images/jenkins_ansible_autodeploy/run_project.png">
+<meta property="og:image" content="http://yoursite.com/images/jenkins_ansible_autodeploy/run_project_console_output.png">
+<meta property="og:updated_time" content="2016-12-21T03:13:23.326Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Jenkins + Ansibleʵ���Զ�������">
+<meta name="twitter:description" content="Jenkins + Ansibleʵ���Զ�������ǰ�������������н���Ӧ�÷���ʱ�����ô����ֹ��ķ�ʽ�Ӳ��Ի�������WAR����������Ŀ¼���б��ݡ����������������Ȳ�����Ϊ��������������Ч�����⣬�Լ������ܱ����˹��������ɵĲ���Ԥ֪��ʧ����׼�������Զ����ķ�ʽ">
+<meta name="twitter:image" content="http://yoursite.com/images/jenkins_ansible_autodeploy/jenkins_invoke_ansible.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/12/21/Jenkins + Ansible实现自动化发布/"/>
+
+
+  <title> Jenkins + Ansibleʵ���Զ������� | Delacroix' Blog </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Delacroix' Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule" rel="section">
+            
+            日程
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Jenkins + Ansibleʵ���Զ�������
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-21T11:14:33+08:00" content="2016-12-21">
+              2016-12-21
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/21/Jenkins + Ansible实现自动化发布/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/12/21/Jenkins + Ansible实现自动化发布/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Jenkins-Ansibleʵ���Զ�������"><a href="#Jenkins-Ansibleʵ���Զ�������" class="headerlink" title="Jenkins + Ansibleʵ���Զ�������"></a>Jenkins + Ansibleʵ���Զ�������</h1><p>ǰ�������������н���Ӧ�÷���ʱ�����ô����ֹ��ķ�ʽ�Ӳ��Ի�������WAR����������Ŀ¼���б��ݡ����������������Ȳ�����Ϊ��������������Ч�����⣬�Լ������ܱ����˹��������ɵĲ���Ԥ֪��ʧ����׼�������Զ����ķ�ʽ��ʵ��Ӧ�õķ�����</p>
+<blockquote>
+<p><strong>���ĵ����õ�ǰ�᣺</strong><br>���Ի����Ѿ�ͨ��CI���������Զ������롢��������������·���������̶���WAR������������ֻ�追����WAR����ָ��Ŀ¼��ѹ���ɵĳ�����</p>
+</blockquote>
+<h2 id="Jenkins��װ"><a href="#Jenkins��װ" class="headerlink" title="Jenkins��װ"></a>Jenkins��װ</h2><blockquote>
+<p><strong>���𻷾���</strong><br>����ϵͳ��ubuntu 14.04<br>������IP��192.168.1.1</p>
+</blockquote>
+<p><strong>��һ�ַ�ʽ</strong><br>ǰ��Jenkins����<a href="https://pkg.jenkins.io/debian-stable/�����ٷ�Jenkins" target="_blank" rel="external">https://pkg.jenkins.io/debian-stable/�����ٷ�Jenkins</a> key���롣</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget -<span class="selector-tag">q</span> -O - https:<span class="comment">//pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -</span></div></pre></td></tr></table></figure>
+<p>Ȼ����������Դ�б���</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">deb https:<span class="regexp">//</span>pkg.jenkins.io<span class="regexp">/debian-stable binary/</span></div></pre></td></tr></table></figure>
+<p>���󣬸��±��ذ�����������װ�ȶ���Jenkins</p>
+<figure class="highlight q"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="built_in">get</span> <span class="keyword">update</span></div><div class="line">sudo apt-<span class="built_in">get</span> install jenkins</div></pre></td></tr></table></figure>
+<p><strong>�ڶ��ַ�ʽ</strong><br>ǰ��Jenkins����<a href="https://pkg.jenkins.io/debian-stable/������deb��" target="_blank" rel="external">https://pkg.jenkins.io/debian-stable/������deb��</a></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget https:<span class="regexp">//</span>pkg.jenkins.io<span class="regexp">/debian-stable/</span>binary<span class="regexp">/jenkins_2.19.4_all.deb</span></div></pre></td></tr></table></figure>
+<p>��װdeb��</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">dpkg</span> <span class="selector-tag">-i</span> <span class="selector-tag">jenkins_2</span><span class="selector-class">.19</span><span class="selector-class">.4_all</span><span class="selector-class">.deb</span></div></pre></td></tr></table></figure>
+<p>���ղ�����ʾ�������а�װ�����ɺ�ͨ������������������</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="regexp">/etc/i</span>nit.d<span class="regexp">/jenkins start</span></div></pre></td></tr></table></figure>
+<p>��������JenkinsĬ�Ͻ�������8080�˿ڡ�</p>
+<h2 id="��װAnsible"><a href="#��װAnsible" class="headerlink" title="��װAnsible"></a>��װAnsible</h2><p>������<br>Ansible��װ���ɺ�����Ҫ�����¹�����</p>
+<h3 id="ʵ�ֱ��ط��������ܵ�½"><a href="#ʵ�ֱ��ط��������ܵ�½" class="headerlink" title="ʵ�ֱ��ط��������ܵ�½"></a>ʵ�ֱ��ط��������ܵ�½</h3><p>��Ansible���ط�������Jenkins�û��£�ִ����������������Կ�ԣ�</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">ssh-keygen -t rsa</span></div></pre></td></tr></table></figure>
+<p>��jenkins�û��Ĺ�Կ���������ط�������sshĿ¼�£�</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ssh-copy-id -<span class="selector-tag">i</span> .ssh/id_rsa<span class="selector-class">.pub</span> app@<span class="number">192.168</span>.<span class="number">1.2</span></div><div class="line">ssh-copy-id -<span class="selector-tag">i</span> .ssh/id_rsa<span class="selector-class">.pub</span> app@<span class="number">172.16</span>.<span class="number">1.2</span></div></pre></td></tr></table></figure>
+<p>���ˣ�Ansible�ܹ�ͨ��jenkins�û����ܵ�½Ӧ�÷��������������Ի�����</p>
+<p>##Jenkins����Ansible<br>���ȣ���Ҫ��Jenkins�ϰ�װAnsible�Ĳ�������Ϊ <strong>Ansible plugin</strong>���ڲ�����������������װ���ɡ�<br>Ȼ������Jenkins�½�<strong>Freestyle Project</strong></p>
+<p><img src="/images/jenkins_ansible_autodeploy/jenkins_invoke_ansible.png" alt="Alt text"></p>
+<p>���õ�Ansible-playbookʾ�����£�</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line">- hosts: <span class="number">192.168</span>.<span class="number">1.2</span></div><div class="line">  vars:</div><div class="line">    testIP: <span class="number">172.16</span>.<span class="number">1.2</span></div><div class="line">    testhome: /home/app/api-tomcat/webapps</div><div class="line">    warname: api.war</div><div class="line">    oldhome: /home/app/api-tomcat</div><div class="line">    backupwebapps: /home/app/tomcat.bak</div><div class="line">    newwar: /home/app/newwar</div><div class="line">    zipname: api</div><div class="line">  remote_user: app</div><div class="line">  tasks:</div><div class="line">    - name: ɾ��/home/app/newwarĿ¼</div><div class="line">      file: path=&#123;&#123; newwar &#125;&#125; state=absent</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: ����/home/app/newwarĿ¼.��Ȩ��</div><div class="line">      file: path=&#123;&#123; newwar &#125;&#125; recurse=yes mode=<span class="number">775</span> owner=app <span class="keyword">group</span>=app state=directory</div><div class="line">    - name: �Ӳ��Ի�������war����/home/app/newwarĿ¼</div><div class="line">      shell: scp app@&#123;&#123; testIP &#125;&#125;:&#123;&#123; testhome &#125;&#125;/&#123;&#123; warname &#125;&#125; &#123;&#123; newwar &#125;&#125;</div><div class="line">    - name: ��/home/app/newwar�ݹ���Ȩ��</div><div class="line">      file: dest=&#123;&#123; newwar&#125;&#125; recurse=yes mode=<span class="number">775</span> owner=app <span class="keyword">group</span>=app</div><div class="line">    - name: ��ѹ/home/app/newwarĿ¼�ڵ�war���ڱ�Ŀ¼��</div><div class="line">      shell: unzip -oq &#123;&#123; newwar &#125;&#125;/&#123;&#123; warname &#125;&#125; -d &#123;&#123; newwar &#125;&#125;/&#123;&#123; zipname &#125;&#125;</div><div class="line">    - name: �ٴθ�/home/app/newwar�ݹ���Ȩ��</div><div class="line">      file: dest=&#123;&#123; newwar&#125;&#125; recurse=yes mode=<span class="number">775</span> owner=app <span class="keyword">group</span>=app</div><div class="line">    - name: ��������webappsĿ¼/home/app/tomcat.bak����Ȩ��</div><div class="line">      file: path=&#123;&#123; backupwebapps &#125;&#125;/&#123;&#123; zipname &#125;&#125; recurse=yes mode=<span class="number">775</span> owner=app <span class="keyword">group</span>=app state=directory</div><div class="line">    - name: ����webapps��Ŀ¼/home/app/tomcat.bak�²�����ʱ����</div><div class="line">      shell: cp -a &#123;&#123; oldhome &#125;&#125;/webapps &#123;&#123; backupwebapps &#125;&#125;/&#123;&#123; zipname &#125;&#125;/webapps-`date +<span class="meta">%Y</span><span class="meta">%m</span><span class="meta">%d</span><span class="meta">%H</span><span class="meta">%M</span>`</div><div class="line">    - name: kill���̷�ʽֹͣ����.���Դ��󷵻�ֵ</div><div class="line">      shell: ps -ef | grep &#123;&#123; oldhome &#125;&#125; | grep -v grep | xargs kill</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: kill���̷�ʽֹͣ����.���Դ��󷵻�ֵ</div><div class="line">      shell: ps -ef | grep &#123;&#123; oldhome &#125;&#125; | grep -v grep | xargs kill</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: �ٴ�kill���̷�ʽֹͣ����.���Դ��󷵻�ֵ</div><div class="line">      shell: ps -ef | grep &#123;&#123; oldhome &#125;&#125; | grep -v grep | xargs kill</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: �鿴ֹͣ�����Ľ���.�����Ƿ�����</div><div class="line">      shell: ps -ef | grep &#123;&#123; oldhome &#125;&#125;</div><div class="line">    - name: ɾ��ԭ����webappsĿ¼�µ�war��</div><div class="line">      file: path=&#123;&#123; oldhome &#125;&#125;/webapps/&#123;&#123; warname &#125;&#125; state=absent</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: ɾ��ԭ����webappsĿ¼�µĳ���Ŀ¼</div><div class="line">      file: path=&#123;&#123; oldhome &#125;&#125;/webapps/&#123;&#123; zipname &#125;&#125; state=absent</div><div class="line">      ignore_errors: yes</div><div class="line">    - name: ����/home/app/newwarĿ¼�µĽ�ѹ���³���Ŀ¼��webappsĿ¼��</div><div class="line">      shell: cp -a &#123;&#123; newwar &#125;&#125;/&#123;&#123; zipname &#125;&#125; &#123;&#123; oldhome &#125;&#125;/webapps/</div><div class="line">    - name: ����/home/app/newwarĿ¼�µ�war����webappsĿ¼��</div><div class="line">      shell: cp -a &#123;&#123; newwar &#125;&#125;/&#123;&#123; warname &#125;&#125; &#123;&#123; oldhome &#125;&#125;/webapps/</div><div class="line">    - name: ��������</div><div class="line">      shell: <span class="string">"source /etc/profile;nohup &#123;&#123; oldhome &#125;&#125;/bin/startup.sh &amp;"</span></div><div class="line">    - name: �鿴�������Ƿ����������ķ���</div><div class="line">      shell: ps -ef | grep &#123;&#123; oldhome &#125;&#125;</div></pre></td></tr></table></figure>
+<p>ִ��RUN����ʼ����������<br><img src="/images/jenkins_ansible_autodeploy/run_project.png" alt="Alt text"></p>
+<p>Ȼ���Ϳ�����CONSOLE���濴��ִ�еĽ�����<br><img src="/images/jenkins_ansible_autodeploy/run_project_console_output.png" alt="Alt text"></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Operations/" rel="tag">#Operations</a>
+          
+            <a href="/tags/�Զ���/" rel="tag">#�Զ���</a>
+          
+            <a href="/tags/��ά/" rel="tag">#��ά</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/15/8D工作法/" rel="next" title="8D 工作法">
+                <i class="fa fa-chevron-left"></i> 8D 工作法
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Delacroix" />
+          <p class="site-author-name" itemprop="name">Delacroix</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Jenkins-Ansibleʵ���Զ�������"><span class="nav-number">1.</span> <span class="nav-text">Jenkins + Ansibleʵ���Զ�������</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Jenkins��װ"><span class="nav-number">1.1.</span> <span class="nav-text">Jenkins��װ</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#��װAnsible"><span class="nav-number">1.2.</span> <span class="nav-text">��װAnsible</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ʵ�ֱ��ط��������ܵ�½"><span class="nav-number">1.2.1.</span> <span class="nav-text">ʵ�ֱ��ط��������ܵ�½</span></a></li></ol></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Delacroix</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'delacroixsblog.disqus.com';
+      var disqus_identifier = '2016/12/21/Jenkins + Ansible实现自动化发布/';
+      var disqus_title = "Jenkins + Ansibleʵ���Զ�������";
+      var disqus_url = 'http://yoursite.com/2016/12/21/Jenkins + Ansible实现自动化发布/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = false;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = decodeURIComponent(data.url);
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title >= 0 || index_content >= 0 ){
+                                isMatch = true;
+								if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            } 
+							
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
