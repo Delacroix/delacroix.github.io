@@ -259,6 +259,145 @@
             
               
                 
+                <a class="post-title-link" href="/2016/12/22/Linux 接口ARP响应问题/" itemprop="url">
+                  Linux 接口ARP响应问题
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-22T14:48:33+08:00" content="2016-12-22">
+              2016-12-22
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/22/Linux 接口ARP响应问题/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/12/22/Linux 接口ARP响应问题/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Linux-接口ARP响应问题"><a href="#Linux-接口ARP响应问题" class="headerlink" title="Linux 接口ARP响应问题"></a>Linux 接口ARP响应问题</h1><h1 id="arp-announce-arp-ignore-sysctl"><a href="#arp-announce-arp-ignore-sysctl" class="headerlink" title="arp_announce/arp_ignore sysctl"></a>arp_announce/arp_ignore sysctl</h1><p>The arp_announce/arp_ignore sysctl on interfaces is available at the Linux official kernel since 2.6.4 and 2.4.26. The description about arp_announce/arp_ignore taken from kernel documentation is as follows: </p>
+<h2 id="arp-announce-INTEGER"><a href="#arp-announce-INTEGER" class="headerlink" title="arp_announce - INTEGER"></a>arp_announce - INTEGER</h2><p>Define different restriction levels for announcing the local source IP address from IP packets in ARP requests sent on interface:</p>
+<p><strong>0 - (default) Use any local address, configured on any interface</strong></p>
+<p><strong>1 - Try to avoid local addresses that are not in the target’s subnet for this interface.</strong><br>This mode is useful when target hosts reachable via this interface require the source IP address in ARP requests to be part of their logical network configured on the receiving interface. When we generate the request we will check all our subnets that include the target IP and will preserve the source address if it is from such subnet. If there is no such subnet we select source address according to the rules for level 2.</p>
+<p><strong>2 - Always use the best local address for this target.</strong><br>In this mode we ignore the source address in the IP packet and try to select local address that we prefer for talks with the target host. Such local address is selected by looking for primary IP addresses on all our subnets on the outgoing interface that include the target IP address. If no suitable local address is found we select the first local address we have on the outgoing interface or on all other interfaces, with the hope we will receive reply for our request and even sometimes no matter the source IP address we announce. The max value from conf/{all,interface}/arp_announce is used. Increasing the restriction level gives more chance for receiving answer from the resolved target while decreasing the level announces more valid sender’s information.</p>
+<h2 id="arp-ignore-INTEGER"><a href="#arp-ignore-INTEGER" class="headerlink" title="arp_ignore - INTEGER"></a>arp_ignore - INTEGER</h2><p>Define different modes for sending replies in response to received ARP requests that resolve local target IP addresses:<br><strong>0 - (default): reply for any local target IP address, configured on any interface</strong></p>
+<p><strong>1 - reply only if the target IP address is local address configured on the incoming interface</strong></p>
+<p><strong>2 - reply only if the target IP address is local address configured on the incoming interface and both with the sender’s IP address are part from same subnet on this interface</strong></p>
+<p><strong>3 - do not reply for local addresses configured with scope host, only resolutions for global and link addresses are replied</strong></p>
+<p><strong>4-7 - reserved</strong></p>
+<p><strong>8 - do not reply for all local addresses</strong><br>The max value from conf/{all,interface}/arp_ignore is used when ARP request is received on the {interface}</p>
+<h2 id="Disable-ARP-for-VIP"><a href="#Disable-ARP-for-VIP" class="headerlink" title="Disable ARP for VIP"></a>Disable ARP for VIP</h2><p>To disable ARP for VIP at real servers, we just need to set arp_announce/arp_ignore sysctls at the interface connected to the VIP network.<br>For example, real servers have eth0 connected to the VIP network with the VIP at interface lo, we will have the following commands.</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">echo <span class="number">1</span> &gt; <span class="meta-keyword">/proc/</span>sys<span class="meta-keyword">/net/</span>ipv4<span class="meta-keyword">/conf/</span>eth0/arp_ignore</div><div class="line">echo <span class="number">2</span> &gt; <span class="meta-keyword">/proc/</span>sys<span class="meta-keyword">/net/</span>ipv4<span class="meta-keyword">/conf/</span>eth0/arp_announce</div></pre></td></tr></table></figure>
+<p>Or, if /etc/sysctl.conf is used in the system, we have this config in /etc/sysctl.conf</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">net<span class="selector-class">.ipv4</span><span class="selector-class">.conf</span><span class="selector-class">.eth0</span><span class="selector-class">.arp_ignore</span> = <span class="number">1</span></div><div class="line">net<span class="selector-class">.ipv4</span><span class="selector-class">.conf</span><span class="selector-class">.eth0</span><span class="selector-class">.arp_announce</span> = <span class="number">2</span></div></pre></td></tr></table></figure>
+<p>If you’re about to brought up a new logical interface(eg. lo.0 etc.) it’s recommended to have the following commands.</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">echo <span class="string">"1"</span> &gt; <span class="meta-keyword">/proc/</span>sys<span class="meta-keyword">/net/</span>ipv4<span class="meta-keyword">/conf/</span>all/arp_ignore</div><div class="line">echo <span class="string">"2"</span> &gt; <span class="meta-keyword">/proc/</span>sys<span class="meta-keyword">/net/</span>ipv4<span class="meta-keyword">/conf/</span>all/arp_announce</div></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>Note that the arp_announce/arp_ignore sysctls must be setup correctly, before the VIP address is brought up at a logical interface at real servers.</strong></p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/12/21/Jenkins + Ansible实现自动化发布/" itemprop="url">
                   Jenkins + Ansible实现自动化发布
                 </a>
@@ -1189,7 +1328,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-count">8</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1206,7 +1345,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
