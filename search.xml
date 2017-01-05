@@ -4,6 +4,20 @@
   
     
     <entry>
+      <title><![CDATA[Umask简介]]></title>
+      <url>http://yoursite.com/2017/01/05/Umask%E7%AE%80%E4%BB%8B/</url>
+      <content type="html"><![CDATA[<h1 id="【转】Umask简介"><a href="#【转】Umask简介" class="headerlink" title="【转】Umask简介"></a>【转】Umask简介</h1><p>原文链接 <a href="https://linux.cn/article-3065-1.html" target="_blank" rel="external">https://linux.cn/article-3065-1.html</a><br>Umask 是什么？解释下，UMASK 代表用户掩码或用户文件创建掩码，它用于新创建的文件和文件夹，是其默认权限的基础。<br><img src="/images/unmask_intro/umask_intro.png" alt="Alt text"><br>上面的意思可以解释成任何基于 Linux 的操作系统为新建文件(包括文件夹)添加默认权限的规则。出于教育目的，下面列出了一些可以用来设置文件权限的八进制值掩码：</p>
+<figure class="highlight basic"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">0 </span>– 读, 写, 可执行 (rwx)</div><div class="line"><span class="symbol">1 </span>– 读和写 (rw-)</div><div class="line"><span class="symbol">2 </span>– 读和可执行 (r-x)</div><div class="line"><span class="symbol">3 </span>– 只读 (r--)</div><div class="line"><span class="symbol">4 </span>– 写和可执行 (-wx)</div><div class="line"><span class="symbol">5 </span>– 只写 (-w-)</div><div class="line"><span class="symbol">6 </span>– 仅可执行 (--x)</div><div class="line"><span class="symbol">7 </span>– 没有权限 (---)</div></pre></td></tr></table></figure>
+<p>在几乎所有的 Linux 发行版本中默认 Umask 值是 0022(或022)，可以在终端模拟程序中输入 umask 命令来查看。也可以运行 “umask 八进制值掩码” 命令（例如 umask 027）来临时改变这个值。</p>
+<p>你也许知道，新创建的文件的默认权限设置原本应该是 0666，文件夹的是 0777。应用上面所说的 umask 值后就得到 644 和 755 权限。</p>
+<p>许多意见认为 022 掩码会带来隐私问题，也就是说您所创建的文件对其他用户来说是可随意查看的，一想到这就感到不太爽！</p>
+<p>言归正传，用户可以按他们所愿来修改默认的 Umask 值，当然首先要保证修改的值合法。要修改默认值，请在您的 shell 配置文件中或者 /etc/profile 文件中写入一个新的 Umask 值。</p>
+<p>好了，这就大功告成了！从现在开始，在你的 Linux 系统上新创建的文件或文件夹都会有准确设置的权限。但请注意已经存在的文件或文件夹的权限并不会因为上面的操作而改变。</p>
+<p>如果您使用的是命令行，可以在任意目录下运行 ls -lah 命令，就可以看到当前的文件权限。另外，新手也可以很容易地查看到文件权限，在基于 GNOME 桌面的环境中，通过右击文件，选择属性 -&gt; 权限选项卡。</p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[Linux 接口ARP响应问题]]></title>
       <url>http://yoursite.com/2016/12/22/Linux%20%E6%8E%A5%E5%8F%A3ARP%E5%93%8D%E5%BA%94%E9%97%AE%E9%A2%98/</url>
       <content type="html"><![CDATA[<h1 id="Linux-接口ARP响应问题"><a href="#Linux-接口ARP响应问题" class="headerlink" title="Linux 接口ARP响应问题"></a>Linux 接口ARP响应问题</h1><h1 id="arp-announce-arp-ignore-sysctl"><a href="#arp-announce-arp-ignore-sysctl" class="headerlink" title="arp_announce/arp_ignore sysctl"></a>arp_announce/arp_ignore sysctl</h1><p>The arp_announce/arp_ignore sysctl on interfaces is available at the Linux official kernel since 2.6.4 and 2.4.26. The description about arp_announce/arp_ignore taken from kernel documentation is as follows: </p>

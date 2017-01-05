@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Operations,Operation System,Policy," />
 
 
 
@@ -84,12 +84,21 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Delacroix' Blog">
-<meta property="og:url" content="http://yoursite.com/categories/问题处理流程/index.html">
+<meta name="description" content="【转】Umask简介原文链接 https://linux.cn/article-3065-1.htmlUmask 是什么？解释下，UMASK 代表用户掩码或用户文件创建掩码，它用于新创建的文件和文件夹，是其默认权限的基础。上面的意思可以解释成任何基于 Linux 的操作系统为新建文件(包括文件夹)添加默认权限的规则。出于教育目的，下面列出了一些可以用来设置文件权限的八进制值掩码：
+12345678">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Umask简介">
+<meta property="og:url" content="http://yoursite.com/2017/01/05/Umask简介/index.html">
 <meta property="og:site_name" content="Delacroix' Blog">
+<meta property="og:description" content="【转】Umask简介原文链接 https://linux.cn/article-3065-1.htmlUmask 是什么？解释下，UMASK 代表用户掩码或用户文件创建掩码，它用于新创建的文件和文件夹，是其默认权限的基础。上面的意思可以解释成任何基于 Linux 的操作系统为新建文件(包括文件夹)添加默认权限的规则。出于教育目的，下面列出了一些可以用来设置文件权限的八进制值掩码：
+12345678">
+<meta property="og:image" content="http://yoursite.com/images/unmask_intro/umask_intro.png">
+<meta property="og:updated_time" content="2017-01-05T03:04:21.194Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Delacroix' Blog">
+<meta name="twitter:title" content="Umask简介">
+<meta name="twitter:description" content="【转】Umask简介原文链接 https://linux.cn/article-3065-1.htmlUmask 是什么？解释下，UMASK 代表用户掩码或用户文件创建掩码，它用于新创建的文件和文件夹，是其默认权限的基础。上面的意思可以解释成任何基于 Linux 的操作系统为新建文件(包括文件夹)添加默认权限的规则。出于教育目的，下面列出了一些可以用来设置文件权限的八进制值掩码：
+12345678">
+<meta name="twitter:image" content="http://yoursite.com/images/unmask_intro/umask_intro.png">
 
 
 
@@ -110,10 +119,10 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/categories/问题处理流程/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/01/05/Umask简介/"/>
 
 
-  <title> 分类: 问题处理流程 | Delacroix' Blog </title>
+  <title> Umask简介 | Delacroix' Blog </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -134,7 +143,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left  ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
@@ -235,47 +244,159 @@
           <div id="content" class="content">
             
 
-  <section id="posts" class="posts-collapse">
-    <div class="collection-title">
-      <h2 >
-        问题处理流程
-        <small>分类</small>
-      </h2>
-    </div>
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
 
     
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Umask简介
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-05T10:43:33+08:00" content="2017-01-05">
+              2017-01-05
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/01/05/Umask简介/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/01/05/Umask简介/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
       
 
-  <article class="post post-type-normal" itemscope itemtype="//schema.org/Article">
-    <header class="post-header">
+      
+        <h1 id="【转】Umask简介"><a href="#【转】Umask简介" class="headerlink" title="【转】Umask简介"></a>【转】Umask简介</h1><p>原文链接 <a href="https://linux.cn/article-3065-1.html" target="_blank" rel="external">https://linux.cn/article-3065-1.html</a><br>Umask 是什么？解释下，UMASK 代表用户掩码或用户文件创建掩码，它用于新创建的文件和文件夹，是其默认权限的基础。<br><img src="/images/unmask_intro/umask_intro.png" alt="Alt text"><br>上面的意思可以解释成任何基于 Linux 的操作系统为新建文件(包括文件夹)添加默认权限的规则。出于教育目的，下面列出了一些可以用来设置文件权限的八进制值掩码：</p>
+<figure class="highlight basic"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">0 </span>– 读, 写, 可执行 (rwx)</div><div class="line"><span class="symbol">1 </span>– 读和写 (rw-)</div><div class="line"><span class="symbol">2 </span>– 读和可执行 (r-x)</div><div class="line"><span class="symbol">3 </span>– 只读 (r--)</div><div class="line"><span class="symbol">4 </span>– 写和可执行 (-wx)</div><div class="line"><span class="symbol">5 </span>– 只写 (-w-)</div><div class="line"><span class="symbol">6 </span>– 仅可执行 (--x)</div><div class="line"><span class="symbol">7 </span>– 没有权限 (---)</div></pre></td></tr></table></figure>
+<p>在几乎所有的 Linux 发行版本中默认 Umask 值是 0022(或022)，可以在终端模拟程序中输入 umask 命令来查看。也可以运行 “umask 八进制值掩码” 命令（例如 umask 027）来临时改变这个值。</p>
+<p>你也许知道，新创建的文件的默认权限设置原本应该是 0666，文件夹的是 0777。应用上面所说的 umask 值后就得到 644 和 755 权限。</p>
+<p>许多意见认为 022 掩码会带来隐私问题，也就是说您所创建的文件对其他用户来说是可随意查看的，一想到这就感到不太爽！</p>
+<p>言归正传，用户可以按他们所愿来修改默认的 Umask 值，当然首先要保证修改的值合法。要修改默认值，请在您的 shell 配置文件中或者 /etc/profile 文件中写入一个新的 Umask 值。</p>
+<p>好了，这就大功告成了！从现在开始，在你的 Linux 系统上新创建的文件或文件夹都会有准确设置的权限。但请注意已经存在的文件或文件夹的权限并不会因为上面的操作而改变。</p>
+<p>如果您使用的是命令行，可以在任意目录下运行 ls -lah 命令，就可以看到当前的文件权限。另外，新手也可以很容易地查看到文件权限，在基于 GNOME 桌面的环境中，通过右击文件，选择属性 -&gt; 权限选项卡。</p>
 
-      <h1 class="post-title">
+      
+    </div>
+
+    <div>
+      
         
-            <a class="post-title-link" href="/2016/12/15/8D工作法/" itemprop="url">
-              
-                <span itemprop="name">8D 工作法</span>
-              
-            </a>
+
+      
+    </div>
+
+    <div>
+      
         
-      </h1>
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2016-12-15T10:56:52+08:00"
-              content="2016-12-15" >
-          12-15
-        </time>
-      </div>
+      
+    </div>
 
-    </header>
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Operations/" rel="tag">#Operations</a>
+          
+            <a href="/tags/Operation-System/" rel="tag">#Operation System</a>
+          
+            <a href="/tags/Policy/" rel="tag">#Policy</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/22/Linux 接口ARP响应问题/" rel="next" title="Linux 接口ARP响应问题">
+                <i class="fa fa-chevron-left"></i> Linux 接口ARP响应问题
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </article>
 
 
-    
-  </section>
 
-  
-
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -283,6 +404,17 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -302,8 +434,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -353,6 +494,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#【转】Umask简介"><span class="nav-number">1.</span> <span class="nav-text">【转】Umask简介</span></a></li></ol></div>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -456,6 +608,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
 
   
 
@@ -472,9 +628,9 @@
 
     <script type="text/javascript">
       var disqus_shortname = 'delacroixsblog.disqus.com';
-      var disqus_identifier = 'categories/问题处理流程/index.html';
-      var disqus_title = "";
-      var disqus_url = '';
+      var disqus_identifier = '2017/01/05/Umask简介/';
+      var disqus_title = "Umask简介";
+      var disqus_url = 'http://yoursite.com/2017/01/05/Umask简介/';
 
       function run_disqus_script(disqus_script){
         var dsq = document.createElement('script');
@@ -485,6 +641,13 @@
       }
 
       run_disqus_script('count.js');
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
       
     </script>
   
