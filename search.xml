@@ -5,7 +5,7 @@
     
     <entry>
       <title><![CDATA[Umask简介]]></title>
-      <url>https://delacroix.github.io/blog/2017/01/05/Umask%E7%AE%80%E4%BB%8B/</url>
+      <url>https://delacroix.github.io/2017/01/05/Umask%E7%AE%80%E4%BB%8B/</url>
       <content type="html"><![CDATA[<h1 id="【转】Umask简介"><a href="#【转】Umask简介" class="headerlink" title="【转】Umask简介"></a>【转】Umask简介</h1><p>原文链接 <a href="https://linux.cn/article-3065-1.html" target="_blank" rel="external">https://linux.cn/article-3065-1.html</a><br>Umask 是什么？解释下，UMASK 代表用户掩码或用户文件创建掩码，它用于新创建的文件和文件夹，是其默认权限的基础。<br><img src="/images/umask_intro/umask_intro.png" alt="Alt text"><br>上面的意思可以解释成任何基于 Linux 的操作系统为新建文件(包括文件夹)添加默认权限的规则。出于教育目的，下面列出了一些可以用来设置文件权限的八进制值掩码：</p>
 <figure class="highlight basic"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">0 </span>– 读, 写, 可执行 (rwx)</div><div class="line"><span class="symbol">1 </span>– 读和写 (rw-)</div><div class="line"><span class="symbol">2 </span>– 读和可执行 (r-x)</div><div class="line"><span class="symbol">3 </span>– 只读 (r--)</div><div class="line"><span class="symbol">4 </span>– 写和可执行 (-wx)</div><div class="line"><span class="symbol">5 </span>– 只写 (-w-)</div><div class="line"><span class="symbol">6 </span>– 仅可执行 (--x)</div><div class="line"><span class="symbol">7 </span>– 没有权限 (---)</div></pre></td></tr></table></figure>
 <p>在几乎所有的 Linux 发行版本中默认 Umask 值是 0022(或022)，可以在终端模拟程序中输入 umask 命令来查看。也可以运行 “umask 八进制值掩码” 命令（例如 umask 027）来临时改变这个值。</p>
@@ -19,7 +19,7 @@
     
     <entry>
       <title><![CDATA[Linux 接口ARP响应问题]]></title>
-      <url>https://delacroix.github.io/blog/2016/12/22/Linux%20%E6%8E%A5%E5%8F%A3ARP%E5%93%8D%E5%BA%94%E9%97%AE%E9%A2%98/</url>
+      <url>https://delacroix.github.io/2016/12/22/Linux%20%E6%8E%A5%E5%8F%A3ARP%E5%93%8D%E5%BA%94%E9%97%AE%E9%A2%98/</url>
       <content type="html"><![CDATA[<h1 id="Linux-接口ARP响应问题"><a href="#Linux-接口ARP响应问题" class="headerlink" title="Linux 接口ARP响应问题"></a>Linux 接口ARP响应问题</h1><h1 id="arp-announce-arp-ignore-sysctl"><a href="#arp-announce-arp-ignore-sysctl" class="headerlink" title="arp_announce/arp_ignore sysctl"></a>arp_announce/arp_ignore sysctl</h1><p>The arp_announce/arp_ignore sysctl on interfaces is available at the Linux official kernel since 2.6.4 and 2.4.26. The description about arp_announce/arp_ignore taken from kernel documentation is as follows: </p>
 <h2 id="arp-announce-INTEGER"><a href="#arp-announce-INTEGER" class="headerlink" title="arp_announce - INTEGER"></a>arp_announce - INTEGER</h2><p>Define different restriction levels for announcing the local source IP address from IP packets in ARP requests sent on interface:</p>
 <p><strong>0 - (default) Use any local address, configured on any interface</strong></p>
@@ -45,7 +45,7 @@
     
     <entry>
       <title><![CDATA[Jenkins + Ansible实现自动化发布]]></title>
-      <url>https://delacroix.github.io/blog/2016/12/21/Jenkins%20+%20Ansible%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83/</url>
+      <url>https://delacroix.github.io/2016/12/21/Jenkins%20+%20Ansible%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83/</url>
       <content type="html"><![CDATA[<h1 id="Jenkins-Ansible实现自动化发布"><a href="#Jenkins-Ansible实现自动化发布" class="headerlink" title="Jenkins + Ansible实现自动化发布"></a>Jenkins + Ansible实现自动化发布</h1><p>前期在生产环境中进行应用发布时，采用纯粹手工的方式从测试环境拷贝WAR到生产环境目录进行备份、部署、重启服务等操作。为解决批量部署的效率问题，以及尽可能避免人工操作造成的不可预知的失误，准备采用自动化的方式来实现应用的发布。</p>
 <blockquote>
 <p><strong>本文档适用的前提：</strong><br>测试环境已经通过CI工具完成自动化编译、打包，并生成了路径、命名固定的WAR包，生产环境只需拷贝该WAR包到指定目录解压即可的场景。</p>
@@ -84,7 +84,7 @@
     
     <entry>
       <title><![CDATA[8D 工作法]]></title>
-      <url>https://delacroix.github.io/blog/2016/12/15/8D%E5%B7%A5%E4%BD%9C%E6%B3%95/</url>
+      <url>https://delacroix.github.io/2016/12/15/8D%E5%B7%A5%E4%BD%9C%E6%B3%95/</url>
       <content type="html"><![CDATA[<h1 id="8D-工作法"><a href="#8D-工作法" class="headerlink" title="8D 工作法"></a>8D 工作法</h1><p>8D是解决问题的8条基本准则或称8个工作步骤，但在实际应用中却有9个步骤：</p>
 <blockquote>
 <p>D0：征兆紧急反应措施<br>D1：小组成立<br>D2：问题说明<br>D3：实施并验证临时措施<br>D4：确定并验证根本原因<br>D5：选择和验证永久纠正措施<br>D6：实施永久纠正措施<br>D7：预防再发生<br>D8：小组祝贺<br>D0：征兆紧急反应措施</p>
@@ -119,7 +119,7 @@
     
     <entry>
       <title><![CDATA[OSPF的基本原理与实现]]></title>
-      <url>https://delacroix.github.io/blog/2016/11/04/OSPF%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/</url>
+      <url>https://delacroix.github.io/2016/11/04/OSPF%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/</url>
       <content type="html"><![CDATA[<h1 id="OSPF的基本原理与实现"><a href="#OSPF的基本原理与实现" class="headerlink" title="OSPF的基本原理与实现"></a>OSPF的基本原理与实现</h1><p>OSPF（Open Shortest Path First，开放最短路径优先）是由IETF开发路径选择协议。<br>OSPF是开放的链路状态路由协议。<br>OSPFv2应用于IPv4中，由RFC2328规范。</p>
 <h2 id="OSPF的特征："><a href="#OSPF的特征：" class="headerlink" title="OSPF的特征："></a>OSPF的特征：</h2><ol>
 <li>收敛快速；</li>
@@ -157,7 +157,7 @@
     
     <entry>
       <title><![CDATA[常用Centos命令]]></title>
-      <url>https://delacroix.github.io/blog/2016/11/04/%E5%B8%B8%E7%94%A8Centos%E5%91%BD%E4%BB%A4/</url>
+      <url>https://delacroix.github.io/2016/11/04/%E5%B8%B8%E7%94%A8Centos%E5%91%BD%E4%BB%A4/</url>
       <content type="html"><![CDATA[<h4 id="安装方式："><a href="#安装方式：" class="headerlink" title="安装方式："></a>安装方式：</h4><p><strong>• yum安装[需联网]</strong><br><code>yum install vim</code> [yum方式安装vim软件及相关依赖包，如有更新包，则提示是否更新]<br><code>yum search vim</code> [yum方式搜索vim软件是否存在]<br><code>yum list |grep vim</code> [yum方式列出vim安装状态、版本及包全名]</p>
 <a id="more"></a>
 <p><strong>• rpm安装</strong><br><code>rpm -ivh vim-minimal.x86_64.rpm</code> [rpm方式安装vim软件，如差依赖包，会有提示]<br><code>rpm -qa |grep vim</code> [查询系统是否安装vim软件，有则显示包全名及版本号]<br><code>rpm -ql yum</code> [列出yum软件所安装的文件]<br><strong>• 源码安装[常规安装方式]</strong><br><code>./configure</code> 配置源码包相关安装 –help 打印帮助文档<br><code>make</code> 编译代码<br><code>make install</code> 安装软件及输出安装信息</p>
@@ -196,7 +196,7 @@
     
     <entry>
       <title><![CDATA[LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志]]></title>
-      <url>https://delacroix.github.io/blog/2016/11/04/LOGSTASH-ELASTICSEARCH-%E5%A4%84%E7%90%86-MYSQL-%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/</url>
+      <url>https://delacroix.github.io/2016/11/04/LOGSTASH-ELASTICSEARCH-%E5%A4%84%E7%90%86-MYSQL-%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/</url>
       <content type="html"><![CDATA[<h1 id="LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志"><a href="#LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志" class="headerlink" title="LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志"></a>LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志</h1><p>先确认慢查询日志是否开启, 然后找到日志文件的位置</p>
 <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="section">&gt; show variables like '%slow%';</span></div><div class="line">+---------------------+-------------------------------------+</div><div class="line"><span class="section">| Variable_name       | Value                               |</span></div><div class="line">+---------------------+-------------------------------------+</div><div class="line">| log<span class="emphasis">_slow_</span>queries    | ON                                  |</div><div class="line">| slow<span class="emphasis">_launch_</span>time    | 2                                   |</div><div class="line">| slow<span class="emphasis">_query_</span>log      | ON                                  |</div><div class="line"><span class="section">| slow_query_log_file | /data/mysqllog/20000/slow-query.log |</span></div><div class="line">+---------------------+-------------------------------------+</div></pre></td></tr></table></figure>
 <a id="more"></a>
@@ -216,7 +216,7 @@
     
     <entry>
       <title><![CDATA[kubeadm 搭建 kubernetes 集群]]></title>
-      <url>https://delacroix.github.io/blog/2016/11/03/kubeadm-%E6%90%AD%E5%BB%BA-kubernetes-%E9%9B%86%E7%BE%A4/</url>
+      <url>https://delacroix.github.io/2016/11/03/kubeadm-%E6%90%AD%E5%BB%BA-kubernetes-%E9%9B%86%E7%BE%A4/</url>
       <content type="html"><![CDATA[<h1 id="转-kubeadm-搭建-kubernetes-集群"><a href="#转-kubeadm-搭建-kubernetes-集群" class="headerlink" title="[转]kubeadm 搭建 kubernetes 集群"></a>[转]kubeadm 搭建 kubernetes 集群</h1><p>原作者链接：<a href="https://mritd.me/2016/10/29/set-up-kubernetes-cluster-by-kubeadm/" target="_blank" rel="external">点我</a></p>
 <p>距离上一篇 kubernetes 1.4 集群搭建 发布间隔不算太久，自己也不断地在生产和测试环境鼓捣，有不少 “逗比” 的经历，准备写一下具体的 kubeadm 搭建集群的一些坑和踩坑的经验，如果没有使用过 kubeadm 的同学，最好先看下上面的文章，然后鼓捣一遍，也许并不会成功，但大部分坑再来看此文会有收获</p>
 <h2 id="1-环境准备"><a href="#1-环境准备" class="headerlink" title="1 环境准备"></a>1 环境准备</h2><p>首先环境还是三台虚拟机，虚拟机地址如下</p>
@@ -384,7 +384,7 @@
     
     <entry>
       <title><![CDATA[LVS集群中的IP负载均衡技术]]></title>
-      <url>https://delacroix.github.io/blog/2016/11/03/LVS%E9%9B%86%E7%BE%A4%E4%B8%AD%E7%9A%84IP%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%8A%80%E6%9C%AF-1/</url>
+      <url>https://delacroix.github.io/2016/11/03/LVS%E9%9B%86%E7%BE%A4%E4%B8%AD%E7%9A%84IP%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%8A%80%E6%9C%AF-1/</url>
       <content type="html"><![CDATA[<h1 id="转-LVS集群中的IP负载均衡技术"><a href="#转-LVS集群中的IP负载均衡技术" class="headerlink" title="[转]LVS集群中的IP负载均衡技术"></a>[转]LVS集群中的IP负载均衡技术</h1><blockquote>
 <p>本文在分析服务器集群实现虚拟网络服务的相关技术上，详细描述了LVS集群中实现的三种IP负载均衡技术（VS/NAT、VS/TUN和VS/DR）的工作原理，以及它们的优缺点。</p>
 </blockquote>
