@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://delacroix.github.io/"/>
-  <updated>2017-02-09T07:04:03.440Z</updated>
+  <updated>2017-02-09T07:07:34.171Z</updated>
   <id>https://delacroix.github.io/</id>
   
   <author>
@@ -20,14 +20,14 @@
     <link href="https://delacroix.github.io/2017/02/09/mysqldump-error-1066-not-unique-table/"/>
     <id>https://delacroix.github.io/2017/02/09/mysqldump-error-1066-not-unique-table/</id>
     <published>2017-02-09T07:01:54.000Z</published>
-    <updated>2017-02-09T07:04:03.440Z</updated>
+    <updated>2017-02-09T07:07:34.171Z</updated>
     
     <content type="html"><![CDATA[<figure class="highlight gams"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysqldump: Got error: <span class="number">1066</span>: <span class="keyword">Not</span> unique <span class="keyword">table</span>/alias</div></pre></td></tr></table></figure>
-<p>myql ����ʱ��ʾ���£�</p>
+<p>myql 导出时提示如下：</p>
 <figure class="highlight moonscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root@localhost MySQL]# mysqldump  -uroot  -p <span class="number">123456</span>  test &gt;test_bak</div><div class="line"><span class="name">mysqldump</span>: Got <span class="name">error</span>: <span class="number">1066</span>: Not unique <span class="built_in">table</span>/<span class="name">alias</span>: <span class="string">'robots_excludeurl'</span> <span class="keyword">when</span> <span class="keyword">using</span> LOCK TABLES</div></pre></td></tr></table></figure>
-<p>�޸�/etc/my.cnf��������������#ע�͵����ɣ�<br><code>lower_case_table_names=1</code>������1��ʾ�����ֱ�����Сд��<br>ע�͵���������mysql��</p>
+<p>修改/etc/my.cnf，将下面这行用#注释掉即可：<br><code>lower_case_table_names=1</code>（等于1表示不区分表名大小写）<br>注释掉后，重启mysql：</p>
 <figure class="highlight ebnf"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">service  mysql  restart</span></div></pre></td></tr></table></figure>
-<p>�ٵ��������ˡ�</p>
+<p>再导出，好了。</p>
 ]]></content>
     
     <summary type="html">
@@ -36,6 +36,8 @@
     
     </summary>
     
+    
+      <category term="MySQL" scheme="https://delacroix.github.io/tags/MySQL/"/>
     
   </entry>
   
@@ -397,9 +399,9 @@
       <category term="Linux" scheme="https://delacroix.github.io/categories/Linux/"/>
     
     
-      <category term="ELK" scheme="https://delacroix.github.io/tags/ELK/"/>
-    
       <category term="MySQL" scheme="https://delacroix.github.io/tags/MySQL/"/>
+    
+      <category term="ELK" scheme="https://delacroix.github.io/tags/ELK/"/>
     
   </entry>
   
