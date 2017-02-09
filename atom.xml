@@ -1,24 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Delacroix&#39;s Blog</title>
   
+  <link href="/atom.xml" rel="self"/>
   
+  <link href="https://delacroix.github.io/"/>
+  <updated>2017-02-09T07:04:03.440Z</updated>
+  <id>https://delacroix.github.io/</id>
+  
+  <author>
+    <name>Delacroix</name>
     
-    <entry>
-      <title><![CDATA[mysqldump_error_1066_not_unique_table]]></title>
-      <url>https://delacroix.github.io/2017/02/09/mysqldump-error-1066-not-unique-table/</url>
-      <content type="html"><![CDATA[<figure class="highlight gams"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysqldump: Got error: <span class="number">1066</span>: <span class="keyword">Not</span> unique <span class="keyword">table</span>/alias</div></pre></td></tr></table></figure>
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>mysqldump_error_1066_not_unique_table</title>
+    <link href="https://delacroix.github.io/2017/02/09/mysqldump-error-1066-not-unique-table/"/>
+    <id>https://delacroix.github.io/2017/02/09/mysqldump-error-1066-not-unique-table/</id>
+    <published>2017-02-09T07:01:54.000Z</published>
+    <updated>2017-02-09T07:04:03.440Z</updated>
+    
+    <content type="html"><![CDATA[<figure class="highlight gams"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysqldump: Got error: <span class="number">1066</span>: <span class="keyword">Not</span> unique <span class="keyword">table</span>/alias</div></pre></td></tr></table></figure>
 <p>myql ����ʱ��ʾ���£�</p>
 <figure class="highlight moonscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root@localhost MySQL]# mysqldump  -uroot  -p <span class="number">123456</span>  test &gt;test_bak</div><div class="line"><span class="name">mysqldump</span>: Got <span class="name">error</span>: <span class="number">1066</span>: Not unique <span class="built_in">table</span>/<span class="name">alias</span>: <span class="string">'robots_excludeurl'</span> <span class="keyword">when</span> <span class="keyword">using</span> LOCK TABLES</div></pre></td></tr></table></figure>
 <p>�޸�/etc/my.cnf��������������#ע�͵����ɣ�<br><code>lower_case_table_names=1</code>������1��ʾ�����ֱ�����Сд��<br>ע�͵���������mysql��</p>
 <figure class="highlight ebnf"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">service  mysql  restart</span></div></pre></td></tr></table></figure>
 <p>�ٵ��������ˡ�</p>
 ]]></content>
-    </entry>
     
-    <entry>
-      <title><![CDATA[Umask简介]]></title>
-      <url>https://delacroix.github.io/2017/01/05/Umask%E7%AE%80%E4%BB%8B/</url>
-      <content type="html"><![CDATA[<h1 id="【转】Umask简介"><a href="#【转】Umask简介" class="headerlink" title="【转】Umask简介"></a>【转】Umask简介</h1><p>原文链接 <a href="https://linux.cn/article-3065-1.html" target="_blank" rel="external">https://linux.cn/article-3065-1.html</a><br>Umask 是什么？解释下，UMASK 代表用户掩码或用户文件创建掩码，它用于新创建的文件和文件夹，是其默认权限的基础。<br><img src="/images/umask_intro/umask_intro.png" alt="Alt text"><br>上面的意思可以解释成任何基于 Linux 的操作系统为新建文件(包括文件夹)添加默认权限的规则。出于教育目的，下面列出了一些可以用来设置文件权限的八进制值掩码：</p>
+    <summary type="html">
+    
+      &lt;figure class=&quot;highlight gams&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Umask简介</title>
+    <link href="https://delacroix.github.io/2017/01/05/Umask%E7%AE%80%E4%BB%8B/"/>
+    <id>https://delacroix.github.io/2017/01/05/Umask简介/</id>
+    <published>2017-01-05T02:43:33.000Z</published>
+    <updated>2017-01-05T03:07:13.043Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="【转】Umask简介"><a href="#【转】Umask简介" class="headerlink" title="【转】Umask简介"></a>【转】Umask简介</h1><p>原文链接 <a href="https://linux.cn/article-3065-1.html" target="_blank" rel="external">https://linux.cn/article-3065-1.html</a><br>Umask 是什么？解释下，UMASK 代表用户掩码或用户文件创建掩码，它用于新创建的文件和文件夹，是其默认权限的基础。<br><img src="/images/umask_intro/umask_intro.png" alt="Alt text"><br>上面的意思可以解释成任何基于 Linux 的操作系统为新建文件(包括文件夹)添加默认权限的规则。出于教育目的，下面列出了一些可以用来设置文件权限的八进制值掩码：</p>
 <figure class="highlight basic"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">0 </span>– 读, 写, 可执行 (rwx)</div><div class="line"><span class="symbol">1 </span>– 读和写 (rw-)</div><div class="line"><span class="symbol">2 </span>– 读和可执行 (r-x)</div><div class="line"><span class="symbol">3 </span>– 只读 (r--)</div><div class="line"><span class="symbol">4 </span>– 写和可执行 (-wx)</div><div class="line"><span class="symbol">5 </span>– 只写 (-w-)</div><div class="line"><span class="symbol">6 </span>– 仅可执行 (--x)</div><div class="line"><span class="symbol">7 </span>– 没有权限 (---)</div></pre></td></tr></table></figure>
 <p>在几乎所有的 Linux 发行版本中默认 Umask 值是 0022(或022)，可以在终端模拟程序中输入 umask 命令来查看。也可以运行 “umask 八进制值掩码” 命令（例如 umask 027）来临时改变这个值。</p>
 <p>你也许知道，新创建的文件的默认权限设置原本应该是 0666，文件夹的是 0777。应用上面所说的 umask 值后就得到 644 和 755 权限。</p>
@@ -27,12 +55,32 @@
 <p>好了，这就大功告成了！从现在开始，在你的 Linux 系统上新创建的文件或文件夹都会有准确设置的权限。但请注意已经存在的文件或文件夹的权限并不会因为上面的操作而改变。</p>
 <p>如果您使用的是命令行，可以在任意目录下运行 ls -lah 命令，就可以看到当前的文件权限。另外，新手也可以很容易地查看到文件权限，在基于 GNOME 桌面的环境中，通过右击文件，选择属性 -&gt; 权限选项卡。</p>
 ]]></content>
-    </entry>
     
-    <entry>
-      <title><![CDATA[Linux 接口ARP响应问题]]></title>
-      <url>https://delacroix.github.io/2016/12/22/Linux%20%E6%8E%A5%E5%8F%A3ARP%E5%93%8D%E5%BA%94%E9%97%AE%E9%A2%98/</url>
-      <content type="html"><![CDATA[<h1 id="Linux-接口ARP响应问题"><a href="#Linux-接口ARP响应问题" class="headerlink" title="Linux 接口ARP响应问题"></a>Linux 接口ARP响应问题</h1><h1 id="arp-announce-arp-ignore-sysctl"><a href="#arp-announce-arp-ignore-sysctl" class="headerlink" title="arp_announce/arp_ignore sysctl"></a>arp_announce/arp_ignore sysctl</h1><p>The arp_announce/arp_ignore sysctl on interfaces is available at the Linux official kernel since 2.6.4 and 2.4.26. The description about arp_announce/arp_ignore taken from kernel documentation is as follows: </p>
+    <summary type="html">
+    
+      &lt;h1 id=&quot;【转】Umask简介&quot;&gt;&lt;a href=&quot;#【转】Umask简介&quot; class=&quot;headerlink&quot; title=&quot;【转】Umask简介&quot;&gt;&lt;/a&gt;【转】Umask简介&lt;/h1&gt;&lt;p&gt;原文链接 &lt;a href=&quot;https://linux.cn/article
+    
+    </summary>
+    
+      <category term="Linux" scheme="https://delacroix.github.io/categories/Linux/"/>
+    
+    
+      <category term="Operations" scheme="https://delacroix.github.io/tags/Operations/"/>
+    
+      <category term="Operation System" scheme="https://delacroix.github.io/tags/Operation-System/"/>
+    
+      <category term="Policy" scheme="https://delacroix.github.io/tags/Policy/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Linux 接口ARP响应问题</title>
+    <link href="https://delacroix.github.io/2016/12/22/Linux%20%E6%8E%A5%E5%8F%A3ARP%E5%93%8D%E5%BA%94%E9%97%AE%E9%A2%98/"/>
+    <id>https://delacroix.github.io/2016/12/22/Linux 接口ARP响应问题/</id>
+    <published>2016-12-22T06:48:33.000Z</published>
+    <updated>2016-12-22T06:50:00.397Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Linux-接口ARP响应问题"><a href="#Linux-接口ARP响应问题" class="headerlink" title="Linux 接口ARP响应问题"></a>Linux 接口ARP响应问题</h1><h1 id="arp-announce-arp-ignore-sysctl"><a href="#arp-announce-arp-ignore-sysctl" class="headerlink" title="arp_announce/arp_ignore sysctl"></a>arp_announce/arp_ignore sysctl</h1><p>The arp_announce/arp_ignore sysctl on interfaces is available at the Linux official kernel since 2.6.4 and 2.4.26. The description about arp_announce/arp_ignore taken from kernel documentation is as follows: </p>
 <h2 id="arp-announce-INTEGER"><a href="#arp-announce-INTEGER" class="headerlink" title="arp_announce - INTEGER"></a>arp_announce - INTEGER</h2><p>Define different restriction levels for announcing the local source IP address from IP packets in ARP requests sent on interface:</p>
 <p><strong>0 - (default) Use any local address, configured on any interface</strong></p>
 <p><strong>1 - Try to avoid local addresses that are not in the target’s subnet for this interface.</strong><br>This mode is useful when target hosts reachable via this interface require the source IP address in ARP requests to be part of their logical network configured on the receiving interface. When we generate the request we will check all our subnets that include the target IP and will preserve the source address if it is from such subnet. If there is no such subnet we select source address according to the rules for level 2.</p>
@@ -53,12 +101,32 @@
 <p><strong>Note that the arp_announce/arp_ignore sysctls must be setup correctly, before the VIP address is brought up at a logical interface at real servers.</strong></p>
 </blockquote>
 ]]></content>
-    </entry>
     
-    <entry>
-      <title><![CDATA[Jenkins + Ansible实现自动化发布]]></title>
-      <url>https://delacroix.github.io/2016/12/21/Jenkins%20+%20Ansible%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83/</url>
-      <content type="html"><![CDATA[<h1 id="Jenkins-Ansible实现自动化发布"><a href="#Jenkins-Ansible实现自动化发布" class="headerlink" title="Jenkins + Ansible实现自动化发布"></a>Jenkins + Ansible实现自动化发布</h1><p>前期在生产环境中进行应用发布时，采用纯粹手工的方式从测试环境拷贝WAR到生产环境目录进行备份、部署、重启服务等操作。为解决批量部署的效率问题，以及尽可能避免人工操作造成的不可预知的失误，准备采用自动化的方式来实现应用的发布。</p>
+    <summary type="html">
+    
+      &lt;h1 id=&quot;Linux-接口ARP响应问题&quot;&gt;&lt;a href=&quot;#Linux-接口ARP响应问题&quot; class=&quot;headerlink&quot; title=&quot;Linux 接口ARP响应问题&quot;&gt;&lt;/a&gt;Linux 接口ARP响应问题&lt;/h1&gt;&lt;h1 id=&quot;arp-announce-
+    
+    </summary>
+    
+      <category term="Linux" scheme="https://delacroix.github.io/categories/Linux/"/>
+    
+    
+      <category term="Operations" scheme="https://delacroix.github.io/tags/Operations/"/>
+    
+      <category term="Network" scheme="https://delacroix.github.io/tags/Network/"/>
+    
+      <category term="ARP" scheme="https://delacroix.github.io/tags/ARP/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Jenkins + Ansible实现自动化发布</title>
+    <link href="https://delacroix.github.io/2016/12/21/Jenkins%20+%20Ansible%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E5%8F%91%E5%B8%83/"/>
+    <id>https://delacroix.github.io/2016/12/21/Jenkins + Ansible实现自动化发布/</id>
+    <published>2016-12-21T03:14:33.000Z</published>
+    <updated>2016-12-21T03:35:44.936Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Jenkins-Ansible实现自动化发布"><a href="#Jenkins-Ansible实现自动化发布" class="headerlink" title="Jenkins + Ansible实现自动化发布"></a>Jenkins + Ansible实现自动化发布</h1><p>前期在生产环境中进行应用发布时，采用纯粹手工的方式从测试环境拷贝WAR到生产环境目录进行备份、部署、重启服务等操作。为解决批量部署的效率问题，以及尽可能避免人工操作造成的不可预知的失误，准备采用自动化的方式来实现应用的发布。</p>
 <blockquote>
 <p><strong>本文档适用的前提：</strong><br>测试环境已经通过CI工具完成自动化编译、打包，并生成了路径、命名固定的WAR包，生产环境只需拷贝该WAR包到指定目录解压即可的场景。</p>
 </blockquote>
@@ -92,12 +160,44 @@
 <p>执行RUN，开始部署操作：<br><img src="/images/jenkins_ansible_autodeploy/run_project.png" alt="Alt text"></p>
 <p>然后就可以在CONSOLE界面看到执行的结果：<br><img src="/images/jenkins_ansible_autodeploy/run_project_console_output.png" alt="Alt text"></p>
 ]]></content>
-    </entry>
     
-    <entry>
-      <title><![CDATA[8D 工作法]]></title>
-      <url>https://delacroix.github.io/2016/12/15/8D%E5%B7%A5%E4%BD%9C%E6%B3%95/</url>
-      <content type="html"><![CDATA[<h1 id="8D-工作法"><a href="#8D-工作法" class="headerlink" title="8D 工作法"></a>8D 工作法</h1><p>8D是解决问题的8条基本准则或称8个工作步骤，但在实际应用中却有9个步骤：</p>
+    <summary type="html">
+    
+      &lt;h1 id=&quot;Jenkins-Ansible实现自动化发布&quot;&gt;&lt;a href=&quot;#Jenkins-Ansible实现自动化发布&quot; class=&quot;headerlink&quot; title=&quot;Jenkins + Ansible实现自动化发布&quot;&gt;&lt;/a&gt;Jenkins + Ansible实现自动化发布&lt;/h1&gt;&lt;p&gt;前期在生产环境中进行应用发布时，采用纯粹手工的方式从测试环境拷贝WAR到生产环境目录进行备份、部署、重启服务等操作。为解决批量部署的效率问题，以及尽可能避免人工操作造成的不可预知的失误，准备采用自动化的方式来实现应用的发布。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;本文档适用的前提：&lt;/strong&gt;&lt;br&gt;测试环境已经通过CI工具完成自动化编译、打包，并生成了路径、命名固定的WAR包，生产环境只需拷贝该WAR包到指定目录解压即可的场景。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;Jenkins安装&quot;&gt;&lt;a href=&quot;#Jenkins安装&quot; class=&quot;headerlink&quot; title=&quot;Jenkins安装&quot;&gt;&lt;/a&gt;Jenkins安装&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;部署环境：&lt;/strong&gt;&lt;br&gt;操作系统：ubuntu 14.04&lt;br&gt;服务器IP：192.168.1.1&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;第一种方式&lt;/strong&gt;&lt;br&gt;前往Jenkins官网&lt;a href=&quot;https://pkg.jenkins.io/debian-stable/，将官方Jenkins&quot;&gt;https://pkg.jenkins.io/debian-stable/，将官方Jenkins&lt;/a&gt; key引入。&lt;/p&gt;
+&lt;figure class=&quot;highlight stylus&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;wget -&lt;span class=&quot;selector-tag&quot;&gt;q&lt;/span&gt; -O - https:&lt;span class=&quot;comment&quot;&gt;//pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -&lt;/span&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;然后将其加入源列表。&lt;/p&gt;
+&lt;figure class=&quot;highlight awk&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;deb https:&lt;span class=&quot;regexp&quot;&gt;//&lt;/span&gt;pkg.jenkins.io&lt;span class=&quot;regexp&quot;&gt;/debian-stable binary/&lt;/span&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;最后，更新本地包索引，并安装稳定版Jenkins&lt;/p&gt;
+&lt;figure class=&quot;highlight q&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;sudo apt-&lt;span class=&quot;built_in&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;update&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;sudo apt-&lt;span class=&quot;built_in&quot;&gt;get&lt;/span&gt; install jenkins&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+      <category term="Linux" scheme="https://delacroix.github.io/categories/Linux/"/>
+    
+    
+      <category term="Operations" scheme="https://delacroix.github.io/tags/Operations/"/>
+    
+      <category term="自动化" scheme="https://delacroix.github.io/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"/>
+    
+      <category term="运维" scheme="https://delacroix.github.io/tags/%E8%BF%90%E7%BB%B4/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>8D 工作法</title>
+    <link href="https://delacroix.github.io/2016/12/15/8D%E5%B7%A5%E4%BD%9C%E6%B3%95/"/>
+    <id>https://delacroix.github.io/2016/12/15/8D工作法/</id>
+    <published>2016-12-15T02:56:52.000Z</published>
+    <updated>2016-12-15T07:09:41.408Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="8D-工作法"><a href="#8D-工作法" class="headerlink" title="8D 工作法"></a>8D 工作法</h1><p>8D是解决问题的8条基本准则或称8个工作步骤，但在实际应用中却有9个步骤：</p>
 <blockquote>
 <p>D0：征兆紧急反应措施<br>D1：小组成立<br>D2：问题说明<br>D3：实施并验证临时措施<br>D4：确定并验证根本原因<br>D5：选择和验证永久纠正措施<br>D6：实施永久纠正措施<br>D7：预防再发生<br>D8：小组祝贺<br>D0：征兆紧急反应措施</p>
 </blockquote>
@@ -127,12 +227,31 @@
 <h2 id="D8：小组祝贺"><a href="#D8：小组祝贺" class="headerlink" title="D8：小组祝贺"></a>D8：小组祝贺</h2><p>　　目的:承认小组的集体努力，对小组工作进行总结并祝贺。</p>
 <p>　　关键要点: 有选择的保留重要文档;流览小组工作，将心得形成文件;了解小组对解决问题的集体力量，及对解决问题作出的贡献;必要的物质、精神奖励。</p>
 ]]></content>
-    </entry>
     
-    <entry>
-      <title><![CDATA[OSPF的基本原理与实现]]></title>
-      <url>https://delacroix.github.io/2016/11/04/OSPF%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/</url>
-      <content type="html"><![CDATA[<h1 id="OSPF的基本原理与实现"><a href="#OSPF的基本原理与实现" class="headerlink" title="OSPF的基本原理与实现"></a>OSPF的基本原理与实现</h1><p>OSPF（Open Shortest Path First，开放最短路径优先）是由IETF开发路径选择协议。<br>OSPF是开放的链路状态路由协议。<br>OSPFv2应用于IPv4中，由RFC2328规范。</p>
+    <summary type="html">
+    
+      &lt;h1 id=&quot;8D-工作法&quot;&gt;&lt;a href=&quot;#8D-工作法&quot; class=&quot;headerlink&quot; title=&quot;8D 工作法&quot;&gt;&lt;/a&gt;8D 工作法&lt;/h1&gt;&lt;p&gt;8D是解决问题的8条基本准则或称8个工作步骤，但在实际应用中却有9个步骤：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;D0：征兆紧急反应措施&lt;br&gt;D1：小组成立&lt;br&gt;D2：问题说明&lt;br&gt;D3：实施并验证临时措施&lt;br&gt;D4：确定并验证根本原因&lt;br&gt;D5：选择和验证永久纠正措施&lt;br&gt;D6：实施永久纠正措施&lt;br&gt;D7：预防再发生&lt;br&gt;D8：小组祝贺&lt;br&gt;D0：征兆紧急反应措施&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+      <category term="问题处理流程" scheme="https://delacroix.github.io/categories/%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B/"/>
+    
+    
+      <category term="ISO20000" scheme="https://delacroix.github.io/tags/ISO20000/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>OSPF的基本原理与实现</title>
+    <link href="https://delacroix.github.io/2016/11/04/OSPF%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E7%8E%B0/"/>
+    <id>https://delacroix.github.io/2016/11/04/OSPF的基本原理与实现/</id>
+    <published>2016-11-04T03:14:33.000Z</published>
+    <updated>2016-11-07T04:55:29.690Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="OSPF的基本原理与实现"><a href="#OSPF的基本原理与实现" class="headerlink" title="OSPF的基本原理与实现"></a>OSPF的基本原理与实现</h1><p>OSPF（Open Shortest Path First，开放最短路径优先）是由IETF开发路径选择协议。<br>OSPF是开放的链路状态路由协议。<br>OSPFv2应用于IPv4中，由RFC2328规范。</p>
 <h2 id="OSPF的特征："><a href="#OSPF的特征：" class="headerlink" title="OSPF的特征："></a>OSPF的特征：</h2><ol>
 <li>收敛快速；</li>
 <li>支持支持大规模的网络；</li>
@@ -165,12 +284,39 @@
 
 
 ]]></content>
-    </entry>
     
-    <entry>
-      <title><![CDATA[常用Centos命令]]></title>
-      <url>https://delacroix.github.io/2016/11/04/%E5%B8%B8%E7%94%A8Centos%E5%91%BD%E4%BB%A4/</url>
-      <content type="html"><![CDATA[<h4 id="安装方式："><a href="#安装方式：" class="headerlink" title="安装方式："></a>安装方式：</h4><p><strong>• yum安装[需联网]</strong><br><code>yum install vim</code> [yum方式安装vim软件及相关依赖包，如有更新包，则提示是否更新]<br><code>yum search vim</code> [yum方式搜索vim软件是否存在]<br><code>yum list |grep vim</code> [yum方式列出vim安装状态、版本及包全名]</p>
+    <summary type="html">
+    
+      &lt;h1 id=&quot;OSPF的基本原理与实现&quot;&gt;&lt;a href=&quot;#OSPF的基本原理与实现&quot; class=&quot;headerlink&quot; title=&quot;OSPF的基本原理与实现&quot;&gt;&lt;/a&gt;OSPF的基本原理与实现&lt;/h1&gt;&lt;p&gt;OSPF（Open Shortest Path First，开放最短路径优先）是由IETF开发路径选择协议。&lt;br&gt;OSPF是开放的链路状态路由协议。&lt;br&gt;OSPFv2应用于IPv4中，由RFC2328规范。&lt;/p&gt;
+&lt;h2 id=&quot;OSPF的特征：&quot;&gt;&lt;a href=&quot;#OSPF的特征：&quot; class=&quot;headerlink&quot; title=&quot;OSPF的特征：&quot;&gt;&lt;/a&gt;OSPF的特征：&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;收敛快速；&lt;/li&gt;
+&lt;li&gt;支持支持大规模的网络；&lt;/li&gt;
+&lt;li&gt;使用Area的概念；&lt;/li&gt;
+&lt;li&gt;Classless（无类）路由协议。支持VLSM、CIDR、不连续子网；&lt;/li&gt;
+&lt;li&gt;支持无大小限制、任意的度量值；&lt;/li&gt;
+&lt;li&gt;支持多条等价路径的负载匀衡；&lt;/li&gt;
+&lt;li&gt;使用保留的组播地址（224.0.0.5和224.0.0.6）；&lt;/li&gt;
+&lt;li&gt;支持更安全的路由选择认证；&lt;/li&gt;
+&lt;li&gt;使用可以跟踪外部路由的路由标记；&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+      <category term="Network" scheme="https://delacroix.github.io/categories/Network/"/>
+    
+    
+      <category term="OSPF" scheme="https://delacroix.github.io/tags/OSPF/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>常用Centos命令</title>
+    <link href="https://delacroix.github.io/2016/11/04/%E5%B8%B8%E7%94%A8Centos%E5%91%BD%E4%BB%A4/"/>
+    <id>https://delacroix.github.io/2016/11/04/常用Centos命令/</id>
+    <published>2016-11-04T02:56:52.000Z</published>
+    <updated>2016-11-07T01:44:54.326Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="安装方式："><a href="#安装方式：" class="headerlink" title="安装方式："></a>安装方式：</h4><p><strong>• yum安装[需联网]</strong><br><code>yum install vim</code> [yum方式安装vim软件及相关依赖包，如有更新包，则提示是否更新]<br><code>yum search vim</code> [yum方式搜索vim软件是否存在]<br><code>yum list |grep vim</code> [yum方式列出vim安装状态、版本及包全名]</p>
 <a id="more"></a>
 <p><strong>• rpm安装</strong><br><code>rpm -ivh vim-minimal.x86_64.rpm</code> [rpm方式安装vim软件，如差依赖包，会有提示]<br><code>rpm -qa |grep vim</code> [查询系统是否安装vim软件，有则显示包全名及版本号]<br><code>rpm -ql yum</code> [列出yum软件所安装的文件]<br><strong>• 源码安装[常规安装方式]</strong><br><code>./configure</code> 配置源码包相关安装 –help 打印帮助文档<br><code>make</code> 编译代码<br><code>make install</code> 安装软件及输出安装信息</p>
 <blockquote>
@@ -204,12 +350,28 @@
 <p>注：请写明具体路径，不要直接填写为/，这会导致IO和CPU占用过高</p>
 </blockquote>
 ]]></content>
-    </entry>
     
-    <entry>
-      <title><![CDATA[LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志]]></title>
-      <url>https://delacroix.github.io/2016/11/04/LOGSTASH-ELASTICSEARCH-%E5%A4%84%E7%90%86-MYSQL-%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/</url>
-      <content type="html"><![CDATA[<h1 id="LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志"><a href="#LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志" class="headerlink" title="LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志"></a>LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志</h1><p>先确认慢查询日志是否开启, 然后找到日志文件的位置</p>
+    <summary type="html">
+    
+      &lt;h4 id=&quot;安装方式：&quot;&gt;&lt;a href=&quot;#安装方式：&quot; class=&quot;headerlink&quot; title=&quot;安装方式：&quot;&gt;&lt;/a&gt;安装方式：&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;• yum安装[需联网]&lt;/strong&gt;&lt;br&gt;&lt;code&gt;yum install vim&lt;/code&gt; [yum方式安装vim软件及相关依赖包，如有更新包，则提示是否更新]&lt;br&gt;&lt;code&gt;yum search vim&lt;/code&gt; [yum方式搜索vim软件是否存在]&lt;br&gt;&lt;code&gt;yum list |grep vim&lt;/code&gt; [yum方式列出vim安装状态、版本及包全名]&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Linux" scheme="https://delacroix.github.io/categories/Linux/"/>
+    
+    
+      <category term="基础" scheme="https://delacroix.github.io/tags/%E5%9F%BA%E7%A1%80/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志</title>
+    <link href="https://delacroix.github.io/2016/11/04/LOGSTASH-ELASTICSEARCH-%E5%A4%84%E7%90%86-MYSQL-%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/"/>
+    <id>https://delacroix.github.io/2016/11/04/LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志/</id>
+    <published>2016-11-04T02:08:23.000Z</published>
+    <updated>2016-11-07T01:44:17.671Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志"><a href="#LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志" class="headerlink" title="LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志"></a>LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志</h1><p>先确认慢查询日志是否开启, 然后找到日志文件的位置</p>
 <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="section">&gt; show variables like '%slow%';</span></div><div class="line">+---------------------+-------------------------------------+</div><div class="line"><span class="section">| Variable_name       | Value                               |</span></div><div class="line">+---------------------+-------------------------------------+</div><div class="line">| log<span class="emphasis">_slow_</span>queries    | ON                                  |</div><div class="line">| slow<span class="emphasis">_launch_</span>time    | 2                                   |</div><div class="line">| slow<span class="emphasis">_query_</span>log      | ON                                  |</div><div class="line"><span class="section">| slow_query_log_file | /data/mysqllog/20000/slow-query.log |</span></div><div class="line">+---------------------+-------------------------------------+</div></pre></td></tr></table></figure>
 <a id="more"></a>
 <h2 id="2-慢查询日志"><a href="#2-慢查询日志" class="headerlink" title="2. 慢查询日志"></a>2. 慢查询日志</h2><p>格式基本如下, 当然, 格式如果有差异, 需要根据具体格式进行小的修改</p>
@@ -224,12 +386,31 @@
 <h2 id="5-渲染页面"><a href="#5-渲染页面" class="headerlink" title="5. 渲染页面"></a>5. 渲染页面</h2><p>python 的后台, 使用sqlparse包, 将 sql 进行格式化 (换行 / 缩进 / 大小写), 再往前端传. sqlparse</p>
 <figure class="highlight gauss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; sql = '<span class="built_in">select</span> * from foo <span class="built_in">where</span> id in (<span class="built_in">select</span> id from <span class="built_in">bar</span>);'</div><div class="line">&gt;&gt;&gt; <span class="keyword">print</span> sqlparse.<span class="keyword">format</span>(sql, reindent=True, keyword_case='<span class="built_in">upper</span>')</div><div class="line"><span class="built_in">SELECT</span> *</div><div class="line">FROM foo</div><div class="line"><span class="built_in">WHERE</span> id IN</div><div class="line">  (<span class="built_in">SELECT</span> id</div><div class="line">   FROM <span class="built_in">bar</span>);</div></pre></td></tr></table></figure>
 ]]></content>
-    </entry>
     
-    <entry>
-      <title><![CDATA[kubeadm 搭建 kubernetes 集群]]></title>
-      <url>https://delacroix.github.io/2016/11/03/kubeadm-%E6%90%AD%E5%BB%BA-kubernetes-%E9%9B%86%E7%BE%A4/</url>
-      <content type="html"><![CDATA[<h1 id="转-kubeadm-搭建-kubernetes-集群"><a href="#转-kubeadm-搭建-kubernetes-集群" class="headerlink" title="[转]kubeadm 搭建 kubernetes 集群"></a>[转]kubeadm 搭建 kubernetes 集群</h1><p>原作者链接：<a href="https://mritd.me/2016/10/29/set-up-kubernetes-cluster-by-kubeadm/" target="_blank" rel="external">点我</a></p>
+    <summary type="html">
+    
+      &lt;h1 id=&quot;LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志&quot;&gt;&lt;a href=&quot;#LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志&quot; class=&quot;headerlink&quot; title=&quot;LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志&quot;&gt;&lt;/a&gt;LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志&lt;/h1&gt;&lt;p&gt;先确认慢查询日志是否开启, 然后找到日志文件的位置&lt;/p&gt;
+&lt;figure class=&quot;highlight asciidoc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;section&quot;&gt;&amp;gt; show variables like &#39;%slow%&#39;;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;+---------------------+-------------------------------------+&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;section&quot;&gt;| Variable_name       | Value                               |&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;+---------------------+-------------------------------------+&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;| log&lt;span class=&quot;emphasis&quot;&gt;_slow_&lt;/span&gt;queries    | ON                                  |&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;| slow&lt;span class=&quot;emphasis&quot;&gt;_launch_&lt;/span&gt;time    | 2                                   |&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;| slow&lt;span class=&quot;emphasis&quot;&gt;_query_&lt;/span&gt;log      | ON                                  |&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;section&quot;&gt;| slow_query_log_file | /data/mysqllog/20000/slow-query.log |&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;+---------------------+-------------------------------------+&lt;/span&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+      <category term="Linux" scheme="https://delacroix.github.io/categories/Linux/"/>
+    
+    
+      <category term="ELK" scheme="https://delacroix.github.io/tags/ELK/"/>
+    
+      <category term="MySQL" scheme="https://delacroix.github.io/tags/MySQL/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>kubeadm 搭建 kubernetes 集群</title>
+    <link href="https://delacroix.github.io/2016/11/03/kubeadm-%E6%90%AD%E5%BB%BA-kubernetes-%E9%9B%86%E7%BE%A4/"/>
+    <id>https://delacroix.github.io/2016/11/03/kubeadm-搭建-kubernetes-集群/</id>
+    <published>2016-11-03T05:16:44.000Z</published>
+    <updated>2016-11-07T01:43:55.221Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="转-kubeadm-搭建-kubernetes-集群"><a href="#转-kubeadm-搭建-kubernetes-集群" class="headerlink" title="[转]kubeadm 搭建 kubernetes 集群"></a>[转]kubeadm 搭建 kubernetes 集群</h1><p>原作者链接：<a href="https://mritd.me/2016/10/29/set-up-kubernetes-cluster-by-kubeadm/" target="_blank" rel="external">点我</a></p>
 <p>距离上一篇 kubernetes 1.4 集群搭建 发布间隔不算太久，自己也不断地在生产和测试环境鼓捣，有不少 “逗比” 的经历，准备写一下具体的 kubeadm 搭建集群的一些坑和踩坑的经验，如果没有使用过 kubeadm 的同学，最好先看下上面的文章，然后鼓捣一遍，也许并不会成功，但大部分坑再来看此文会有收获</p>
 <h2 id="1-环境准备"><a href="#1-环境准备" class="headerlink" title="1 环境准备"></a>1 环境准备</h2><p>首先环境还是三台虚拟机，虚拟机地址如下</p>
 <table>
@@ -392,12 +573,54 @@
 <h2 id="四-其他的一些坑"><a href="#四-其他的一些坑" class="headerlink" title="四 其他的一些坑"></a>四 其他的一些坑</h2><p>还有一些其他的坑等着大家去摸索，其中有一个是 DNS 解析错误，表现形式为 POD 内的程序通过域名访问解析不了，cat 一下容器的 /etc/resolv.conf发现指向的 dns 服务器与 kubectl get svc –namespace=kube-system 中的 kube-dsn 地址不符；解决办法就是 编辑节点的 /etc/systemd/system/kubelet.service.d/10-kubeadm.conf 文件，更改 KUBELET_DNS_ARGS 地址为 get svc 中的 kube-dns 地址，然后重启 kubelet 服务，重新杀掉 POD 让 kubernetes 重建即可<br><img src="/images/kubeadm/1478154465762.png" alt="Alt text"></p>
 <p>其他坑欢迎大家补充</p>
 ]]></content>
-    </entry>
     
-    <entry>
-      <title><![CDATA[LVS集群中的IP负载均衡技术]]></title>
-      <url>https://delacroix.github.io/2016/11/03/LVS%E9%9B%86%E7%BE%A4%E4%B8%AD%E7%9A%84IP%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%8A%80%E6%9C%AF-1/</url>
-      <content type="html"><![CDATA[<h1 id="转-LVS集群中的IP负载均衡技术"><a href="#转-LVS集群中的IP负载均衡技术" class="headerlink" title="[转]LVS集群中的IP负载均衡技术"></a>[转]LVS集群中的IP负载均衡技术</h1><blockquote>
+    <summary type="html">
+    
+      &lt;h1 id=&quot;转-kubeadm-搭建-kubernetes-集群&quot;&gt;&lt;a href=&quot;#转-kubeadm-搭建-kubernetes-集群&quot; class=&quot;headerlink&quot; title=&quot;[转]kubeadm 搭建 kubernetes 集群&quot;&gt;&lt;/a&gt;[转]kubeadm 搭建 kubernetes 集群&lt;/h1&gt;&lt;p&gt;原作者链接：&lt;a href=&quot;https://mritd.me/2016/10/29/set-up-kubernetes-cluster-by-kubeadm/&quot;&gt;点我&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;距离上一篇 kubernetes 1.4 集群搭建 发布间隔不算太久，自己也不断地在生产和测试环境鼓捣，有不少 “逗比” 的经历，准备写一下具体的 kubeadm 搭建集群的一些坑和踩坑的经验，如果没有使用过 kubeadm 的同学，最好先看下上面的文章，然后鼓捣一遍，也许并不会成功，但大部分坑再来看此文会有收获&lt;/p&gt;
+&lt;h2 id=&quot;1-环境准备&quot;&gt;&lt;a href=&quot;#1-环境准备&quot; class=&quot;headerlink&quot; title=&quot;1 环境准备&quot;&gt;&lt;/a&gt;1 环境准备&lt;/h2&gt;&lt;p&gt;首先环境还是三台虚拟机，虚拟机地址如下&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&quot;text-align:left&quot;&gt;IP 地址&lt;/th&gt;
+&lt;th style=&quot;text-align:right&quot;&gt;节点&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align:left&quot;&gt;192.168.1.167&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;master&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align:left&quot;&gt;192.168.1.189&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;node1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&quot;text-align:left&quot;&gt;192.168.1.189&lt;/td&gt;
+&lt;td style=&quot;text-align:right&quot;&gt;node2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+    
+    </summary>
+    
+      <category term="Linux" scheme="https://delacroix.github.io/categories/Linux/"/>
+    
+    
+      <category term="Kubernetes" scheme="https://delacroix.github.io/tags/Kubernetes/"/>
+    
+      <category term="Docker" scheme="https://delacroix.github.io/tags/Docker/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LVS集群中的IP负载均衡技术</title>
+    <link href="https://delacroix.github.io/2016/11/03/LVS%E9%9B%86%E7%BE%A4%E4%B8%AD%E7%9A%84IP%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%8A%80%E6%9C%AF-1/"/>
+    <id>https://delacroix.github.io/2016/11/03/LVS集群中的IP负载均衡技术-1/</id>
+    <published>2016-11-03T02:55:24.000Z</published>
+    <updated>2016-11-07T01:44:27.022Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="转-LVS集群中的IP负载均衡技术"><a href="#转-LVS集群中的IP负载均衡技术" class="headerlink" title="[转]LVS集群中的IP负载均衡技术"></a>[转]LVS集群中的IP负载均衡技术</h1><blockquote>
 <p>本文在分析服务器集群实现虚拟网络服务的相关技术上，详细描述了LVS集群中实现的三种IP负载均衡技术（VS/NAT、VS/TUN和VS/DR）的工作原理，以及它们的优缺点。</p>
 </blockquote>
 <hr>
@@ -602,8 +825,23 @@
 <p>关于作者<br>章文嵩博士，开放源码及Linux内核的开发者，著名的Linux集群项目－－LVS(Linux Virtual Server)的创始人和主要开发人员。他目前工作于国家并行与分布式处理重点实验室，主要从事集群技术、操作系统、对象存储与数据库的研究。他一直在自 由软件的开发上花费大量时间，并以此为乐。</p>
 </blockquote>
 ]]></content>
-    </entry>
     
+    <summary type="html">
+    
+      &lt;h1 id=&quot;转-LVS集群中的IP负载均衡技术&quot;&gt;&lt;a href=&quot;#转-LVS集群中的IP负载均衡技术&quot; class=&quot;headerlink&quot; title=&quot;[转]LVS集群中的IP负载均衡技术&quot;&gt;&lt;/a&gt;[转]LVS集群中的IP负载均衡技术&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;本文在分析服务器集群实现虚拟网络服务的相关技术上，详细描述了LVS集群中实现的三种IP负载均衡技术（VS/NAT、VS/TUN和VS/DR）的工作原理，以及它们的优缺点。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;1-前言&quot;&gt;&lt;a href=&quot;#1-前言&quot; class=&quot;headerlink&quot; title=&quot;1 前言&quot;&gt;&lt;/a&gt;1 前言&lt;/h2&gt;&lt;p&gt;在前面文章中，讲述了可伸缩网络服务的几种结构，它们都需要一个前端的负载调度器（或者多个进行主从备份）。我们先分析实现虚拟网络服务的主要技术，指出 IP负载均衡技术是在负载调度器的实现技术中效率最高的。在已有的IP负载均衡技术中，主要有通过网络地址转换（Network Address Translation）将一组服务器构成一个高性能的、高可用的虚拟服务器，我们称之为VS/NAT技术（Virtual Server via Network Address Translation）。在分析VS/NAT的缺点和网络服务的非对称性的基础上，我们提出了通过IP隧道实现虚拟服务器的方法VS/TUN （Virtual Server via IP Tunneling），和通过直接路由实现虚拟服务器的方法VS/DR（Virtual Server via Direct Routing），它们可以极大地提高系统的伸缩性。VS/NAT、VS/TUN和VS/DR技术是LVS集群中实现的三种IP负载均衡技术，我们将在文 章中详细描述它们的工作原理和各自的优缺点。&lt;/p&gt;
+&lt;p&gt;在以下描述中，我们称客户的socket和服务器的socket之间的数据通讯为连接，无论它们是使用TCP还是UDP协议。下面简述当前用服务器集群实现高可伸缩、高可用网络服务的几种负载调度方法，并列举几个在这方面有代表性的研究项目。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Network" scheme="https://delacroix.github.io/categories/Network/"/>
+    
+    
+      <category term="负载均衡" scheme="https://delacroix.github.io/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/"/>
+    
+  </entry>
   
-  
-</search>
+</feed>
