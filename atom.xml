@@ -34,7 +34,7 @@
     <link href="https://delacroix.github.io/2017/02/13/Kubernetes%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/"/>
     <id>https://delacroix.github.io/2017/02/13/Kubernetes系统架构简介/</id>
     <published>2017-02-13T03:12:30.000Z</published>
-    <updated>2017-02-13T03:17:54.059Z</updated>
+    <updated>2017-11-24T06:15:49.433Z</updated>
     
     <content type="html"><![CDATA[<h1 id="【转】Kubernetes系统架构简介"><a href="#【转】Kubernetes系统架构简介" class="headerlink" title="【转】Kubernetes系统架构简介"></a>【转】Kubernetes系统架构简介</h1><p>原文 <a href="http://www.infoq.com/cn/articles/Kubernetes-system-architecture-introduction" target="_blank" rel="external">http://www.infoq.com/cn/articles/Kubernetes-system-architecture-introduction</a></p>
 <h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h2><blockquote>
@@ -43,6 +43,7 @@
 </blockquote>
 <p>Kubernetes作为Docker生态圈中重要一员，是Google多年大规模容器管理技术的开源版本，是产线实践经验的最佳表现[G1] 。如Urs Hölzle所说，无论是公有云还是私有云甚至混合云，Kubernetes将作为一个为任何应用，任何环境的容器管理框架无处不在。正因为如此， 目前受到各大巨头及初创公司的青睐，如Microsoft、VMWare、Red Hat、CoreOS、Mesos等，纷纷加入给Kubernetes贡献代码。随着Kubernetes社区及各大厂商的不断改进、发展，Kuberentes将成为容器管理领域的领导者。</p>
 <p>接下来我们会用一系列文章逐一探索Kubernetes是什么、能做什么以及怎么做。</p>
+<a id="more"></a>
 <h2 id="2-什么是Kubernetes"><a href="#2-什么是Kubernetes" class="headerlink" title="2. 什么是Kubernetes"></a>2. 什么是Kubernetes</h2><p>Kubernetes是Google开源的容器集群管理系统，其提供应用部署、维护、 扩展机制等功能，利用Kubernetes能方便地管理跨机器运行容器化的应用，其主要功能如下：</p>
 <p>1) 使用Docker对应用程序包装(package)、实例化(instantiate)、运行(run)。</p>
 <p>2) 以集群的方式运行、管理跨机器的容器。</p>
@@ -104,7 +105,13 @@
     
     <summary type="html">
     
-      &lt;h1 id=&quot;【转】Kubernetes系统架构简介&quot;&gt;&lt;a href=&quot;#【转】Kubernetes系统架构简介&quot; class=&quot;headerlink&quot; title=&quot;【转】Kubernetes系统架构简介&quot;&gt;&lt;/a&gt;【转】Kubernetes系统架构简介&lt;/h1&gt;&lt;p&gt;原文
+      &lt;h1 id=&quot;【转】Kubernetes系统架构简介&quot;&gt;&lt;a href=&quot;#【转】Kubernetes系统架构简介&quot; class=&quot;headerlink&quot; title=&quot;【转】Kubernetes系统架构简介&quot;&gt;&lt;/a&gt;【转】Kubernetes系统架构简介&lt;/h1&gt;&lt;p&gt;原文 &lt;a href=&quot;http://www.infoq.com/cn/articles/Kubernetes-system-architecture-introduction&quot;&gt;http://www.infoq.com/cn/articles/Kubernetes-system-architecture-introduction&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;1-前言&quot;&gt;&lt;a href=&quot;#1-前言&quot; class=&quot;headerlink&quot; title=&quot;1. 前言&quot;&gt;&lt;/a&gt;1. 前言&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;Together we will ensure that Kubernetes is a strong and open container management framework for any application and in any environment, whether in a private, public or hybrid cloud.&lt;/p&gt;
+&lt;p&gt;Urs Hölzle, Google&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Kubernetes作为Docker生态圈中重要一员，是Google多年大规模容器管理技术的开源版本，是产线实践经验的最佳表现[G1] 。如Urs Hölzle所说，无论是公有云还是私有云甚至混合云，Kubernetes将作为一个为任何应用，任何环境的容器管理框架无处不在。正因为如此， 目前受到各大巨头及初创公司的青睐，如Microsoft、VMWare、Red Hat、CoreOS、Mesos等，纷纷加入给Kubernetes贡献代码。随着Kubernetes社区及各大厂商的不断改进、发展，Kuberentes将成为容器管理领域的领导者。&lt;/p&gt;
+&lt;p&gt;接下来我们会用一系列文章逐一探索Kubernetes是什么、能做什么以及怎么做。&lt;/p&gt;
     
     </summary>
     

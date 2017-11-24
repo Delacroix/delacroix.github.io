@@ -21,7 +21,7 @@ Together we will ensure that Kubernetes is a strong and open container managemen
 <meta property="og:image" content="https://delacroix.github.io/images/k8s_arch/1.jpg">
 <meta property="og:image" content="https://delacroix.github.io/images/k8s_arch/2.jpg">
 <meta property="og:image" content="https://delacroix.github.io/images/k8s_arch/3.jpg">
-<meta property="og:updated_time" content="2017-02-13T03:17:54.059Z">
+<meta property="og:updated_time" content="2017-11-24T06:15:49.433Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kubernetes系统架构简介">
 <meta name="twitter:description" content="【转】Kubernetes系统架构简介原文 http://www.infoq.com/cn/articles/Kubernetes-system-architecture-introduction
@@ -190,6 +190,7 @@ Together we will ensure that Kubernetes is a strong and open container managemen
 </blockquote>
 <p>Kubernetes作为Docker生态圈中重要一员，是Google多年大规模容器管理技术的开源版本，是产线实践经验的最佳表现[G1] 。如Urs Hölzle所说，无论是公有云还是私有云甚至混合云，Kubernetes将作为一个为任何应用，任何环境的容器管理框架无处不在。正因为如此， 目前受到各大巨头及初创公司的青睐，如Microsoft、VMWare、Red Hat、CoreOS、Mesos等，纷纷加入给Kubernetes贡献代码。随着Kubernetes社区及各大厂商的不断改进、发展，Kuberentes将成为容器管理领域的领导者。</p>
 <p>接下来我们会用一系列文章逐一探索Kubernetes是什么、能做什么以及怎么做。</p>
+<a id="more"></a>
 <h2 id="2-什么是Kubernetes"><a href="#2-什么是Kubernetes" class="headerlink" title="2. 什么是Kubernetes"></a>2. 什么是Kubernetes</h2><p>Kubernetes是Google开源的容器集群管理系统，其提供应用部署、维护、 扩展机制等功能，利用Kubernetes能方便地管理跨机器运行容器化的应用，其主要功能如下：</p>
 <p>1) 使用Docker对应用程序包装(package)、实例化(instantiate)、运行(run)。</p>
 <p>2) 以集群的方式运行、管理跨机器的容器。</p>
@@ -512,23 +513,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Kubernetes</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">架构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ELK</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
+                <a href="javascript:void(0)" class="js-tag color4">ISO20000</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -544,6 +529,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">负载均衡</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Network</a>
               </li>
              
@@ -552,11 +541,23 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Operation System</a>
+                <a href="javascript:void(0)" class="js-tag color4">ELK</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Policy</a>
+                <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Kubernetes</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">架构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Docker</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -564,11 +565,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ISO20000</a>
+                <a href="javascript:void(0)" class="js-tag color2">Operation System</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">负载均衡</a>
+                <a href="javascript:void(0)" class="js-tag color2">Policy</a>
               </li>
              
               <li class="article-tag-list-item">
