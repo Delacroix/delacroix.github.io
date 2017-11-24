@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://delacroix.github.io/"/>
-  <updated>2017-11-24T02:47:01.867Z</updated>
+  <updated>2017-11-24T02:47:01.868Z</updated>
   <id>https://delacroix.github.io/</id>
   
   <author>
@@ -19,8 +19,8 @@
     <title></title>
     <link href="https://delacroix.github.io/2017/11/24/ELK%E5%AE%8C%E6%88%90%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%97%A5%E5%BF%97%E5%AE%A1%E8%AE%A1/"/>
     <id>https://delacroix.github.io/2017/11/24/ELK完成操作系统日志审计/</id>
-    <published>2017-11-24T02:47:01.867Z</published>
-    <updated>2017-11-24T02:47:01.867Z</updated>
+    <published>2017-11-24T02:47:01.868Z</published>
+    <updated>2017-11-24T02:47:01.868Z</updated>
     
     <summary type="html">
     
@@ -122,7 +122,7 @@
     <link href="https://delacroix.github.io/2017/02/09/mysqldump-error-1066-not-unique-table/"/>
     <id>https://delacroix.github.io/2017/02/09/mysqldump-error-1066-not-unique-table/</id>
     <published>2017-02-09T07:01:54.000Z</published>
-    <updated>2017-02-09T07:07:34.171Z</updated>
+    <updated>2017-02-09T07:07:34.172Z</updated>
     
     <content type="html"><![CDATA[<figure class="highlight gams"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysqldump: Got error: <span class="number">1066</span>: <span class="keyword">Not</span> unique <span class="keyword">table</span>/alias</div></pre></td></tr></table></figure>
 <p>myql 导出时提示如下：</p>
@@ -148,7 +148,7 @@
     <link href="https://delacroix.github.io/2017/01/05/Umask%E7%AE%80%E4%BB%8B/"/>
     <id>https://delacroix.github.io/2017/01/05/Umask简介/</id>
     <published>2017-01-05T02:43:33.000Z</published>
-    <updated>2017-01-05T03:07:13.043Z</updated>
+    <updated>2017-01-05T03:07:13.044Z</updated>
     
     <content type="html"><![CDATA[<h1 id="【转】Umask简介"><a href="#【转】Umask简介" class="headerlink" title="【转】Umask简介"></a>【转】Umask简介</h1><p>原文链接 <a href="https://linux.cn/article-3065-1.html" target="_blank" rel="external">https://linux.cn/article-3065-1.html</a><br>Umask 是什么？解释下，UMASK 代表用户掩码或用户文件创建掩码，它用于新创建的文件和文件夹，是其默认权限的基础。<br><img src="/images/umask_intro/umask_intro.png" alt="Alt text"><br>上面的意思可以解释成任何基于 Linux 的操作系统为新建文件(包括文件夹)添加默认权限的规则。出于教育目的，下面列出了一些可以用来设置文件权限的八进制值掩码：</p>
 <figure class="highlight basic"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">0 </span>– 读, 写, 可执行 (rwx)</div><div class="line"><span class="symbol">1 </span>– 读和写 (rw-)</div><div class="line"><span class="symbol">2 </span>– 读和可执行 (r-x)</div><div class="line"><span class="symbol">3 </span>– 只读 (r--)</div><div class="line"><span class="symbol">4 </span>– 写和可执行 (-wx)</div><div class="line"><span class="symbol">5 </span>– 只写 (-w-)</div><div class="line"><span class="symbol">6 </span>– 仅可执行 (--x)</div><div class="line"><span class="symbol">7 </span>– 没有权限 (---)</div></pre></td></tr></table></figure>
@@ -418,7 +418,7 @@
     <link href="https://delacroix.github.io/2016/11/04/%E5%B8%B8%E7%94%A8Centos%E5%91%BD%E4%BB%A4/"/>
     <id>https://delacroix.github.io/2016/11/04/常用Centos命令/</id>
     <published>2016-11-04T02:56:52.000Z</published>
-    <updated>2016-11-07T01:44:54.326Z</updated>
+    <updated>2016-11-07T01:44:54.327Z</updated>
     
     <content type="html"><![CDATA[<h4 id="安装方式："><a href="#安装方式：" class="headerlink" title="安装方式："></a>安装方式：</h4><p><strong>• yum安装[需联网]</strong><br><code>yum install vim</code> [yum方式安装vim软件及相关依赖包，如有更新包，则提示是否更新]<br><code>yum search vim</code> [yum方式搜索vim软件是否存在]<br><code>yum list |grep vim</code> [yum方式列出vim安装状态、版本及包全名]</p>
 <a id="more"></a>
