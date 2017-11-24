@@ -4,6 +4,12 @@
   
     
     <entry>
+      <title></title>
+      <url>https://delacroix.github.io/2017/11/24/ELK%E5%AE%8C%E6%88%90%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%97%A5%E5%BF%97%E5%AE%A1%E8%AE%A1/</url>
+      <content type="html"></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[Kubernetes系统架构简介]]></title>
       <url>https://delacroix.github.io/2017/02/13/Kubernetes%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/</url>
       <content type="html"><![CDATA[<h1 id="【转】Kubernetes系统架构简介"><a href="#【转】Kubernetes系统架构简介" class="headerlink" title="【转】Kubernetes系统架构简介"></a>【转】Kubernetes系统架构简介</h1><p>原文 <a href="http://www.infoq.com/cn/articles/Kubernetes-system-architecture-introduction" target="_blank" rel="external">http://www.infoq.com/cn/articles/Kubernetes-system-architecture-introduction</a></p>

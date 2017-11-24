@@ -10,7 +10,7 @@
     <!-- Title -->
     
     <title>
-        Linux 接口ARP响应问题 | Delacroix&#39;s Blog
+        归档: 2017/11 | Delacroix&#39;s Blog
     </title>
     
     <!-- Favicons -->
@@ -46,7 +46,7 @@
     <!-- The Open Graph protocol -->
     <meta property="og:url" content="https://delacroix.github.io">
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="Linux 接口ARP响应问题 | Delacroix&#39;s Blog">
+    <meta property="og:title" content="归档: 2017/11 | Delacroix&#39;s Blog">
     <meta property="og:description" content="Ŭ����Ϊһ��CCIE">
     
      <!--[if lte IE 9]>
@@ -200,241 +200,92 @@
                 </button>
 				
 				
-                <!-- Post TOC -->
-
+                <!-- Index Module -->
+<div class="material-index mdl-grid">
+	
+    <div class="locate-thumbnail-symbol"></div>
     
-	<!-- Back Button -->
-<!--
-	<div class="material-back" id="backhome-div" tabindex="0">
-		<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" href="#" onclick="window.history.back();return false;" target="_self" role="button" data-upgraded=",MaterialButton,MaterialRipple">
-			<i class="material-icons" role="presentation">arrow_back</i>
-			<span class="mdl-button__ripple-container">
-				<span class="mdl-ripple"></span>
-			</span>
-		</a>
-	</div>			
--->
-	<!-- Left aligned menu below button -->
-	<button id="post-toc-trigger-btn"
-			class="mdl-button mdl-js-button mdl-button--icon">
-	  <i class="material-icons">format_list_numbered</i>
-	</button>
-
-	<ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
-		for="post-toc-trigger-btn">
-			
-			<ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Linux-接口ARP响应问题"><span class="post-toc-number">1.</span> <span class="post-toc-text">Linux 接口ARP响应问题</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#arp-announce-arp-ignore-sysctl"><span class="post-toc-number">2.</span> <span class="post-toc-text">arp_announce/arp_ignore sysctl</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#arp-announce-INTEGER"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">arp_announce - INTEGER</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#arp-ignore-INTEGER"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">arp_ignore - INTEGER</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Disable-ARP-for-VIP"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">Disable ARP for VIP</span></a></li></ol></li></ol>
+    
 		
-<!--			<li class="mdl-menu__item">Some Action</li>-->
-	</ul>
-
-
-
-<!-- Layouts -->
-
-    <!-- Post Module -->
-    <div class="material-post_container">
-		
-        <div class="material-post mdl-grid">
-            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
-
-                <!-- Post Header(Thumbnail & Title) -->
-                
-	<!-- Paradox Post Header -->
+			<!-- Paradox Thumbnail -->
+        	<div class="post_entry-module mdl-card mdl-cell mdl-cell--12-col fade out">
+    
+    <!-- Post Thumbnail -->
 	
 		
 			<!-- Random Thumbnail -->
 			<div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-				<script>
+		
+	
+				
+		<!-- Post Title -->
+		<p class="article-headline-p"><a href="/2017/11/24/ELK完成操作系统日志审计/"></a></p>
+	</div>
+
+    <!-- Post Excerpt -->
+    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
+        
+            
+        
+        &nbsp;&nbsp;&nbsp;
+        <span>
+            <a href="/2017/11/24/ELK完成操作系统日志审计/" target="_self">继续阅读</a>
+        </span>
+    </div>
+    <!-- Post_entry Info-->
+    <div id="post_entry-info">
+        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
+            <!-- Author Avatar -->
+            <div id="author-avatar">
+                <img src="/img/avatar.png" width="44px" height="44px" alt="Delacroix's avatar">
+            </div>
+            <div>
+                <strong>Delacroix</strong>
+                <span>11月 24, 2017</span>
+            </div>
+        </div>
+        <div id="post_entry-right-info">
+            <!-- Category -->
+            <span class="post_entry-category">
+                
+            </span>
+            
+            
+            
+            <!-- Post Views -->
+            <span class="post_entry-views">
+                
+            </span>
+        </div>
+    </div>
+            
+</div>
+
+		
+		
+    
+    
+	
+		<script>
     
     var randomNum;
-    randomNum = Math.floor(Math.random() * 19 + 1);
     
-    $(".post_thumbnail-random").css('background-image', 'url(' + '/img/random/material-' + randomNum + '.png' + ')');
+    var locatePost = $(".locate-thumbnail-symbol").next();
+    for(var i=0; i < 10; i++){
+        
+        randomNum = Math.floor(Math.random() * 19 + 1);
+        
+        locatePost.children(".post_thumbnail-random").attr('id', 'random_thumbnail-'+randomNum);
+        locatePost.children(".post_thumbnail-random").css('background-image', 'url(' + '/img/random/material-' + randomNum + '.png' + ')')
+        
+        locatePost = locatePost.next();
+    }
     
 </script>
 
-		
 	
-        <p class="article-headline-p">
-            Linux 接口ARP响应问题
-        </p>
-    </div>
-
-	
-
-				
-				
-					<!-- Paradox Post Info -->
-					<div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
-
-    <!-- Author Avatar -->
-    <div id="author-avatar">
-        <img src="/img/avatar.png" width="44px" height="44px" alt="Author Avatar"/>
-    </div>
-    <!-- Author Name & Date -->
-    <div>
-        <strong>Delacroix</strong>
-        <span>12月 22, 2016</span>
-    </div>
-
-    <div class="section-spacer"></div>
-
-    <!-- Favorite -->
-<!--
-    <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
-        <i class="material-icons" role="presentation">favorite</i>
-        <span class="visuallyhidden">favorites</span>
-    </button>
--->
-
-    <!-- Qrcode -->
-    
-
-
-    <!-- Tags (bookmark) -->
-    
-    <button id="article-functions-viewtags-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
-        <i class="material-icons" role="presentation">bookmark</i>
-        <span class="visuallyhidden">bookmark</span>
-    </button>
-    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
-        <li class="mdl-menu__item">
-        <a class="post_tag-link" href="/tags/ARP/">ARP</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/Network/">Network</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/Operations/">Operations</a>
-    </ul>
-    
-
-    <!-- Share -->
-    <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
-    <i class="material-icons" role="presentation">share</i>
-    <span class="visuallyhidden">share</span>
-</button>
-<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
-
-    
-
-    
-
-    <!-- Share Weibo -->
-    
-    <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=Linux 接口ARP响应问题&url=https://delacroix.github.io//2016/12/22/Linux 接口ARP响应问题/index.html&pic=&searchPic=false&style=simple" target="_blank">
-        <li class="mdl-menu__item">
-            分享到微博
-        </li>
-    </a>
-    
-
-    <!-- Share Twitter -->
-    
-    <a class="post_share-link" href="https://twitter.com/intent/tweet?text=Linux 接口ARP响应问题&url=https://delacroix.github.io//2016/12/22/Linux 接口ARP响应问题/index.html&via=Delacroix" target="_blank">
-        <li class="mdl-menu__item">
-            分享到 Twitter
-        </li>
-    </a>
-    
-
-    <!-- Share Facebook -->
-    
-    <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=https://delacroix.github.io//2016/12/22/Linux 接口ARP响应问题/index.html" target="_blank">
-        <li class="mdl-menu__item">
-            分享到 Facebook
-        </li>
-    </a>
-    
-
-    <!-- Share Google+ -->
-    
-    <a class="post_share-link" href="https://plus.google.com/share?url=https://delacroix.github.io//2016/12/22/Linux 接口ARP响应问题/index.html" target="_blank">
-        <li class="mdl-menu__item">
-            分享到 Google+
-        </li>
-    </a>
-    
-
-    <!-- Share LinkedIn -->
-    
-
-    <!-- Share QQ -->
-    
-
-    <!-- Share Telegram -->
-    
-</ul>
 
 </div>
-
-				
-
-                <!-- Post Content -->
-                <div id="post-content" class="markdown-Github mdl-color-text--grey-700 mdl-card__supporting-text fade out">
-	
-		<h1 id="Linux-接口ARP响应问题"><a href="#Linux-接口ARP响应问题" class="headerlink" title="Linux 接口ARP响应问题"></a>Linux 接口ARP响应问题</h1><h1 id="arp-announce-arp-ignore-sysctl"><a href="#arp-announce-arp-ignore-sysctl" class="headerlink" title="arp_announce/arp_ignore sysctl"></a>arp_announce/arp_ignore sysctl</h1><p>The arp_announce/arp_ignore sysctl on interfaces is available at the Linux official kernel since 2.6.4 and 2.4.26. The description about arp_announce/arp_ignore taken from kernel documentation is as follows: </p>
-<h2 id="arp-announce-INTEGER"><a href="#arp-announce-INTEGER" class="headerlink" title="arp_announce - INTEGER"></a>arp_announce - INTEGER</h2><p>Define different restriction levels for announcing the local source IP address from IP packets in ARP requests sent on interface:</p>
-<p><strong>0 - (default) Use any local address, configured on any interface</strong></p>
-<p><strong>1 - Try to avoid local addresses that are not in the target’s subnet for this interface.</strong><br>This mode is useful when target hosts reachable via this interface require the source IP address in ARP requests to be part of their logical network configured on the receiving interface. When we generate the request we will check all our subnets that include the target IP and will preserve the source address if it is from such subnet. If there is no such subnet we select source address according to the rules for level 2.</p>
-<p><strong>2 - Always use the best local address for this target.</strong><br>In this mode we ignore the source address in the IP packet and try to select local address that we prefer for talks with the target host. Such local address is selected by looking for primary IP addresses on all our subnets on the outgoing interface that include the target IP address. If no suitable local address is found we select the first local address we have on the outgoing interface or on all other interfaces, with the hope we will receive reply for our request and even sometimes no matter the source IP address we announce. The max value from conf/{all,interface}/arp_announce is used. Increasing the restriction level gives more chance for receiving answer from the resolved target while decreasing the level announces more valid sender’s information.</p>
-<h2 id="arp-ignore-INTEGER"><a href="#arp-ignore-INTEGER" class="headerlink" title="arp_ignore - INTEGER"></a>arp_ignore - INTEGER</h2><p>Define different modes for sending replies in response to received ARP requests that resolve local target IP addresses:<br><strong>0 - (default): reply for any local target IP address, configured on any interface</strong></p>
-<p><strong>1 - reply only if the target IP address is local address configured on the incoming interface</strong></p>
-<p><strong>2 - reply only if the target IP address is local address configured on the incoming interface and both with the sender’s IP address are part from same subnet on this interface</strong></p>
-<p><strong>3 - do not reply for local addresses configured with scope host, only resolutions for global and link addresses are replied</strong></p>
-<p><strong>4-7 - reserved</strong></p>
-<p><strong>8 - do not reply for all local addresses</strong><br>The max value from conf/{all,interface}/arp_ignore is used when ARP request is received on the {interface}</p>
-<h2 id="Disable-ARP-for-VIP"><a href="#Disable-ARP-for-VIP" class="headerlink" title="Disable ARP for VIP"></a>Disable ARP for VIP</h2><p>To disable ARP for VIP at real servers, we just need to set arp_announce/arp_ignore sysctls at the interface connected to the VIP network.<br>For example, real servers have eth0 connected to the VIP network with the VIP at interface lo, we will have the following commands.</p>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">echo <span class="number">1</span> &gt; <span class="meta-keyword">/proc/</span>sys<span class="meta-keyword">/net/</span>ipv4<span class="meta-keyword">/conf/</span>eth0/arp_ignore</div><div class="line">echo <span class="number">2</span> &gt; <span class="meta-keyword">/proc/</span>sys<span class="meta-keyword">/net/</span>ipv4<span class="meta-keyword">/conf/</span>eth0/arp_announce</div></pre></td></tr></table></figure>
-<p>Or, if /etc/sysctl.conf is used in the system, we have this config in /etc/sysctl.conf</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">net<span class="selector-class">.ipv4</span><span class="selector-class">.conf</span><span class="selector-class">.eth0</span><span class="selector-class">.arp_ignore</span> = <span class="number">1</span></div><div class="line">net<span class="selector-class">.ipv4</span><span class="selector-class">.conf</span><span class="selector-class">.eth0</span><span class="selector-class">.arp_announce</span> = <span class="number">2</span></div></pre></td></tr></table></figure>
-<p>If you’re about to brought up a new logical interface(eg. lo.0 etc.) it’s recommended to have the following commands.</p>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">echo <span class="string">"1"</span> &gt; <span class="meta-keyword">/proc/</span>sys<span class="meta-keyword">/net/</span>ipv4<span class="meta-keyword">/conf/</span>all/arp_ignore</div><div class="line">echo <span class="string">"2"</span> &gt; <span class="meta-keyword">/proc/</span>sys<span class="meta-keyword">/net/</span>ipv4<span class="meta-keyword">/conf/</span>all/arp_announce</div></pre></td></tr></table></figure>
-<blockquote>
-<p><strong>Note that the arp_announce/arp_ignore sysctls must be setup correctly, before the VIP address is brought up at a logical interface at real servers.</strong></p>
-</blockquote>
-
-	
-	
-	
-	
-</div>
-				
-				
-
-                <!-- Post Comments -->
-                
-                    
-
-
-                
-            </div>
-
-            <!-- Post Prev & Next Nav -->
-            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
-    
-    <!-- Prev Nav -->
-    
-        <a href="/2017/01/05/Umask简介/" id="post_nav-newer" class="prev-content">
-            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
-                <i class="material-icons">arrow_back</i>
-            </button>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            新篇
-        </a>
-    
-
-    <!-- Section Spacer -->
-    <div class="section-spacer"></div>
-
-    <!-- Next Nav -->
-    
-        <a href="/2016/12/21/Jenkins + Ansible实现自动化发布/" id="post_nav-older" class="next-content">
-            旧篇
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
-                <i class="material-icons">arrow_forward</i>
-            </button>
-        </a>
-    
-</nav>
-        </div>
-    </div>
 
 				
 				
