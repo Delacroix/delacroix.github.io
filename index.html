@@ -157,9 +157,42 @@
     <article id="post-ELK完成操作系统日志审计" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/24/ELK完成操作系统日志审计/">ELK完成操作系统日志审计</a>
+    </h1>
+  
+
+        
+        <a href="/2017/11/24/ELK完成操作系统日志审计/" class="archive-article-date">
+  	<time datetime="2017-11-24T03:12:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-11-24</time>
+</a>
+        
+      </header>
+    
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h1 id="一、filebeat-版本、安装地址等情况"><a href="#一、filebeat-版本、安装地址等情况" class="headerlink" title="一、filebeat 版本、安装地址等情况"></a>一、filebeat 版本、安装地址等情况</h1><p>1、filebeat 版本为：5.5.2<br>2、filebeat 由二进制包安装（filebeat-5.5.2-linux-x86_64.tar.gz，解压后直接可用）<br>3、filebeat 安装目录：/usr/local/filebeat<br>4、filebeat 二进制包存放地址：192.168.13.45 中 / home/app/python/python_connection/file_put 下</p>
+<h1 id="二、安装步骤"><a href="#二、安装步骤" class="headerlink" title="二、安装步骤"></a>二、安装步骤</h1><p> 1、在各服务器中的 / etc/bashrc 文件中追加有一下命令</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="section">##usermonitor----------------------------------------------</span></div><div class="line"><span class="section">##modify by huqing at 2016---------------------------------</span></div><div class="line">STIME=<span class="code">`date -d today +"%Y-%m-%d"`</span></div><div class="line">HISTSIZE=1000</div><div class="line">HISTTIMEFORMAT="%Y/%m/%d %T ";</div><div class="line">export HISTORY<span class="emphasis">_FILE=/usermonitor/audit172_</span>19<span class="emphasis">_2_</span>49.log.$&#123;STIME&#125;.<span class="code">`id -un`</span></div><div class="line">export HISTTIMEFORMAT</div><div class="line">export PROMPT_COMMAND='&#123; thisHistID=<span class="code">`history 1|awk "&#123;print \\$1&#125;"`</span>;</div><div class="line">lastCommand=<span class="code">`history 1| awk "&#123;\\$1=\"\" ;print&#125;"`</span>;</div><div class="line">user=<span class="code">`id -un`</span>;whoStr=(<span class="code">`who -u am i`</span>);</div><div class="line">realUser=$&#123;whoStr[0]&#125;;</div><div class="line">logMonth=$&#123;whoStr[2]&#125;;</div><div class="line">logDay=$&#123;whoStr[3]&#125;;</div><div class="line">logTime=$&#123;whoStr[4]&#125;;</div><div class="line">pid=$&#123;whoStr[5]&#125;;</div><div class="line">ip=$&#123;whoStr[6]&#125;;</div><div class="line">if [ $&#123;thisHistID&#125;x != $&#123;lastHistID&#125;x ];</div><div class="line"><span class="code">         then</span></div><div class="line">echo -E "[<span class="string">OPERATE USER:"$user</span>]"[<span class="string">LOGIN USER:"$realUser</span>]"[<span class="string">LOGIN SOURCE IP:"$ip</span>][<span class="symbol">LOGIN PID:$pid</span>][<span class="string">LOGIN TIME:$logMonth $logDay $logTime</span>] ------"[OPERATE TIME AND COMMAND:"$lastCommand ];lastHistID=$thisHistID;</div><div class="line">fi; &#125; &gt;&gt; $HISTORY_FILE'</div></pre></td></tr></table></figure>
+<p>2、修改 / etc/bashrc 文件中追加命令中的 ip 地址：</p>
+<figure class="highlight mel"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">audit172_19_2_49.<span class="keyword">log</span>.$&#123;STIME&#125;.<span class="string">`id -un`</span></div></pre></td></tr></table></figure>
+<p>中的 172_19_2_49 修改为本机 ip，该 ip 为日志名字</p>
+<p>3、创建 / usermonitor 目录，日志存放在该目录下</p>
+<p>4、解压 filebeat 二进制文件, 并移动到 / usr/local/filebeat</p>
+<p>5、修改 / usr/local/filebeat/filebeat.yml 文件为以下配置，并把 name 的值改为本机 ip 地址</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">filebeat.<span class="string">prospectors:</span></div><div class="line">- <span class="string">input_type:</span> log</div><div class="line"><span class="string">paths:</span></div><div class="line">- <span class="regexp">/usermonitor/</span>*</div><div class="line"><span class="string">name:</span> <span class="string">"172.19.2.49"</span></div><div class="line">output.<span class="string">logstash:</span></div><div class="line"><span class="string">hosts:</span> [<span class="string">"172.19.2.51:6666"</span>]</div></pre></td></tr></table></figure>
+<p>6、执行 <code>source /etc/bashrc</code><br>7、启动 filebeat</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">chmod u+x <span class="regexp">/usr/</span>local<span class="regexp">/filebeat/</span>filebeat</div><div class="line">nohup <span class="regexp">/usr/</span>local<span class="regexp">/filebeat/</span>filebeat -c <span class="regexp">/usr/</span>local<span class="regexp">/filebeat/</span>filebeat.yml &amp;</div></pre></td></tr></table></figure>
+<h1 id="三、python-脚本"><a href="#三、python-脚本" class="headerlink" title="三、python 脚本"></a>三、python 脚本</h1><p>1、python 脚本地址</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta-keyword">/home/</span>app<span class="meta-keyword">/python/</span>python_connection/connection_ssh.py</div><div class="line"><span class="meta-keyword">/home/</span>app<span class="meta-keyword">/python/</span>python_connection/show.py</div></pre></td></tr></table></figure>
+<p>2、配置文件地址及配置格式要求</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="regexp">/home/</span>app<span class="regexp">/python/</span>python_connection<span class="regexp">/ip.txt</span></div></pre></td></tr></table></figure>
+<p>格式要求：ip, 端口普通用户名, 普通用户密码, root 用户密码<br>     注意中间必须用英文符号的逗号隔开，末尾不能有空格<br>     如：192.168.1.1,22,app,appmima,rootmima</p>
+<p>3、运行脚本</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">python</span> show.<span class="keyword">py</span></div></pre></td></tr></table></figure>
       
 
       
@@ -167,6 +200,25 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">ELK</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">审计</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">日志分析</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -1153,7 +1205,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ISO20000</a>
+                <a href="javascript:void(0)" class="js-tag color4">ELK</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">审计</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">日志分析</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1169,18 +1233,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">负载均衡</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ELK</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Operations</a>
               </li>
              
@@ -1193,15 +1245,23 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">负载均衡</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">OSPF</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">ISO20000</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Operation System</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Policy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">OSPF</a>
               </li>
              
               <li class="article-tag-list-item">
