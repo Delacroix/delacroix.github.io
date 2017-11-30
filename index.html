@@ -154,6 +154,94 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-zabbix监控mysql" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/30/zabbix监控mysql/">zabbix监控mysql</a>
+    </h1>
+  
+
+        
+        <a href="/2017/11/30/zabbix监控mysql/" class="archive-article-date">
+  	<time datetime="2017-11-30T11:10:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-11-30</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>修改配置文件</strong></p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">vim /home/zabbix/zabbix_agents/<span class="keyword">conf</span>/zabbix_agentd.<span class="keyword">conf</span>.<span class="keyword">d</span>/userparameter_mysql.<span class="keyword">conf</span></div><div class="line">UserParameter=mysql.status[*],echo <span class="string">"show global status where Variable_name='$1';"</span> | HOME=/home/zabbix/zabbix_agents/ mysql -<span class="keyword">N</span> | awk '&#123;<span class="keyword">print</span> $<span class="variable">$2&#125;</span>'</div><div class="line">UserParameter=mysql.size[*],bash -c 'echo <span class="string">"select sum($(case "</span><span class="variable">$3</span><span class="string">" in both|"</span><span class="string">") echo "</span>data_length+index_length<span class="string">";; data|index) echo "</span><span class="variable">$3_length</span><span class="string">";; free) echo "</span>data_free<span class="string">";; esac)) from information_schema.tables$([[ "</span><span class="variable">$1</span><span class="string">" = "</span>all<span class="string">" || ! "</span><span class="variable">$1</span><span class="string">" ]] || echo "</span> where table_schema=\<span class="string">"$1\"</span><span class="string">")$([[ "</span><span class="variable">$2</span><span class="string">" = "</span>all<span class="string">" || ! "</span><span class="variable">$2</span><span class="string">" ]] || echo "</span>and table_name=\<span class="string">"$2\"</span><span class="string">");"</span> | HOME=/home/zabbix/zabbix_agents/ mysql -<span class="keyword">N</span>'</div><div class="line">UserParameter=mysql.ping,HOME=/home/zabbix/zabbix_agents/ mysqladmin ping | grep -c alive</div><div class="line">UserParameter=mysql.<span class="keyword">version</span>,mysql -V</div><div class="line">#UserParameter=mysql.slavestatus,echo <span class="string">"show slave status\G"</span> | HOME=/home/zabbix/zabbix_agents/ mysql -<span class="keyword">N</span> | grep -<span class="keyword">E</span> <span class="string">"Slave_IO_Running|Slave_SQL_Running"</span> | awk '&#123;<span class="keyword">print</span> <span class="variable">$2&#125;</span>'|grep -c Yes</div></pre></td></tr></table></figure>
+<p><strong>host为当前数据库IP，该账号密码都只有查询权限</strong></p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">vim /home/zabbix/zabbix_agents/.my.cnf</div><div class="line">[mysql]</div><div class="line"><span class="attribute">host</span>=<span class="number">192.168</span>.<span class="number">138.138</span></div><div class="line"><span class="attribute">user</span>=ops_query</div><div class="line"><span class="attribute">password</span>=password</div><div class="line"><span class="attribute">socket</span>=/var/lib/mysql/mysql.sock</div><div class="line">[mysqladmin]</div><div class="line"><span class="attribute">host</span>=<span class="number">192.168</span>.<span class="number">138.138</span></div><div class="line"><span class="attribute">user</span>=ops_query</div><div class="line"><span class="attribute">password</span>=password</div><div class="line"><span class="attribute">socket</span>=/var/lib/mysql/mysql.sock</div></pre></td></tr></table></figure>
+<p><strong>新增Include</strong></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">vim <span class="regexp">/usr/</span>local<span class="regexp">/etc/</span>zabbix_agentd.conf</div><div class="line"><span class="keyword">Include</span>=<span class="regexp">/home/</span>zabbix<span class="regexp">/zabbix_agents/</span>conf<span class="regexp">/zabbix_agentd.conf.d/u</span>serparameter_mysql.conf</div></pre></td></tr></table></figure>
+<p><strong>启动</strong></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="regexp">/home/</span>zabbix<span class="regexp">/zabbix_agents/</span>sbin<span class="regexp">/zabbix_agentd -c /u</span>sr<span class="regexp">/local/</span>etc<span class="regexp">/zabbix_agentd.conf</span></div></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">zabbix</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">mysql</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">监控</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/11/30/zabbix监控mysql/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-nginx实现证书双向认证" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1032,93 +1120,6 @@
 
 
   
-    <article id="post-常用Centos命令" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/04/常用Centos命令/">常用Centos命令</a>
-    </h1>
-  
-
-        
-        <a href="/2016/11/04/常用Centos命令/" class="archive-article-date">
-  	<time datetime="2016-11-04T02:56:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-11-04</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h4 id="安装方式："><a href="#安装方式：" class="headerlink" title="安装方式："></a>安装方式：</h4><p><strong>• yum安装[需联网]</strong><br><code>yum install vim</code> [yum方式安装vim软件及相关依赖包，如有更新包，则提示是否更新]<br><code>yum search vim</code> [yum方式搜索vim软件是否存在]<br><code>yum list |grep vim</code> [yum方式列出vim安装状态、版本及包全名]</p>
-        
-          <a class="article-more-a" href="/2016/11/04/常用Centos命令/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Linux//" class="article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2016/11/04/常用Centos命令/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
@@ -1216,22 +1217,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ELK</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">审计</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">日志分析</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ISO20000</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Operations</a>
               </li>
              
@@ -1244,7 +1229,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">负载均衡</a>
+                <a href="javascript:void(0)" class="js-tag color4">ISO20000</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">ELK</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">审计</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">日志分析</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1261,6 +1258,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">负载均衡</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1293,6 +1294,18 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">CA证书</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">zabbix</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">mysql</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">监控</a>
               </li>
              
               <li class="article-tag-list-item">
