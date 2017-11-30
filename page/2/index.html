@@ -154,6 +154,98 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/11/04/LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志/">LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志</a>
+    </h1>
+  
+
+        
+        <a href="/2016/11/04/LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志/" class="archive-article-date">
+  	<time datetime="2016-11-04T02:08:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-11-04</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志"><a href="#LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志" class="headerlink" title="LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志"></a>LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志</h1><p>先确认慢查询日志是否开启, 然后找到日志文件的位置</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="section">&gt; show variables like '%slow%';</div><div class="line">+---------------------+-------------------------------------+</span></div><div class="line"><span class="section">| Variable_name       | Value                               |</div><div class="line">+---------------------+-------------------------------------+</span></div><div class="line">| log<span class="emphasis">_slow_</span>queries    | ON                                  |</div><div class="line">| slow<span class="emphasis">_launch_</span>time    | 2                                   |</div><div class="line">| slow<span class="emphasis">_query_</span>log      | ON                                  |</div><div class="line"><span class="section">| slow_query_log_file | /data/mysqllog/20000/slow-query.log |</div><div class="line">+---------------------+-------------------------------------+</span></div></pre></td></tr></table></figure>
+        
+          <a class="article-more-a" href="/2016/11/04/LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">ELK</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">MySQL</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Linux//" class="article-tag-list-link color1">Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2016/11/04/LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="[post]-kubeadm-搭建-kubernetes-集群" class="article article-type-[post]  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -458,6 +550,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">ISO20000</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">ELK</a>
               </li>
              
@@ -467,6 +563,18 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">日志分析</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Operations</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">自动化</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">运维</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -486,7 +594,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Operations</a>
+                <a href="javascript:void(0)" class="js-tag color5">负载均衡</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">OSPF</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -498,18 +610,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">负载均衡</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">OSPF</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ISO20000</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Operation System</a>
               </li>
              
@@ -518,15 +618,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">安全</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">CA证书</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">基础</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">自动化</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">运维</a>
               </li>
             
             <div class="clearfix"></div>

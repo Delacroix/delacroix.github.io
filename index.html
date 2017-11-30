@@ -154,6 +154,109 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-nginx实现证书双向认证" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/30/nginx实现证书双向认证/">nginx实现证书双向认证</a>
+    </h1>
+  
+
+        
+        <a href="/2017/11/30/nginx实现证书双向认证/" class="archive-article-date">
+  	<time datetime="2017-11-30T03:12:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-11-30</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>实现的功能：外网访问nginx有证书才能打开页面，无证书打不开页面</p>
+<p><strong>一、在192.168.13.45安装nginx</strong></p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apt-<span class="keyword">get</span> install nginx</div></pre></td></tr></table></figure>
+<p><strong>二、配置生成ca的参数</strong></p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">mkdir</span> -pv /etc/nginx/<span class="keyword">ca</span></div><div class="line"><span class="keyword">cd</span> /etc/nginx/<span class="keyword">ca</span></div><div class="line"><span class="built_in">mkdir</span> -pv <span class="built_in">mkdir</span> newcerts private <span class="keyword">conf</span> server</div><div class="line"><span class="keyword">cd</span> <span class="keyword">conf</span></div><div class="line"> </div><div class="line"><span class="keyword">vim</span> openssl.<span class="keyword">conf</span></div><div class="line">[ <span class="keyword">ca</span> ] </div><div class="line">default_ca      = foo                   # The default <span class="keyword">ca</span> section </div><div class="line">    </div><div class="line">[ foo ] </div><div class="line">dir            = /etc/nginx/<span class="keyword">ca</span>         # top dir </div><div class="line">database       = /etc/nginx/<span class="keyword">ca</span>/<span class="built_in">index</span>.txt          # <span class="built_in">index</span> <span class="keyword">file</span>. </div><div class="line">new_certs_dir  = /etc/nginx/<span class="keyword">ca</span>/newcerts           # <span class="keyword">new</span> certs dir </div><div class="line">    </div><div class="line">certificate    = /etc/nginx/<span class="keyword">ca</span>/private/<span class="keyword">ca</span>.crt         # The CA cert </div><div class="line">serial         = /etc/nginx/<span class="keyword">ca</span>/serial             # serial <span class="keyword">no</span> <span class="keyword">file</span> </div><div class="line">private_key    = /etc/nginx/<span class="keyword">ca</span>/private/<span class="keyword">ca</span>.key  # CA private key </div><div class="line">RANDFILE       =/etc/nginx/<span class="keyword">ca</span>/private/.rand      # random <span class="keyword">number</span> <span class="keyword">file</span> </div><div class="line">    </div><div class="line">default_days   = <span class="number">365</span>                     # how long <span class="keyword">to</span> certify <span class="keyword">for</span> </div><div class="line">default_crl_days= <span class="number">30</span>                     # how long before <span class="keyword">next</span> CRL </div><div class="line">default_md     = md5                     # message digest method <span class="keyword">to</span> use </div><div class="line">unique_subject = <span class="keyword">no</span>                      # Set <span class="keyword">to</span> <span class="string">'no'</span> <span class="keyword">to</span> allow creation of </div><div class="line"> </div><div class="line">policy         = policy_any</div><div class="line">    </div><div class="line">[ policy_any ] </div><div class="line">countryName = <span class="keyword">match</span> </div><div class="line">stateOrProvinceName = <span class="keyword">match</span> </div><div class="line">organizationName = <span class="keyword">match</span> </div><div class="line">organizationalUnitName = <span class="keyword">match</span> </div><div class="line">localityName            = optional </div><div class="line">commonName              = supplied </div><div class="line">emailAddress            = optional</div></pre></td></tr></table></figure>
+<p><strong>三、生成根证书</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> ..</div><div class="line">vim new_ca.sh</div><div class="line"><span class="meta">#!/bin/sh </span></div><div class="line"><span class="comment"># Generate the key. </span></div><div class="line">openssl genrsa -out private/ca.key</div><div class="line"><span class="comment"># Generate a certificate request. </span></div><div class="line">openssl req -new -key private/ca.key -out private/ca.csr</div><div class="line"><span class="comment"># Self signing key is bad... this could work with a third party signed key... registeryfly has them on for $16 but I'm too cheap lazy to get one on a lark. </span></div><div class="line"><span class="comment"># I'm also not 100% sure if any old certificate will work or if you have to buy a special one that you can sign with. I could investigate further but since this </span></div><div class="line"><span class="comment"># service will never see the light of an unencrypted Internet see the cheap and lazy remark. </span></div><div class="line"><span class="comment"># So self sign our root key. </span></div><div class="line">openssl x509 -req -days 365 -in private/ca.csr -signkey private/ca.key -out private/ca.crt</div><div class="line"><span class="comment"># Setup the first serial number for our keys... can be any 4 digit hex string... not sure if there are broader bounds but everything I've seen uses 4 digits. </span></div><div class="line"><span class="built_in">echo</span> FACE &gt; serial</div><div class="line"><span class="comment"># Create the CA's key database. </span></div><div class="line">touch index.txt</div><div class="line"><span class="comment"># Create a Certificate Revocation list for removing 'user certificates.' </span></div><div class="line">openssl ca -gencrl -out /etc/nginx/ca/private/ca.crl -crldays 7 -config <span class="string">"/etc/nginx/ca/conf/openssl.conf"</span></div><div class="line"> </div><div class="line">chmod 777 new_ca.sh</div></pre></td></tr></table></figure>
+<p>执行生成根证书，记住输入的内容，之后生成服务器证书和客户端证书输入内容要相同</p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">./new_ca.sh</div><div class="line">Country <span class="keyword">Name</span> (<span class="number">2</span> letter code) [AU]:CN</div><div class="line">State <span class="keyword">or</span> Province <span class="keyword">Name</span> (full <span class="keyword">name</span>) [Some-State]:cq</div><div class="line">Locality <span class="keyword">Name</span> (eg, city) []:cq</div><div class="line">Organization <span class="keyword">Name</span> (eg, company) [Internet Widgits Pty Ltd]:iot</div><div class="line">Organizational <span class="keyword">Unit</span> <span class="keyword">Name</span> (eg, section) []:ops</div><div class="line">Common <span class="keyword">Name</span> (e.g. server FQDN <span class="keyword">or</span> YOUR <span class="keyword">name</span>) []:www.xxx.com</div><div class="line">Email Address []:</div><div class="line"> </div><div class="line">Please enter the following <span class="string">'extra'</span> attributes</div><div class="line"><span class="keyword">to</span> be sent <span class="keyword">with</span> your certificate request</div><div class="line">A challenge password []:!xxx</div><div class="line">An optional company <span class="keyword">name</span> []:xxx</div></pre></td></tr></table></figure>
+<p><strong>四、生成服务器证书</strong></p>
+<figure class="highlight vbscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">vim new_server.sh</div><div class="line"># Create us a key. Don<span class="comment">'t bother putting a password on it since you will need it to start apache. If you have a better work around I'd love to hear it. </span></div><div class="line">openssl genrsa -out <span class="built_in">server</span>/<span class="built_in">server</span>.key</div><div class="line"># Take our key <span class="keyword">and</span> create a Certificate Signing <span class="built_in">Request</span> <span class="keyword">for</span> it. </div><div class="line">openssl req -<span class="keyword">new</span> -key <span class="built_in">server</span>/<span class="built_in">server</span>.key -out <span class="built_in">server</span>/<span class="built_in">server</span>.csr</div><div class="line"># Sign this bastard key <span class="keyword">with</span> our bastard CA key. </div><div class="line">openssl ca -<span class="keyword">in</span> <span class="built_in">server</span>/<span class="built_in">server</span>.csr -cert <span class="keyword">private</span>/ca.crt -keyfile <span class="keyword">private</span>/ca.key -out <span class="built_in">server</span>/<span class="built_in">server</span>.crt -config <span class="string">"/etc/nginx/ca/conf/openssl.conf"</span></div><div class="line"> </div><div class="line"> </div><div class="line"></div><div class="line">chmod <span class="number">777</span> new_server.sh</div><div class="line">./new_server.sh</div></pre></td></tr></table></figure>
+<p>执行中输入内容要和根证书相同</p>
+<p><strong>五、修改nginx配置文件</strong></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">vim</span> /etc/nginx/nginx.conf</div><div class="line">user  nginx;</div><div class="line"><span class="attribute">worker_processes</span>  <span class="number">1</span>;</div><div class="line"><span class="attribute">error_log</span>  /var/log/nginx/error.log <span class="literal">warn</span>;</div><div class="line"><span class="attribute">pid</span>        /var/run/nginx.pid;</div><div class="line"><span class="section">events</span> &#123;</div><div class="line">    <span class="attribute">worker_connections</span>  <span class="number">1024</span>;</div><div class="line">&#125;</div><div class="line"><span class="section">http</span> &#123;</div><div class="line">    <span class="attribute">include</span>       /etc/nginx/mime.types;</div><div class="line">    <span class="attribute">default_type</span>  application/octet-stream;</div><div class="line">    <span class="attribute">log_format</span>  logstash_json  <span class="string">'&#123; "<span class="variable">@timestamp</span>": "<span class="variable">$time_local</span>", '</span></div><div class="line">                               <span class="string">'"<span class="variable">@fields</span>": &#123; '</span></div><div class="line">                               <span class="string">'"remote_addr": "<span class="variable">$remote_addr</span>", '</span></div><div class="line">                               <span class="string">'"remote_user": "<span class="variable">$remote_user</span>", '</span></div><div class="line">                               <span class="string">'"body_bytes_sent": "<span class="variable">$body_bytes_sent</span>", '</span></div><div class="line">                               <span class="string">'"request_time": "<span class="variable">$request_time</span>", '</span></div><div class="line">                               <span class="string">'"status": "<span class="variable">$status</span>", '</span></div><div class="line">                               <span class="string">'"request": "<span class="variable">$request</span>", '</span></div><div class="line">                               <span class="string">'"request_method": "<span class="variable">$request_method</span>", '</span></div><div class="line">                               <span class="string">'"http_referrer": "<span class="variable">$http_referer</span>", '</span></div><div class="line">                               <span class="string">'"body_bytes_sent":"<span class="variable">$body_bytes_sent</span>", '</span></div><div class="line">                               <span class="string">'"http_x_forwarded_for": "<span class="variable">$http_x_forwarded_for</span>", '</span></div><div class="line">                               <span class="string">'"http_user_agent": "<span class="variable">$http_user_agent</span>" &#125; &#125;'</span>;</div><div class="line">    <span class="attribute">access_log</span>     <span class="literal">off</span>;</div><div class="line">    <span class="attribute">sendfile</span>        <span class="literal">on</span>;</div><div class="line">    <span class="attribute">keepalive_timeout</span>  <span class="number">65</span>;</div><div class="line">    <span class="attribute">server_tokens</span>    <span class="literal">off</span>;</div><div class="line"> </div><div class="line">    <span class="attribute">upstream</span> nginx &#123;</div><div class="line">        <span class="attribute">server</span> <span class="number">192.168.13.45:80</span> weight=<span class="number">1</span> max_fails=<span class="number">2</span> fail_timeout=<span class="number">1</span>;</div><div class="line">        &#125;</div><div class="line"> </div><div class="line">    <span class="section">server</span> &#123;</div><div class="line">        <span class="attribute">listen</span>       <span class="number">8989</span>;</div><div class="line">        <span class="attribute">access_log</span>  /var/log/nginx/accesse.log  logstash_json;</div><div class="line">        <span class="attribute">server_name</span>  www.iotiotiot.com;</div><div class="line"> </div><div class="line">        <span class="attribute">ssi</span> <span class="literal">on</span>;</div><div class="line">        <span class="attribute">ssi_silent_errors</span> <span class="literal">on</span>;</div><div class="line">        <span class="attribute">ssi_types</span> text/shtml; </div><div class="line">   </div><div class="line">        <span class="attribute">ssl</span>                  <span class="literal">on</span>; </div><div class="line">        <span class="attribute">ssl_certificate</span>      /etc/nginx/ca/server/server.crt; </div><div class="line">        <span class="attribute">ssl_certificate_key</span>  /etc/nginx/ca/server/server.key; </div><div class="line">        <span class="attribute">ssl_client_certificate</span> /etc/nginx/ca/private/ca.crt; </div><div class="line">   </div><div class="line">        <span class="attribute">ssl_session_timeout</span>  <span class="number">5m</span>; </div><div class="line">        <span class="attribute">ssl_verify_client</span> <span class="literal">on</span>;</div><div class="line">   </div><div class="line">        <span class="attribute">ssl_protocols</span>  SSLv2 SSLv3 TLSv1; </div><div class="line">        <span class="attribute">ssl_ciphers</span> ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP; </div><div class="line">        <span class="attribute">ssl_prefer_server_ciphers</span>   <span class="literal">on</span>;</div><div class="line"> </div><div class="line">        <span class="attribute">location</span> / &#123;</div><div class="line">            <span class="attribute">proxy_pass</span>   http://nginx/;</div><div class="line">            <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</div><div class="line">            <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"> </div><div class="line">    <span class="attribute">include</span> /etc/nginx/conf.d/<span class="regexp">*.conf</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>六、生成客户端证书并访问</strong></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">vim new_user.sh</div><div class="line"><span class="comment">#!/bin/sh </span></div><div class="line"><span class="comment"># The base of where our SSL stuff lives. </span></div><div class="line">base=<span class="string">"/etc/nginx/ca"</span></div><div class="line"><span class="comment"># Were we would like to store keys... in this case we take the username given to us and store everything there. </span></div><div class="line">mkdir -p <span class="variable">$base</span><span class="regexp">/users/</span> </div><div class="line">   </div><div class="line"><span class="comment"># Let's create us a key for this user... yeah not sure why people want to use DES3 but at least let's make us a nice big key. </span></div><div class="line">openssl genrsa -des3 -out <span class="variable">$base</span><span class="regexp">/users/</span>client.key <span class="number">1024</span> </div><div class="line"><span class="comment"># Create a Certificate Signing Request for said key. </span></div><div class="line">openssl req -new -key <span class="variable">$base</span><span class="regexp">/users/</span>client.key -out <span class="variable">$base</span><span class="regexp">/users/</span>client.csr </div><div class="line"><span class="comment"># Sign the key with our CA's key and cert and create the user's certificate out of it. </span></div><div class="line">openssl ca -<span class="keyword">in</span> <span class="variable">$base</span><span class="regexp">/users/</span>client.csr -cert <span class="variable">$base</span><span class="regexp">/private/</span>ca.crt -keyfile <span class="variable">$base</span><span class="regexp">/private/</span>ca.key -out <span class="variable">$base</span><span class="regexp">/users/</span>client.crt -config <span class="string">"/etc/nginx/ca/conf/openssl.conf"</span></div><div class="line">   </div><div class="line"><span class="comment"># This is the tricky bit... convert the certificate into a form that most browsers will understand PKCS12 to be specific. </span></div><div class="line"><span class="comment"># The export password is the password used for the browser to extract the bits it needs and insert the key into the user's keychain. </span></div><div class="line"><span class="comment"># Take the same precaution with the export password that would take with any other password based authentication scheme. </span></div><div class="line">openssl pkcs12 -export -clcerts -<span class="keyword">in</span> <span class="variable">$base</span><span class="regexp">/users/</span>client.crt -inkey <span class="variable">$base</span><span class="regexp">/users/</span>client.key -out <span class="variable">$base</span><span class="regexp">/users/</span>client.p12</div><div class="line"> </div><div class="line">chmod <span class="number">777</span> new_user.sh</div><div class="line">.<span class="regexp">/new_user.sh</span></div></pre></td></tr></table></figure>
+<p>执行中输入内容要和根证书相同</p>
+<p>将生成的客户端证书导入浏览器，注意导入时选择自动导入，密码：xxx</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sz <span class="regexp">/etc/</span>nginx<span class="regexp">/ca/u</span>sers<span class="regexp">/client.p12</span></div></pre></td></tr></table></figure>
+<p>修改/etc/hosts加入</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">183<span class="selector-class">.183</span><span class="selector-class">.183</span><span class="selector-class">.183</span>    <span class="selector-tag">www</span><span class="selector-class">.xxx</span><span class="selector-class">.com</span></div></pre></td></tr></table></figure>
+<p>浏览器访问<a href="https://www.xxx.com:8989" target="_blank" rel="external">https://www.xxx.com:8989</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">nginx</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">安全</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">CA证书</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/11/30/nginx实现证书双向认证/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-ELK完成操作系统日志审计" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1016,98 +1119,6 @@
 
 
   
-    <article id="post-LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/04/LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志/">LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志</a>
-    </h1>
-  
-
-        
-        <a href="/2016/11/04/LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志/" class="archive-article-date">
-  	<time datetime="2016-11-04T02:08:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-11-04</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志"><a href="#LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志" class="headerlink" title="LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志"></a>LOGSTASH+ELASTICSEARCH 处理 MYSQL 慢查询日志</h1><p>先确认慢查询日志是否开启, 然后找到日志文件的位置</p>
-<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="section">&gt; show variables like '%slow%';</div><div class="line">+---------------------+-------------------------------------+</span></div><div class="line"><span class="section">| Variable_name       | Value                               |</div><div class="line">+---------------------+-------------------------------------+</span></div><div class="line">| log<span class="emphasis">_slow_</span>queries    | ON                                  |</div><div class="line">| slow<span class="emphasis">_launch_</span>time    | 2                                   |</div><div class="line">| slow<span class="emphasis">_query_</span>log      | ON                                  |</div><div class="line"><span class="section">| slow_query_log_file | /data/mysqllog/20000/slow-query.log |</div><div class="line">+---------------------+-------------------------------------+</span></div></pre></td></tr></table></figure>
-        
-          <a class="article-more-a" href="/2016/11/04/LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">ELK</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">MySQL</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Linux//" class="article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2016/11/04/LOGSTASH-ELASTICSEARCH-处理-MYSQL-慢查询日志/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
@@ -1205,6 +1216,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">ISO20000</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">ELK</a>
               </li>
              
@@ -1214,6 +1229,18 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">日志分析</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Operations</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">自动化</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">运维</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1233,7 +1260,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Operations</a>
+                <a href="javascript:void(0)" class="js-tag color5">负载均衡</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">OSPF</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1245,18 +1276,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">负载均衡</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">OSPF</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ISO20000</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Operation System</a>
               </li>
              
@@ -1265,15 +1284,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">安全</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">CA证书</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">基础</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">自动化</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">运维</a>
               </li>
             
             <div class="clearfix"></div>
